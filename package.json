@@ -1,0 +1,9 @@
+{
+    "name": "ferro",
+    "version": "0.0.1",
+    "dependencies": {
+	"coffeekup": "0.2.3",
+	"coffee-script": "1.1.1"
+    }
+}
+  
