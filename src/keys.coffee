@@ -1,7 +1,7 @@
 sentence_case = (s) ->
-  ret = s[0].toUpperCase() + s[1..-1]
+  ret = s[0].toUpperCase() + s[1..-1].toLowerCase()
   if (i = s.indexOf '_') > 0
-    ret = ret[0..i-1] + ' ' + s[i+1].toUpperCase() + s[i+2..-1]
+    return ret[0..i-1] + ' ' + s[i+1].toUpperCase() + s[i+2..-1].toLowerCase()
   ret
 
 reverse = (h) ->
@@ -9,19 +9,19 @@ reverse = (h) ->
   o[v] = sentence_case k for k, v of h
   o
 
-f.keys =
-  codes:
-    return: 13
-    esc: 27
-    space: 32
-    page_up: 33
-    page_down: 34
-    end: 35
-    home: 36
-    left: 37
-    up: 38
-    right: 39
-    down: 40
+f.KEYS =
+  CODES:
+    RETURN: 13
+    ESC: 27
+    SPACE: 32
+    PAGE_UP: 33
+    PAGE_DOWN: 34
+    END: 35
+    HOME: 36
+    LEFT: 37
+    UP: 38
+    RIGHT: 39
+    DOWN: 40
 
-f.keys.names = reverse f.keys.codes
+f.KEYS.NAMES = reverse f.KEYS.CODES #todo how to cache? like memoize?
 

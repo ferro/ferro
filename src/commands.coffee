@@ -1,7 +1,14 @@
+f.CONTEXTS =
+  TAB: 0
+  EXTENSION: 1
+  APP: 2
+  SESSION: 3
+  TEXT: 4
+
 f.commands =
   extract:
     desc: "Extract tabs that match the given text into a new window. Uses the current tab's domain if text is blank."
-    context: 'text'
+    context: f.CONTEXTS.TEXT
     fn: (tab, text) ->
       if text is ''
         if _(tab.url).startsWith 'chrome' or _(tab.url).startsWith 'about'
@@ -14,67 +21,72 @@ f.commands =
         move_to_new_window new RegExp(text, 'i')
   pin:
     desc: "Pin tab. Uses current tab if text is blank."
-    context: ['tab', 'text']
+    context: [f.CONTEXTS.TAB, f.CONTEXTS.TEXT]
     fn: (current_tab, tab) ->
       if tab is ''
         tab = current_tab
       chrome.tabs.update tab.id, {pinned: true}
   unpin:
     desc: "Unpin tab. Uses current tab if text is blank."
-    context: ['tab', 'text']
+    context: [f.CONTEXTS.TAB, f.CONTEXTS.TEXT]
     fn: (current_tab, tab) ->
       if tab is ''
         tab = current_tab
       chrome.tabs.update tab.id, {pinned: false}
   select:
     desc: "Select tab."
-    context: 'tab'
+    context: f.CONTEXTS.TAB
     fn: (x, tab) ->
       chrome.tabs.update tab.id, {selected: true}
   enable:
-    context: ['extension', 'app']
+    context: [f.CONTEXTS.EXTENSION, f.CONTEXTS.APP]
     fn: (x, ext) ->
       chrome.management.setEnabled ext.id, true
   disable:
-    context: ['extension', 'app']
+    context: [f.CONTEXTS.EXTENSION, f.CONTEXTS.APP]
     fn: (x, ext) ->
       chrome.management.setEnabled ext.id, false
   options:
     desc: 'Open the options page.'
-    context: ['extension', 'app']
+    context: [f.CONTEXTS.EXTENSION, f.CONTEXTS.APP]
     fn: (x, ext) ->
       f.open ext.optionsUrl
   describe:
-    context: ['extension', 'app']
+    context: [f.CONTEXTS.EXTENSION, f.CONTEXTS.APP]
     fn: (x, ext) ->
       f.display ext.description + ' -- Version: ' + ext.version
   homepage:
-    context: ['extension', 'app']
+    context: [f.CONTEXTS.EXTENSION, f.CONTEXTS.APP]
     fn: (x, ext) ->
       f.open ext.homepageUrl
   launch:
-    context: 'app'
+    context: f.CONTEXTS.APP
     fn: (x, app) ->
       chrome.management.launchApp app.id
   uninstall:
-    context: ['extension', 'app']
+    context: [f.CONTEXTS.EXTENSION, f.CONTEXTS.APP]
     fn: (x, ext) ->
       chrome.management.uninstall ext.id
   save:
     desc: "Save the current window with the name given."
-    context: 'text'
+    context: f.CONTEXTS.TEXT
     fn: (tab, name) ->
       chrome.windows.get tab.windowId, (win) ->
         f.sessions.add name, prepare win
   save_all:
     desc: "Save all open windows with the name given."
-    context: 'text'
+    context: f.CONTEXTS.TEXT
     fn: (x, name) ->
       chrome.windows.getAll {populate: true}, (wins) ->
         f.sessions.add name, prepare win for win in wins
-  remove:
+  open:
     desc: "Open saved session."
-    context: 'session'
+    context: f.CONTEXTS.SESSION
+    fn: (x, session) ->
+      open session #TODO
+  remove:
+    desc: "Delete saved session."
+    context: f.CONTEXTS.SESSION
     fn: (x, session) ->
       open session #TODO
 
@@ -83,16 +95,16 @@ prepare = (win) ->
     url: _(win.tabs).pluck 'url'
 
 move_to_new_window = (regex) ->
-  for first_tab in f.tabs when regex.test tab.url
-    chrome.windows.create {
-      focused: true
-      tabId: first_tab.id
-    }, (win) =>
-      first_tab.winId = win.id
-      for tab in f.tabs when regex.test tab.url
-        chrome.tabs.move tab.id {
-          windowId: win.id
-          index: 0
-        }
-    return
+  tabs = get_tabs regex
+  chrome.windows.create {
+    focused: true
+    tabId: tabs[0].id
+  }, (win) =>
+    chrome.tabs.move tabs[i].id, {
+      windowId: win.id
+      index: 0
+    } for i in [1..tabs.length]
 
+get_tabs = (regex) ->
+  chrome.windows.getAll {populate: true}, (wins) ->
+    # map + flatten + filter (regex.text tab.url) wins.tabs
