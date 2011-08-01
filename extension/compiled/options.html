@@ -19,7 +19,77 @@
     <script src="compiled/logic.js"></script>
   </head>
   <body>
+    <h2>Recommendations</h2>
+    <h3>Other extensions</h3>
     <ul id="session-list">
+      <li>
+        <a href="https://chrome.google.com/webstore/detail/dbepggeogbaibhgnhhndojpepiihcmeb#">
+          Vimium
+        </a>
+        : Provides better keyboard navigation. You can even customize the shortcuts to better match the one true editor.
+      </li>
+      <li>
+        <a href="https://chrome.google.com/webstore/detail/hdokiejnpimakedhajhdlcegeplioahd">
+          Lastpass
+        </a>
+        : Automatically generate, remember, and fill in random passwords.
+      </li>
+      <li>
+        <a href="https://chrome.google.com/webstore/detail/bjclhonkhgkidmlkghlkiffhoikhaajg">
+          Greplin
+        </a>
+        : Search your data.
+      </li>
+      <li>
+        <a href="https://chrome.google.com/webstore/detail/gijmaphaippejlhagngohjmehmanbehd">
+          QuickShift
+        </a>
+        : Move Chrome tabs to a different window or to a new location within the current window using your keyboard.
+      </li>
+      <li>
+        <a href="https://chrome.google.com/webstore/detail/ahmiiblnmmnijkhboligioinfchkeagi#">
+          Minimalist for Facebook
+        </a>
+      </li>
+      <li>
+        <a href="https://chrome.google.com/webstore/detail/mgljgiacemcbnibkkmbolnljeffaadna">
+          Minimalist for Google Calendar
+        </a>
+      </li>
+      <li>
+        <a href="https://chrome.google.com/webstore/detail/oddhbkghjoccbljmagcgoklbfdjeiinb">
+          Minimalist for Gmail
+        </a>
+      </li>
+      <li>
+        <a href="https://chrome.google.com/webstore/detail/hihakjfhbmlmjdnnhegiciffjplmdhin">
+          Rapportive
+        </a>
+        : Replaces Gmail right-hand sidebar with information about who you are corresponding with.
+      </li>
     </ul>
-  </body>
+    <h3>
+Features to enable in       <a href="about:flags">
+        about:flags
+      </a>
+    </h3>
+    <ul>
+      <li>Tab Overview</li>
+      <li>GPU Accelerated Compositing</li>
+      <li>Print Preview</li>
+      <li>Web Page Prerendering -> Always Enabled</li>
+      <li>Confirm to Quit</li>
+      <li>Click to play</li>
+      <li>Enable better omnibox history matching</li>
+    </ul>
+    <h2>The Code</h2>
+    <span>content-script</span>
+ is loaded into every tab, and it listens to key events and handles the UI.     <span>keys</span>
+ lists the special keys Ferro recognizes.     <span>commands</span>
+ defines the available commands.     <span>chrome-pages</span>
+ lists the special     <span>about:</span>
+ and     <span>chrome://</span>
+ pages.     <span>options</span>
+ is a CoffeeKup template of the extension's options page, and     <span>options-backbone</span>
+ is the Backbone.js application it loads.  </body>
 </html>

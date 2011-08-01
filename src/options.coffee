@@ -1,3 +1,5 @@
+t = text
+
 doctype 5
 html ->
   head ->
@@ -22,5 +24,57 @@ html ->
     script src: 'compiled/content-script.js'
     script src: 'compiled/logic.js'
   body ->
+
+    h2 'Recommendations'
+    h3 'Other extensions'
     ul id: 'session-list', ->
-      li
+    	li ->
+    	  a href: 'https://chrome.google.com/webstore/detail/dbepggeogbaibhgnhhndojpepiihcmeb#', -> 'Vimium'
+    	  ': Provides better keyboard navigation. You can even customize the shortcuts to better match the one true editor.'
+    	li ->
+    	  a href: 'https://chrome.google.com/webstore/detail/hdokiejnpimakedhajhdlcegeplioahd', -> 'Lastpass'
+    	  ': Automatically generate, remember, and fill in random passwords.'
+    	li ->
+    	  a href: 'https://chrome.google.com/webstore/detail/bjclhonkhgkidmlkghlkiffhoikhaajg', -> 'Greplin'
+    	  ': Search your data.'
+    	li ->
+    	  a href: 'https://chrome.google.com/webstore/detail/gijmaphaippejlhagngohjmehmanbehd', -> 'QuickShift'
+    	  ': Move Chrome tabs to a different window or to a new location within the current window using your keyboard.'
+    	li ->
+    	  a href: 'https://chrome.google.com/webstore/detail/ahmiiblnmmnijkhboligioinfchkeagi#', -> 'Minimalist for Facebook'
+    	li ->
+    	  a href: 'https://chrome.google.com/webstore/detail/mgljgiacemcbnibkkmbolnljeffaadna', -> 'Minimalist for Google Calendar'
+    	li ->
+    	  a href: 'https://chrome.google.com/webstore/detail/oddhbkghjoccbljmagcgoklbfdjeiinb', -> 'Minimalist for Gmail'
+    	li ->
+    	  a href: 'https://chrome.google.com/webstore/detail/hihakjfhbmlmjdnnhegiciffjplmdhin', -> 'Rapportive'
+    	  ': Replaces Gmail right-hand sidebar with information about who you are corresponding with.'
+    h3 ->
+      t 'Features to enable in '
+      a href: 'about:flags', ->
+        'about:flags'
+    ul ->
+    	li 'Tab Overview'
+    	li 'GPU Accelerated Compositing'
+    	li 'Print Preview'
+    	li 'Web Page Prerendering -> Always Enabled'
+    	li 'Confirm to Quit'
+    	li 'Click to play'
+    	li 'Enable better omnibox history matching'
+    h2 'The Code'
+    span 'content-script'
+    t ' is loaded into every tab, and it listens to key events and handles the UI. '
+    span 'keys'
+    t ' lists the special keys Ferro recognizes. '
+    span 'commands'
+    t ' defines the available commands. '
+    span 'chrome-pages'
+    t ' lists the special '
+    span 'about:'
+    t ' and '
+    span 'chrome://'
+    t ' pages. '
+    span 'options'
+    t " is a CoffeeKup template of the extension's options page, and "
+    span 'options-backbone'
+    t ' is the Backbone.js application it loads.'
