@@ -1,10 +1,24 @@
 (function() {
-  var move_to_new_window, prepare;
+  var add_session, get_tabs, move_to_new_window, open_session, prepare;
   var __bind = function(fn, me){ return function(){ return fn.apply(me, arguments); }; };
-  f.commands = {
+  f.CONTEXTS = {
+    TAB: 0,
+    EXTENSION: 1,
+    APP: 2,
+    SESSION: 3,
+    TEXT: 4
+  };
+  f.COMMANDS = {
+    search_history: {
+      desc: 'Search through your history.',
+      context: f.CONTEXTS.TEXT,
+      fn: function(x, text) {
+        return f.open('chrome://history/#q=' + text + '&p=0');
+      }
+    },
     extract: {
       desc: "Extract tabs that match the given text into a new window. Uses the current tab's domain if text is blank.",
-      context: 'text',
+      context: f.CONTEXTS.TEXT,
       fn: function(tab, text) {
         var domain, http;
         if (text === '') {
@@ -21,8 +35,8 @@
       }
     },
     pin: {
-      desc: "Pin tab. Uses current tab if text is blank.",
-      context: ['tab', 'text'],
+      desc: 'Pin tab. Uses current tab if text is blank.',
+      context: [f.CONTEXTS.TAB, f.CONTEXTS.TEXT],
       fn: function(current_tab, tab) {
         if (tab === '') {
           tab = current_tab;
@@ -33,8 +47,8 @@
       }
     },
     unpin: {
-      desc: "Unpin tab. Uses current tab if text is blank.",
-      context: ['tab', 'text'],
+      desc: 'Unpin tab. Uses current tab if text is blank.',
+      context: [f.CONTEXTS.TAB, f.CONTEXTS.TEXT],
       fn: function(current_tab, tab) {
         if (tab === '') {
           tab = current_tab;
@@ -45,8 +59,8 @@
       }
     },
     select: {
-      desc: "Select tab.",
-      context: 'tab',
+      desc: 'Select tab.',
+      context: f.CONTEXTS.TAB,
       fn: function(x, tab) {
         return chrome.tabs.update(tab.id, {
           selected: true
@@ -54,60 +68,60 @@
       }
     },
     enable: {
-      context: ['extension', 'app'],
+      context: [f.CONTEXTS.EXTENSION, f.CONTEXTS.APP],
       fn: function(x, ext) {
         return chrome.management.setEnabled(ext.id, true);
       }
     },
     disable: {
-      context: ['extension', 'app'],
+      context: [f.CONTEXTS.EXTENSION, f.CONTEXTS.APP],
       fn: function(x, ext) {
         return chrome.management.setEnabled(ext.id, false);
       }
     },
     options: {
       desc: 'Open the options page.',
-      context: ['extension', 'app'],
+      context: [f.CONTEXTS.EXTENSION, f.CONTEXTS.APP],
       fn: function(x, ext) {
         return f.open(ext.optionsUrl);
       }
     },
     describe: {
-      context: ['extension', 'app'],
+      context: [f.CONTEXTS.EXTENSION, f.CONTEXTS.APP],
       fn: function(x, ext) {
         return f.display(ext.description + ' -- Version: ' + ext.version);
       }
     },
     homepage: {
-      context: ['extension', 'app'],
+      context: [f.CONTEXTS.EXTENSION, f.CONTEXTS.APP],
       fn: function(x, ext) {
         return f.open(ext.homepageUrl);
       }
     },
     launch: {
-      context: 'app',
+      context: f.CONTEXTS.APP,
       fn: function(x, app) {
         return chrome.management.launchApp(app.id);
       }
     },
     uninstall: {
-      context: ['extension', 'app'],
+      context: [f.CONTEXTS.EXTENSION, f.CONTEXTS.APP],
       fn: function(x, ext) {
         return chrome.management.uninstall(ext.id);
       }
     },
     save: {
-      desc: "Save the current window with the name given.",
-      context: 'text',
+      desc: 'Save the current window with the name given.',
+      context: f.CONTEXTS.TEXT,
       fn: function(tab, name) {
-        return chrome.windows.get(tab.windowId, function(win) {
-          return f.sessions.add(name, prepare(win));
-        });
+        return chrome.windows.get(tab.windowId, __bind(function(win) {
+          return add_session(name, [prepare(win)]);
+        }, this));
       }
     },
     save_all: {
-      desc: "Save all open windows with the name given.",
-      context: 'text',
+      desc: 'Save all open windows with the name given.',
+      context: f.CONTEXTS.TEXT,
       fn: function(x, name) {
         return chrome.windows.getAll({
           populate: true
@@ -116,52 +130,92 @@
           _results = [];
           for (_i = 0, _len = wins.length; _i < _len; _i++) {
             win = wins[_i];
-            _results.push(f.sessions.add(name, prepare(win)));
+            _results.push(add_session(name, prepare(win)));
           }
           return _results;
         });
       }
     },
-    remove: {
-      desc: "Open saved session.",
-      context: 'session',
+    open: {
+      desc: 'Open saved session.',
+      context: f.CONTEXTS.SESSION,
       fn: function(x, session) {
-        return open(session);
+        return open_session(session);
+      }
+    },
+    remove: {
+      desc: 'Delete saved session.',
+      context: f.CONTEXTS.SESSION,
+      fn: function(x, session) {
+        return open_session(session);
       }
     }
   };
   prepare = function(win) {
-    return _.extend(_.copy(win, 'left', 'top', 'width', 'height'), {
+    return _.extend(_.copy(win, 'left', 'top', 'width', 'height', 'focused'), {
       url: _(win.tabs).pluck('url')
     });
   };
   move_to_new_window = function(regex) {
-    var first_tab, _i, _len, _ref;
-    _ref = f.tabs;
-    for (_i = 0, _len = _ref.length; _i < _len; _i++) {
-      first_tab = _ref[_i];
-      if (regex.test(tab.url)) {
-        chrome.windows.create({
-          focused: true,
-          tabId: first_tab.id
-        }, __bind(function(win) {
-          var tab, _j, _len2, _ref2, _results;
-          first_tab.winId = win.id;
-          _ref2 = f.tabs;
-          _results = [];
-          for (_j = 0, _len2 = _ref2.length; _j < _len2; _j++) {
-            tab = _ref2[_j];
-            if (regex.test(tab.url)) {
-              _results.push(chrome.tabs.move(tab.id({
-                windowId: win.id,
-                index: 0
-              })));
-            }
-          }
-          return _results;
-        }, this));
-        return;
+    var tabs;
+    tabs = get_tabs(regex);
+    return chrome.windows.create({
+      focused: true,
+      tabId: tabs[0].id
+    }, __bind(function(win) {
+      var i, _ref, _results;
+      _results = [];
+      for (i = 1, _ref = tabs.length; 1 <= _ref ? i <= _ref : i >= _ref; 1 <= _ref ? i++ : i--) {
+        _results.push(chrome.tabs.move(tabs[i].id, {
+          windowId: win.id,
+          index: 0
+        }));
       }
+      return _results;
+    }, this));
+  };
+  get_tabs = function(regex) {
+    return chrome.windows.getAll({
+      populate: true
+    }, __bind(function(wins) {
+      var tab, win, _i, _len, _ref, _results;
+      _ref = _.flatten((function() {
+        var _j, _len, _results2;
+        _results2 = [];
+        for (_j = 0, _len = wins.length; _j < _len; _j++) {
+          win = wins[_j];
+          _results2.push(win.tabs);
+        }
+        return _results2;
+      })());
+      _results = [];
+      for (_i = 0, _len = _ref.length; _i < _len; _i++) {
+        tab = _ref[_i];
+        if (regex.test(tab.url)) {
+          _results.push(tab);
+        }
+      }
+      return _results;
+    }, this));
+  };
+  open_session = function(session) {
+    var win, _i, _len, _ref, _results;
+    _ref = session.wins;
+    _results = [];
+    for (_i = 0, _len = _ref.length; _i < _len; _i++) {
+      win = _ref[_i];
+      _results.push(chrome.windows.create(win));
     }
+    return _results;
+  };
+  add_session = function(name, wins) {
+    return chrome.extension.sendRequest({
+      action: 'create',
+      type: 'session',
+      value: {
+        name: name,
+        wins: wins
+      }
+    }, function(response) {});
   };
 }).call(this);

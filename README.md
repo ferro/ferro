@@ -1,5 +1,14 @@
 # Ferro
 
+# The Code
+
+* content-script: loaded into every tab, and it listens to key events and handles the UI
+* keys: lists the special keys Ferro recognizes
+* commands: defines the available commands
+* chrome-pages: lists the special `about:` and `chrome://` pages
+* options: CoffeeKup template of the extension's options page
+* options-backbone: the Backbone.js application that `options` loads
+
 # Credits
 
  - Nicholas Jitkoff and the Quicksilver development community for [Quicksilver](http://qsapp.com/), which inspired Ferro.
