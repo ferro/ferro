@@ -23,5 +23,6 @@ f.KEYS =
     RIGHT: 39
     DOWN: 40
 
-f.KEYS.NAMES = reverse f.KEYS.CODES #todo how to cache? like memoize?
 
+
+f.KEYS.NAMES = reverse f.KEYS.CODES

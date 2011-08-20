@@ -4,12 +4,9 @@
 task :default => :watch
 
 task :watch do
-  exec 'coffee -cw -o extension/compiled/ src/cs/'
-  exec 'sass --watch src/sass/:extension/compiled/'
-  exec 'coffeekup -fw -o extension/compiled/ src/coffeekup/'
-
-  while true
-  end
+  exec 'coffee -cw -o extension/js/ src/cs/'
+  exec 'sass --watch src/sass/:extension/'
+  exec 'coffeekup -fw -o extension/js/ src/coffeekup/'
 end
 
 def exec cmd

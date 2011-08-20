@@ -1,0 +1,56 @@
+
+$width: 400px
+$height: $width / 2
+$sub-pad: $width * .05 
+$sub-width: ($width - (4 * $sub-pad)) / 2 - 2
+$sub-height: $height - 2 - 2 * $sub-pad
+$radius: 20px
+$border: #777
+$sub-border: lighten($border, 20%)
+$back-dark: lighten($border, 40%)
+$back-light: lighten($border, 45%)
+$font-size: 16px
+
+#f-box
+  font-family: Monaco, 'Lucida Console', monospace
+  position: fixed
+  left: 50%
+  top: 20%
+  margin-left: -($width / 2)
+  width: $width
+  height: $height
+  border: 1px solid $border
+  border-radius: $radius $radius 0 0 
+  background-color: $back-light
+  box-shadow: 5px 5px 20px $border, 1px 1px 1px $border, 10px 10px 70px $sub-border, inset 0px 0px 50px 10px rgba($border,0.4)
+  background-image: -webkit-linear-gradient(0deg, rgba(255,255,255,0) 48%, rgba(153,153,153,1) 50%, rgba(255,255,255,0) 53%), -webkit-linear-gradient(60deg, rgba(255,255,255,0) 30%, rgba(255,255,255,1) 50%, rgba(255,255,255,0) 70%)
+
+    
+#f-main, #f-cmd, #f-text
+  margin: $sub-pad
+  border-radius: $radius
+  border: 1px solid $sub-border
+  font-size: $font-size
+//  padding: 10px
+
+#f-main, #f-cmd
+  background-color: white
+  width: $sub-width
+  height: $sub-height
+
+#f-main
+  float: left
+
+#f-cmd
+  float: right
+
+#f-text
+  font-family: Monaco, 'Lucida Console', monospace
+  position: absolute
+  top: 0px
+  visibility: hidden
+  width: $sub-width + 2
+  height: $sub-height + 2
+  background-color: $back-light
+    
+  

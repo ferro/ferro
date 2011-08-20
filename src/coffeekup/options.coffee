@@ -15,21 +15,17 @@ html ->
     script src: 'vendor/underscore.string.min.js'
     script src: 'vendor/backbone.js'
     script src: 'vendor/backbone-localstorage.js'
-    script src: 'compiled/init.js'
-    script src: 'compiled/testing.js'
-    script src: 'compiled/app.js'
-    script src: 'compiled/commands.js'
-    script src: 'compiled/chrome-pages.js'
-    script src: 'compiled/keys.js'
-    script src: 'compiled/content-script.js'
-    script src: 'compiled/logic.js'
+    script src: 'compiled/options-backbone.js'
   body ->
-
+    h2 'Ferro'
+    p "Note that Ferro does not work on any special chrome:// pages, including this one, and Google's extension and app galleries. It also does not work in a tab whose page has not finished loading or when focus is on the address bar."
+    h3 'Keyboard Shortcut'
+    p 'Changes only take effect todo'
     h2 'Recommendations'
     h3 'Other extensions'
     ul id: 'session-list', ->
     	li ->
-    	  a href: 'https://chrome.google.com/webstore/detail/dbepggeogbaibhgnhhndojpepiihcmeb#', -> 'Vimium'
+    	  a href: 'https://chrome.google.com/webstore/detail/dbepggeogbaibhgnhhndojpepiihcmeb', -> 'Vimium'
     	  ': Provides better keyboard navigation. You can even customize the shortcuts to better match the one true editor.'
     	li ->
     	  a href: 'https://chrome.google.com/webstore/detail/hdokiejnpimakedhajhdlcegeplioahd', -> 'Lastpass'
@@ -41,7 +37,7 @@ html ->
     	  a href: 'https://chrome.google.com/webstore/detail/gijmaphaippejlhagngohjmehmanbehd', -> 'QuickShift'
     	  ': Move Chrome tabs to a different window or to a new location within the current window using your keyboard.'
     	li ->
-    	  a href: 'https://chrome.google.com/webstore/detail/ahmiiblnmmnijkhboligioinfchkeagi#', -> 'Minimalist for Facebook'
+    	  a href: 'https://chrome.google.com/webstore/detail/ahmiiblnmmnijkhboligioinfchkeagi', -> 'Minimalist for Facebook'
     	li ->
     	  a href: 'https://chrome.google.com/webstore/detail/mgljgiacemcbnibkkmbolnljeffaadna', -> 'Minimalist for Google Calendar'
     	li ->

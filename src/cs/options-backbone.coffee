@@ -1,3 +1,12 @@
+# key = String.fromCharCode e.keyCode
+# if key is ''
+#   key = f.KEYS.CODES[e.keyCode]
+# shortcut =
+#   key: key
+#   alt: e.altKey
+#   ctrl: e.ctrlKey
+#   shift: e.shiftKey
+
 $ ->
 
   class Session extends Backbone.Model
