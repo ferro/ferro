@@ -7,12 +7,20 @@ STATES =
 PERIOD = 46
 TAB = 9
 BACKSPACE = 8
+N = 78
+P = 80
+J = 74
+K = 75
 
 state = STATES.INACTIVE
 entered = ''
-cmd = null
 context = null
-choices = []
+is_text = false
+
+main-choices = []
+main = null
+cmd-choices = []
+cmd = null
 
 refresh_shortcut = ->
   chrome.extension.sendRequest 'shortcut', (value) ->
@@ -47,12 +55,19 @@ window.onkeydown = (e) ->
     when STATES.MAIN_SELECT
       if e.keyCode is PERIOD
         show 'f-text'
+        document.getElementById('f-text').focus()
         context = f.CONTEXTS.TEXT
+        state = STATES.TEXT
+        is_text = true
       else if e.keyCode is TAB
         switch_to_command()
       else if e.keyCode is BACKSPACE
         entered = ''
         refresh_entered()
+      else if is_down e
+        main = (main + 1) % 5
+      else if is_up e
+        main = (main - 1) % 5
       else
         update e
     when STATES.TEXT
@@ -60,11 +75,20 @@ window.onkeydown = (e) ->
         entered = document.getElementById('f-text').value
         switch_to_command()
     when STATES.COMMAND
-      update e
+      if e.keyCode is TAB
+        state = is_text ? STATES.TEXT : STATES.MAIN_SELECT
+      else if is_down e
+        cmd = (cmd + 1) % 5
+      else if is_up e
+        cmd = (cmd - 1) % 5
+      else
+        update e
 
   # log 'down ' + String.fromCharCode e.keyCode
   # if _(f.keys.codes).chain().values().include(e.keyCode).value()
   #   log 'h'
+
+  document.querySelector 'div.blah'
 
 # main has cmds, apps, extensions, sessions, and tabs
 update = (e) ->
@@ -84,6 +108,18 @@ update = (e) ->
 
   #display
 
+is_down = (e) ->
+  k = e.keyCode
+  k is f.KEYS.CODES.PAGE_DOWN or
+    k is f.KEYS.CODES.DOWN or
+    ((e.altKey or e.ctrlKey) and (k is N or k is J))
+
+is_up = (e) ->
+  k = e.keyCode
+  k is f.KEYS.CODES.PAGE_UP or
+    k is f.KEYS.CODES.UP or
+    ((e.altKey or e.ctrlKey) and (k is P or k is K))
+
 refresh_entered = ->
   if state = STATES.MAIN_SELECT
     entered_id = 'f-entered-main'
@@ -93,12 +129,14 @@ refresh_entered = ->
 
 shortcut_matches = (e) ->
   e.keyCode is shortcut.key and
-  e.altKey is shortcut.altKey and
-  e.ctrlKey is shortcut.ctrlKey and
-  e.shiftKey is shiftKey.shiftKey
+    e.altKey is shortcut.altKey and
+    e.ctrlKey is shortcut.ctrlKey and
+    e.shiftKey is shiftKey.shiftKey
 
 execute = ->
-  return unless cmd #todo wrong
+  unless cmd
+    close
+    return  #todo wrong
 
 close = ->
   state = STATES.INACTIVE
@@ -106,6 +144,7 @@ close = ->
   context = null
   choices = []
   document.getElementById('f-box').style.visibility = 'hidden'
+  is_text = false
 
 show = (id) ->
   document.getElementById(id).style.visibility = 'visible'

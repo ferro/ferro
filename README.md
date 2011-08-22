@@ -9,6 +9,11 @@
 * options: CoffeeKup template of the extension's options page
 * options-backbone: the Backbone.js application that `options` loads
 
+# TODO
+
+* show entered capital letters
+* have < 5 suggestions if < 5 have a positive score
+
 # Credits
 
  - Nicholas Jitkoff and the Quicksilver development community for [Quicksilver](http://qsapp.com/), which inspired Ferro.
