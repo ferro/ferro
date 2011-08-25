@@ -4,23 +4,24 @@ f.CONTEXTS =
   APP: 2
   SESSION: 3
   TEXT: 4
-  NONE: 5
+  CMD: 5
 
+# todo reorder for correct default
 f.COMMANDS =
   duplicate:
     desc: 'Duplicate tab.'
-    context: [f.CONTEXTS.TAB, f.CONTEXTS.NONE]
+    context: [f.CONTEXTS.TAB, f.CONTEXTS.CMD]
     fn: (tab) ->
-      chrome.tabs.getSelected #todo
+      chrome.tabs.create _.copy(tab, 'windowId', 'index', 'url')
   reload_all_tabs:
     desc: 'Reload every tab in every window.'
-    context: f.CONTEXTS.NONE
+    context: f.CONTEXTS.CMD
     fn: (x) ->
       chrome.windows.getAll { populate: true }, (wins) ->
         reload_window win for win in wins
   reload_all_tabs_in_window:
     desc: 'Reload every tab in this window.'
-    context: f.CONTEXTS.NONE
+    context: f.CONTEXTS.CMD
     fn: (x) ->
       chrome.windows.getCurrent (win) ->
         reload_window win
@@ -30,10 +31,10 @@ f.COMMANDS =
     fn: (text) ->
       f.open 'chrome://history/#q=' + text + '&p=0'
   extract:
-    desc: "Extract tabs that match the given text into a new window. Uses the current tab's domain if text is blank."
-    context: f.CONTEXTS.TEXT
+    desc: "Extract tabs that match the given text into a new window. Uses the current tab's domain if no text is given."
+    context: [f.CONTEXTS.TEXT, f.CONTEXTS.CMD]
     fn: (text) ->
-      if text is ''
+      if text is '' or text.url # then it's a tab, and we're in CMD context
         chrome.tabs.getCurrent (tab) ->
           if _(tab.url).startsWith 'chrome' or _(tab.url).startsWith 'about'
             move_to_new_window /^(chrome|about)/
@@ -45,22 +46,14 @@ f.COMMANDS =
         move_to_new_window new RegExp(text, 'i')
   pin:
     desc: 'Pin tab.'
-    context: [f.CONTEXTS.TAB, f.CONTEXTS.NONE]
+    context: [f.CONTEXTS.TAB, f.CONTEXTS.CMD]
     fn: (tab) ->
-      if tab
-        chrome.tabs.update tab.id, {pinned: true}
-      else
-        chrome.tabs.getCurrent (tab) ->
-          chrome.tabs.update tab.id, {pinned: true}
+      chrome.tabs.update tab.id, {pinned: true}
   unpin:
     desc: 'Unpin tab.'
-    context: [f.CONTEXTS.TAB, f.CONTEXTS.NONE]
+    context: [f.CONTEXTS.TAB, f.CONTEXTS.CMD]
     fn: (tab) ->
-      if tab
-        chrome.tabs.update tab.id, {pinned: false}
-      else
-        chrome.tabs.getCurrent (tab) ->
-          chrome.tabs.update tab.id, {pinned: false}
+      chrome.tabs.update tab.id, {pinned: false}
   select:
     desc: 'Select tab.'
     context: f.CONTEXTS.TAB
@@ -105,7 +98,7 @@ f.COMMANDS =
     desc: 'Save all open windows with the name given.'
     context: f.CONTEXTS.TEXT
     fn: (name) ->
-      chrome.windows.getAll {populate: true}, (wins) ->
+      chrome.windows.getAll {populate: true}, (wins) =>
         add_session name, prepare win for win in wins
   open:
     desc: 'Open saved session.'
@@ -116,7 +109,10 @@ f.COMMANDS =
     desc: 'Delete saved session.'
     context: f.CONTEXTS.SESSION
     fn: (session) ->
-      open_session session
+      chrome.extension.sendRequest {
+        action: 'delete'
+        value: session.name
+      }, ->
 
 f.COMMAND_NAMES = []
 
@@ -126,7 +122,7 @@ for x, i of f.CONTEXTS
 for name, cmd of f.COMMANDS
   context = cmd.context
   context = [context] unless context instanceof Array
-  f.COMMAND_NAMES[c] += {name: name, type: f.COMMANDS} for c in context
+  f.COMMAND_NAMES[c].concat {name: name, cmd: cmd} for c in context
 
 prepare = (win) ->
   _.extend _.copy(win, 'left', 'top', 'width', 'height', 'focused'),
@@ -134,19 +130,17 @@ prepare = (win) ->
 
 move_to_new_window = (regex) ->
   tabs = get_tabs regex
-  chrome.windows.create {
-    focused: true
-    tabId: tabs[0].id
-  }, (win) =>
-    for i in [1..tabs.length]
-      chrome.tabs.move tabs[i].id, {
-        windowId: win.id
-        index: 0
-      }
-
-get_tabs = (regex) ->
   chrome.windows.getAll {populate: true}, (wins) =>
-    tab for tab in _.flatten(win.tabs for win in wins) when regex.test tab.url
+    tabs = tab for tab in _.flatten(win.tabs for win in wins) when regex.test tab.url
+    chrome.windows.create {
+      focused: true
+      tabId: tabs[0].id
+    }, (win) =>
+      for i in [1..tabs.length]
+        chrome.tabs.move tabs[i].id, {
+          windowId: win.id
+          index: 0
+        }
 
 open_session = (session) ->
   for win in session.wins
@@ -155,7 +149,6 @@ open_session = (session) ->
 add_session = (name, wins) ->
   chrome.extension.sendRequest {
     action: 'create'
-    type: 'session'
     value:
       name: name
       wins: wins

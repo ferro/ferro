@@ -1,8 +1,11 @@
 STATES =
   INACTIVE: 0
-  MAIN_SELECT: 1
+  MAIN: 1
   TEXT: 2
-  COMMAND: 3
+  CMD: 3
+choices:
+  1: [] #main
+  3: [] #cmd
 
 PERIOD = 46
 TAB = 9
@@ -16,22 +19,21 @@ state = STATES.INACTIVE
 entered = ''
 context = null
 is_text = false
-
-main-choices = []
+selection = null
 main = null
-cmd-choices = []
 cmd = null
+main_choice = null
 
-refresh_shortcut = ->
-  chrome.extension.sendRequest 'shortcut', (value) ->
-    shortcut = value
-
-refresh_shortcut()
-
-refresh_sessions = ->
-  chrome.extension.sendRequest 'sessions', (value) ->
-    sessions = value
-#push
+# todo race conditions
+refresh_all = ->
+  chrome.management.getAll (_apps) ->
+    apps = _apps
+  chrome.windows.getAll {populate: true}, (wins) ->
+    tabs = tab for tab in _.flatten(win.tabs for win in wins) when regex.test tab.url
+    choices[STATES.MAIN] = f.CMD_NAMES[f.CONTEXTS.CMD]
+      .concat tabs
+      .concat apps
+      .concat f.sessions
 
 css = document.createElement 'link'
 css.href = chrome.extension.getURL 'content-script.css'
@@ -42,17 +44,18 @@ document.getElementsByTagName('head')[0].appendChild css
 
 window.onkeydown = (e) ->
   if state != STATES.INACTIVE
-    if e.keyCode is f.KEYS.RETURN and cmd
+    if e.keyCode is f.KEYS.RETURN and selection
       execute
     else if e.keyCode is f.KEYS.ESC or shortcut_matches e
-      close
+      close()
 
   switch state
     when STATES.INACTIVE
       if shortcut_matches e
+        refresh_all
         show 'f-box'
-        state = STATES.MAIN_SELECT
-    when STATES.MAIN_SELECT
+        state = STATES.MAIN
+    when STATES.MAIN
       if e.keyCode is PERIOD
         show 'f-text'
         document.getElementById('f-text').focus()
@@ -74,9 +77,9 @@ window.onkeydown = (e) ->
       if e.keyCode is TAB
         entered = document.getElementById('f-text').value
         switch_to_command()
-    when STATES.COMMAND
+    when STATES.CMD
       if e.keyCode is TAB
-        state = is_text ? STATES.TEXT : STATES.MAIN_SELECT
+        state = if is_text then STATES.TEXT else STATES.MAIN
       else if is_down e
         cmd = (cmd + 1) % 5
       else if is_up e
@@ -90,6 +93,7 @@ window.onkeydown = (e) ->
 
   document.querySelector 'div.blah'
 
+
 # main has cmds, apps, extensions, sessions, and tabs
 update = (e) ->
   c = String.fromCharCode e.keyCode
@@ -97,14 +101,13 @@ update = (e) ->
 
   entered += c
   refresh_entered()
-  if state = STATES.MAIN_SELECT
-  #update context
-  f.COMMAND_NAMES[f.CONTEXTS.NONE]
-  else if state = STATES.COMMAND
-    choices = f.COMMAND_NAMES[context]
 
-  choices = _.sortBy choices, (choice) ->
-    choice.name.score entered
+  choices[state] = _.sortBy choices, (choice) ->
+    # everything has a name except for tabs
+    if choice.name
+      choice.name.score entered
+    else
+      _.max [choice.title.score entered, choice.url.score entered]
 
   #display
 
@@ -121,28 +124,31 @@ is_up = (e) ->
     ((e.altKey or e.ctrlKey) and (k is P or k is K))
 
 refresh_entered = ->
-  if state = STATES.MAIN_SELECT
+  if state = STATES.MAIN
     entered_id = 'f-entered-main'
   else
     entered_id = 'f-entered-cmd'
   document.getElementById(entered_id).innerHtml = entered
 
 shortcut_matches = (e) ->
-  e.keyCode is shortcut.key and
-    e.altKey is shortcut.altKey and
-    e.ctrlKey is shortcut.ctrlKey and
-    e.shiftKey is shiftKey.shiftKey
+  e.keyCode is f.shortcut.key and
+    e.altKey is f.shortcut.altKey and
+    e.ctrlKey is f.shortcut.ctrlKey and
+    e.shiftKey is f.shortcut.shiftKey
 
 execute = ->
   unless cmd
     close
-    return  #todo wrong
+    return
+
+
 
 close = ->
   state = STATES.INACTIVE
   entered = ''
   context = null
-  choices = []
+  choices[STATES.MAIN] = []
+  choices[STATES.CMD] = []
   document.getElementById('f-box').style.visibility = 'hidden'
   is_text = false
 
@@ -150,6 +156,24 @@ show = (id) ->
   document.getElementById(id).style.visibility = 'visible'
 
 switch_to_command = ->
-  state = STATES.COMMAND
-  choices = []
+  state = STATES.CMD
+  if is_text
+    context = f.CONTEXTS.TEXT
+  else
+    main_choice = choices[STATES.MAIN][selection]
+    selection = 0
+    if main_choice.cmd
+      chrome.tabs.getCurrent (tab) =>
+        main_choice.cmd.fn tab
+      close()
+      return
+
+    if main_choice.version
+      context = if main_choice.isApp then f.CONTEXTS.APP else f.CONTEXTS.EXTENSION
+    else if main_choice.index
+      context = f.CONTEXTS.TAB
+    else
+      context = f.CONTEXTS.SESSION
+
+  choices[STATES.CMD] = f.COMMAND_NAMES[context]
   #todo UI

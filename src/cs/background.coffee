@@ -3,8 +3,10 @@ request = new XMLHttpRequest
 request.open 'GET', chrome.extenstion.getURL('manifest.json'), false
 request.send null
 old_version = localStorage.version
-inject_background_scripts unless old_version
 localStorage.version = JSON.parse(request.responseText).version
+
+# if we haven't run before, then this was just installed, and currently-open tabs do not yet have our content script.
+inject_background_scripts unless old_version
 
 inject_content_scripts = ->
   chrome.windows.getAll {populate: true}, (wins) ->
@@ -15,6 +17,17 @@ inject_content_scripts = ->
           allFrames: true
         }
 
+update_content_scripts = (keys...) = ->
+  views = chrome.extension.getViews {type: 'tab'}
+  view.f[key] = localStorage[key] for key in keys
+
+update_content_scripts 'sessions', 'shortcut'
+
 chrome.extension.onRequest.addListener (request, sender, sendResponse) ->
-  sendResponse
-    value: localStorage[request.key]
+  switch request.action
+    when 'delete'
+      localStorage['sessions'] = s for s in localStorage['sessions'] when s.name == request.value
+    when 'create'
+      localStorage['sessions'].concat request.value
+  update_content_scripts 'sessions'
+
