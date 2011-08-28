@@ -1,10 +1,11 @@
 
-$width: 400px
-$height: $width / 2
+$width: 600px
+$height: $width / 3
 
-$sub-pad: $width * .05 
-$sub-width: ($width - (4 * $sub-pad)) / 2 - 2
-$sub-height: $height - 2 - 2 * $sub-pad
+$sub-margin: $width * .05
+$sub-pad: 5px
+$sub-width: ($width - (4 * $sub-margin)) / 2 - 2 - 2 * $sub-pad
+$sub-height: $height - 2 - 2 * $sub-margin - 2 * $sub-pad
 
 $suggest-width: $width * .8
 $suggest-height: 40px
@@ -16,16 +17,22 @@ $sub-border: lighten($border, 20%)
 $back-dark: lighten($border, 40%)
 $back-light: lighten($border, 45%)
 
-$opacity-time: .2s
+$opacity-trans: opacity .2s ease-in-out
+$shadow-trans: box-shadow .5s ease-in-out
+$width-trans: width .2s ease-in-out
+$height-trans: height .2s ease-in-out
 
 #ferro
-  -webkit-transition: opacity $opacity-time ease-in-out
+  -webkit-transition: $opacity-trans
   opacity: 1
   position: fixed
   left: 50%
   top: 3% //todo
   font-size: 16px
   font-family: Monaco, 'Lucida Console', monospace
+
+b
+  text-decoration: underline
 
 #f-box
   margin-left: -($width / 2)
@@ -34,13 +41,15 @@ $opacity-time: .2s
   border: 1px solid $border
   border-radius: $radius //$radius 0 0 
   background-color: $back-light
-  -webkit-transition: box-shadow .5s ease-in-out
+  -webkit-transition: $shadow-trans
+  -webkit-transition: $width-trans
+  -webkit-transition: $height-trans
   box-shadow: 5px 5px 20px $border, 1px 1px 1px $border, 10px 10px 70px $sub-border, inset 0 0 50px 10px rgba($border,0.4)
   background-image: -webkit-linear-gradient(0deg, rgba(255,255,255,0) 48%, rgba(153,153,153,1) 50%, rgba(255,255,255,0) 53%), -webkit-linear-gradient(70deg, rgba(255,255,255,0) 30%, rgba(255,255,255,1) 50%, rgba(255,255,255,0) 70%)
 
     
 #f-main, #f-cmd, #f-text
-  margin: $sub-pad
+  margin: $sub-margin
   border-radius: $radius
   border: 1px solid $sub-border
   box-shadow: 0 1px white
@@ -48,14 +57,34 @@ $opacity-time: .2s
 
 #f-main, #f-cmd
   width: $sub-width
-  height: $sub-height
-
+  padding: $sub-pad
+  height: $sub-height 
+  overflow: hidden
+      
 #f-main
   float: left
 
 #f-cmd
   float: right
-  
+
+#f-icon-main
+  margin: 15px 0 10px ($sub-width / 2 - 8px)
+  box-shadow: 3px 3px 10px $border, 1px 1px 1px $border, 3px 3px 20px $sub-border, inset 0 0 20px 10px rgba($border,0.4)
+//why doesn't left: 50% work here?
+
+#f-name-main, #f-name-cmd
+  text-align: center 
+
+#f-description-main, #f-description-cmd
+  font-size: 12px
+  margin: 5px
+
+#f-description-main, #f-description-cmd, .f-url
+  color: $border
+
+#f-name-cmd
+  margin: 20px 0 10px 0
+
 .f-selected
   background-color: white
 
@@ -70,7 +99,8 @@ $opacity-time: .2s
     
 #f-suggestions
   width: $suggest-width
-  -webkit-transition: opacity $opacity-time ease-in-out
+  -webkit-transition: $width-trans
+  -webkit-transition: $opacity-trans
   opacity: 1
   margin-left: -($suggest-width / 2)
   border: 1px solid $border
@@ -91,7 +121,7 @@ $opacity-time: .2s
 //  margin: 0 10px 0 10px
   
 .f-suggest.f-selected
-  -webkit-transition: box-shadow $opacity-time ease-in-out
+  -webkit-transition: $shadow-trans
   background: white
   box-shadow: 0 0 10px 5px white
   border: none
@@ -101,22 +131,22 @@ $opacity-time: .2s
 // i wish i could do box-shadow-top: none, or make the white shadow have precedence? 
 
 #f-entered-text
-  background-color: white
   padding: 0 5px 0 5px
   border: 1px solid $sub-border
   border-radius: 5px
   box-shadow: 0 1px white
+  background-color: white
+  text-shadow: 1px 1px 1px #999, 2px 2px 1px #ccc, 3px 3px 1px #eee
+  /* text-shadow: 0px 2px 3px white
+  /* background: url(noisy.png)
+  /* color: #222
 
 $icon-margin: $suggest-height / 2 - 8
 
-.f-icon
+.f-suggest > .f-icon
   float: left
   margin: $icon-margin
     
-.f-suggest > .f-title, .f-suggest > .f-url
-
-.f-suggest > .f-title
+.f-title
   padding-top: 5px
 
-.f-suggest > .f-url
-  color: $border

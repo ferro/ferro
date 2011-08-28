@@ -4,24 +4,24 @@ f.CONTEXTS =
   APP: 2
   SESSION: 3
   TEXT: 4
-  CMD: 5
+  MAIN: 5
 
 # todo reorder for correct default
 f.COMMANDS =
   duplicate:
     desc: 'Duplicate tab.'
-    context: [f.CONTEXTS.TAB, f.CONTEXTS.CMD]
+    context: [f.CONTEXTS.TAB, f.CONTEXTS.MAIN]
     fn: (tab) ->
       chrome.tabs.create _.copy(tab, 'windowId', 'index', 'url')
   reload_all_tabs:
     desc: 'Reload every tab in every window.'
-    context: f.CONTEXTS.CMD
+    context: f.CONTEXTS.MAIN
     fn: (x) ->
       chrome.windows.getAll { populate: true }, (wins) ->
         reload_window win for win in wins
   reload_all_tabs_in_window:
     desc: 'Reload every tab in this window.'
-    context: f.CONTEXTS.CMD
+    context: f.CONTEXTS.MAIN
     fn: (x) ->
       chrome.windows.getCurrent (win) ->
         reload_window win
@@ -31,27 +31,27 @@ f.COMMANDS =
     fn: (text) ->
       f.open 'chrome://history/#q=' + text + '&p=0'
   extract:
-    desc: "Extract tabs that match the given text into a new window. Uses the current tab's domain if no text is given."
-    context: [f.CONTEXTS.TEXT, f.CONTEXTS.CMD]
+    desc: "Extract tabs that match the given text or the given tab's domain into a new window."
+    context: [f.CONTEXTS.TEXT, f.CONTEXTS.MAIN, f.CONTEXTS.TAB]
     fn: (text) ->
-      if text is '' or text.url # then it's a tab, and we're in CMD context
-        chrome.tabs.getCurrent (tab) ->
-          if _(tab.url).startsWith 'chrome' or _(tab.url).startsWith 'about'
-            move_to_new_window /^(chrome|about)/
-          else
-            http = '^https*://'
-            domain = tab.url.match(new RegExp(http + '(.*\..{2,4}/)', 'i'))[1]
-            move_to_new_window new RegExp(http + domain, 'i')
+      if text.url
+        tab = text
+        if _(tab.url).startsWith 'chrome' or _(tab.url).startsWith 'about'
+          move_to_new_window /^(chrome|about)/
+        else
+          http = '^https*://'
+          domain = tab.url.match(new RegExp(http + '(.*\..{2,4}/)', 'i'))[1]
+          move_to_new_window new RegExp(http + domain, 'i') if domain
       else
         move_to_new_window new RegExp(text, 'i')
   pin:
     desc: 'Pin tab.'
-    context: [f.CONTEXTS.TAB, f.CONTEXTS.CMD]
+    context: [f.CONTEXTS.TAB, f.CONTEXTS.MAIN]
     fn: (tab) ->
       chrome.tabs.update tab.id, {pinned: true}
   unpin:
     desc: 'Unpin tab.'
-    context: [f.CONTEXTS.TAB, f.CONTEXTS.CMD]
+    context: [f.CONTEXTS.TAB, f.CONTEXTS.MAIN]
     fn: (tab) ->
       chrome.tabs.update tab.id, {pinned: false}
   select:
