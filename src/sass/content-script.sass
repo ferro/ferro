@@ -2,7 +2,7 @@
 $width: 600px
 $height: $width / 3
 
-$sub-margin: $width * .05
+$sub-margin: $width / 25
 $sub-pad: 5px
 $sub-width: ($width - (4 * $sub-margin)) / 2 - 2 - 2 * $sub-pad
 $sub-height: $height - 2 - 2 * $sub-margin - 2 * $sub-pad
@@ -106,6 +106,8 @@ b
   border: 1px solid $border
   background-color: $back-light
   box-shadow: 5px 5px 20px $border, 1px 1px 1px $border, 10px 10px 70px $sub-border, inset 0 0 50px 10px rgba($border,0.4)
+  overflow: hidden
+  border-radius: 0 0 10px 10px
 
 #f-entered
   height: 20px
@@ -131,7 +133,7 @@ b
 // i wish i could do box-shadow-top: none, or make the white shadow have precedence? 
 
 #f-entered-text
-  padding: 0 5px 0 5px
+  padding: 0 8px 0 8px
   border: 1px solid $sub-border
   border-radius: 5px
   box-shadow: 0 1px white

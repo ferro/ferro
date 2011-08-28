@@ -103,7 +103,7 @@ update_selection = (down, state) ->
 # main has cmds, apps, extensions, sessions, and tabs
 update = (e) ->
   c = String.fromCharCode e.keyCode
-  return unless c # don't do anything with unprintable chars
+  return unless c and not (e.altKey or e.ctrlKey or e.shiftKey) # don't do anything with unprintable chars
 
   set_entered entered + c
 

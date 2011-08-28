@@ -1,3 +1,5 @@
+#TODO check file-global vars not covering local
+
 f.CONTEXTS =
   TAB: 0
   EXTENSION: 1
@@ -34,16 +36,34 @@ f.COMMANDS =
     desc: "Extract tabs that match the given text or the given tab's domain into a new window."
     context: [f.CONTEXTS.TEXT, f.CONTEXTS.MAIN, f.CONTEXTS.TAB]
     fn: (text) ->
-      if text.url
-        tab = text
-        if _(tab.url).startsWith 'chrome' or _(tab.url).startsWith 'about'
-          move_to_new_window /^(chrome|about)/
-        else
-          http = '^https*://'
-          domain = tab.url.match(new RegExp(http + '(.*\..{2,4}/)', 'i'))[1]
-          move_to_new_window new RegExp(http + domain, 'i') if domain
-      else
-        move_to_new_window new RegExp(text, 'i')
+      apply_to_matching_tabs text, (tabs) ->
+        chrome.windows.create {
+          focused: true
+          tabId: tabs[0].id
+        }, (win) =>
+          for i in [1..tabs.length]
+            chrome.tabs.move tabs[i].id, {
+              windowId: win.id
+              index: 0
+            }
+  close:
+    desc: "Close tabs that match the given text or the given tab's domain."
+    context: [f.CONTEXTS.TEXT, f.CONTEXTS.MAIN, f.CONTEXTS.TAB]
+    fn: (text) ->
+      apply_to_matching_tabs text, (tabs) ->
+        chrome.tabs.remove tab.id for tab in tabs
+  kill:
+    desc: "Kill tabs that match the given text or the given tab's domain."
+    context: [f.CONTEXTS.TEXT, f.CONTEXTS.MAIN, f.CONTEXTS.TAB]
+    fn: (text) ->
+      apply_to_matching_tabs text, (tabs) ->
+        kill tab.id for tab in tabs
+  kill_all:
+    desc: 'Kill all tabs.'
+    context: f.CONTEXTS.MAIN
+    fn: (x) ->
+      chrome.windows.getAll { populate: true }, (wins) ->
+        (kill tab.id for tab in win.tabs) for win in wins
   pin:
     desc: 'Pin tab.'
     context: [f.CONTEXTS.TAB, f.CONTEXTS.MAIN]
@@ -128,20 +148,24 @@ prepare = (win) ->
   _.extend _.copy(win, 'left', 'top', 'width', 'height', 'focused'),
     url: _(win.tabs).pluck 'url'
 
-move_to_new_window = (regex) ->
+apply_to_matching_tabs = (text, fn) ->
+  if text.url
+    tab = text
+    if _(tab.url).startsWith 'chrome' or _(tab.url).startsWith 'about'
+      apply_to_regex_tabs /^(chrome|about)/, fn
+    else
+      http = '^https*://'
+      domain = tab.url.match(new RegExp(http + '(.*\..{2,4}/)', 'i'))[1]
+      apply_to_regex_tabs new RegExp(http + domain, 'i') if domain, fn
+  else
+    apply_to_regex_tabs new RegExp(text, 'i'), fn
+
+apply_to_regex_tabs = (regex, fn) ->
   tabs = get_tabs regex
   chrome.windows.getAll {populate: true}, (wins) =>
     tabs = tab for tab in _.flatten(win.tabs for win in wins) when regex.test tab.url
-    chrome.windows.create {
-      focused: true
-      tabId: tabs[0].id
-    }, (win) =>
-      for i in [1..tabs.length]
-        chrome.tabs.move tabs[i].id, {
-          windowId: win.id
-          index: 0
-        }
-
+    fn tabs
+  
 open_session = (session) ->
   for win in session.wins
     chrome.windows.create win
@@ -156,3 +180,6 @@ add_session = (name, wins) ->
 
 reload_window = (win) ->
   chrome.tabs.update(tab.id, {url: tab.url}) for tab in win.tabs
+
+kill = (id) ->
+  chrome.tabs.update id, {url: 'about:kill'}

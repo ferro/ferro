@@ -13,6 +13,7 @@
 
 Please do contribute! I'm not planning on doing these anytime soon unless there is an unexpected high usage/demand. Message me if you'd like to be pointed in the right direction on how to implement something.
 
+* allow for multiple search terms for extract, close, etc.
 * show entered capital letters
 * have < 5 suggestions if < 5 have a nonzero score
 * implement/use pubsub for shortcut, sessions, and chrome.* getters
