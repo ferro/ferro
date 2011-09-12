@@ -1,23 +1,30 @@
 # Ferro
 
-# The Code
-
-* content-script: loaded into every tab, and it listens to key events and handles the UI
-* keys: lists the special keys Ferro recognizes
-* commands: defines the available commands
-* chrome-pages: lists the special `about:` and `chrome://` pages
-* options: CoffeeKup template of the extension's options page
-* options-backbone: the Backbone.js application that `options` loads
-
 # TODO
 
-Please do contribute! I'm not planning on doing these anytime soon unless there is an unexpected high usage/demand. Message me if you'd like to be pointed in the right direction on how to implement something.
+Please do contribute! I'm not planning on doing these anytime soon. Message me if you'd like to be pointed in the right direction on how to implement something.
 
+* icons for commands
 * allow for multiple search terms for extract, close, etc.
 * show entered capital letters
 * have < 5 suggestions if < 5 have a nonzero score
 * implement/use pubsub for shortcut, sessions, and chrome.* getters
 * weight scoring for previously-used key sequences
+* class system for different types of suggestions
+* filter exts/apps when mayDisable is false and cmd is disable
+
+# The Code
+
+There is an instance of content script in each tab, and it brings up and handles the main Ferro UI when the shortcut is hit. There is one background script, which along with the options page has access to the extension's local storage. The content script saves and deletes sessions by sending messages to the background script, which makes the changes to local storage and then updates the f.sessions global variable in each tab. The options page provides an interface to change sessions and the Ferro keyboard shortcut, and it updates each tab's f.sessions and f.shortcut variables as well as saving the changes to local storage. 
+
+* content-main: the main logic of the content script - it listens to key events, dispatches commands from a state machine, and renders the UI
+* keys: lists the special keys Ferro recognizes
+* commands: defines the available commands
+* chrome-pages: lists the special `about:` and `chrome://` pages
+* background: injects content script on initial run, handles session update requests from the content scripts
+* options-backbone: the Backbone.js application that `options` loads
+* options: CoffeeKup template of the extension's options page, converted to HTML before packaging
+* ferro: CoffeeKup template of the main UI, converted to JS before packaging
 
 # Credits
 

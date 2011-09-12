@@ -41,11 +41,11 @@ b
   border: 1px solid $border
   border-radius: $radius //$radius 0 0 
   background-color: $back-light
-  -webkit-transition: $shadow-trans
-  -webkit-transition: $width-trans
-  -webkit-transition: $height-trans
   box-shadow: 5px 5px 20px $border, 1px 1px 1px $border, 10px 10px 70px $sub-border, inset 0 0 50px 10px rgba($border,0.4)
   background-image: -webkit-linear-gradient(0deg, rgba(255,255,255,0) 48%, rgba(153,153,153,1) 50%, rgba(255,255,255,0) 53%), -webkit-linear-gradient(70deg, rgba(255,255,255,0) 30%, rgba(255,255,255,1) 50%, rgba(255,255,255,0) 70%)
+  /* -webkit-transition: $shadow-trans
+  /* -webkit-transition: $width-trans
+  /* -webkit-transition: $height-trans
 
     
 #f-main, #f-cmd, #f-text
@@ -99,7 +99,6 @@ b
     
 #f-suggestions
   width: $suggest-width
-  -webkit-transition: $width-trans
   -webkit-transition: $opacity-trans
   opacity: 1
   margin-left: -($suggest-width / 2)
@@ -108,6 +107,7 @@ b
   box-shadow: 5px 5px 20px $border, 1px 1px 1px $border, 10px 10px 70px $sub-border, inset 0 0 50px 10px rgba($border,0.4)
   overflow: hidden
   border-radius: 0 0 10px 10px
+//  -webkit-transition: $width-trans
 
 #f-entered
   height: 20px
@@ -123,10 +123,10 @@ b
 //  margin: 0 10px 0 10px
   
 .f-suggest.f-selected
-  -webkit-transition: $shadow-trans
   background: white
   box-shadow: 0 0 10px 5px white
   border: none
+//  -webkit-transition: $shadow-trans
 
 .f-suggest.f-selected + .f-suggest
   border: none

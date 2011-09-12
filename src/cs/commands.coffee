@@ -1,4 +1,4 @@
-#TODO check file-global vars not covering local
+#TODO check file-global vars not covering local or getting overwritten
 
 f.CONTEXTS =
   TAB: 0
@@ -6,9 +6,24 @@ f.CONTEXTS =
   APP: 2
   SESSION: 3
   TEXT: 4
-  MAIN: 5
+  SPECIAL: 5
+  BOOKMARK: 6
+  MAIN: 7
+  COMMAND: 8
 
-# todo reorder for correct default
+f.DEFAULTS = [
+  f.COMMANDS.open
+  f.COMMANDS.options
+  f.COMMANDS.launch
+  f.COMMANDS.restore
+  f.COMMANDS.history
+  f.COMMANDS.open
+  f.COMMANDS.open
+  null
+  null
+]
+  
+# don't add commands that have keyboard shortcuts, like close tab, close window, and create bookmark
 f.COMMANDS =
   duplicate:
     desc: 'Duplicate tab.'
@@ -108,31 +123,59 @@ f.COMMANDS =
     context: [f.CONTEXTS.EXTENSION, f.CONTEXTS.APP]
     fn: (ext) ->
       chrome.management.uninstall ext.id
+  add:
+    desc: 'Add current tab to session.'
+    context: f.CONTEXTS.SESSION
+    fn: (session) ->
+      chrome.tabs.getCurrent (tab) =>
+        session.wins[0].url.push tab.url
+        session.wins[0].pins.push tab.pinned
+        save_session session.name, session.wins
   save:
     desc: 'Save the current window with the name given.'
     context: f.CONTEXTS.TEXT
     fn: (name) ->
       chrome.windows.getCurrent (win) =>
-        add_session name, [prepare win]
+        save_session name, [prepare win]
   save_all:
     desc: 'Save all open windows with the name given.'
     context: f.CONTEXTS.TEXT
     fn: (name) ->
       chrome.windows.getAll {populate: true}, (wins) =>
-        add_session name, prepare win for win in wins
-  open:
-    desc: 'Open saved session.'
+        save_session name, prepare win for win in wins
+  restore:
+    desc: 'Restore saved session.'
     context: f.CONTEXTS.SESSION
     fn: (session) ->
       open_session session
   remove:
-    desc: 'Delete saved session.'
+    desc: 'Remove saved session.'
     context: f.CONTEXTS.SESSION
     fn: (session) ->
       chrome.extension.sendRequest {
         action: 'delete'
         value: session.name
       }, ->
+  open:
+    desc: 'Open page.'
+    context: [f.CONTEXTS.TAB, f.CONTEXTS.SPECIAL, f.CONTEXTS.BOOKMARK]
+    fn: (page)
+      if page.url
+        open page.url
+      else
+        folder = page
+        chrome.bookmarks.getChildren folder.id, (pages) ->
+          if pages.length > 30
+            return unless confirm "Open all #{pages.length} tabs in bookmark folder?"
+          open page.url for page in pages 
+  delete:
+    desc: 'Delete bookmark.'
+    context: f.CONTEXTS.BOOKMARKS
+    fn: (bookmark) ->
+      if bookmark.children and bookmark.children.length isnt 0
+        chrome.bookmarks.removeTree bookmark.id if confirm "Recursively delete all #{bookmark.children.length} bookmarks in folder?"
+      else
+        chrome.bookmarks.remove bookmark.id
 
 f.COMMAND_NAMES = []
 
@@ -142,12 +185,14 @@ for x, i of f.CONTEXTS
 for name, cmd of f.COMMANDS
   context = cmd.context
   context = [context] unless context instanceof Array
-  f.COMMAND_NAMES[c].concat {name: name, cmd: cmd} for c in context
+  f.COMMAND_NAMES[c].push {name: name, cmd: cmd} for c in context
 
 prepare = (win) ->
   _.extend _.copy(win, 'left', 'top', 'width', 'height', 'focused'),
     url: _(win.tabs).pluck 'url'
-
+    icons: _(win.tabs).pluck 'favIconUrl'
+    pins: _(win.tabs).pluck 'pinned' #or just save a count
+    
 apply_to_matching_tabs = (text, fn) ->
   if text.url
     tab = text
@@ -166,20 +211,24 @@ apply_to_regex_tabs = (regex, fn) ->
     tabs = tab for tab in _.flatten(win.tabs for win in wins) when regex.test tab.url
     fn tabs
   
+# assumes order of pins is same as window, which api doesn't guarantee
 open_session = (session) ->
+  pins = session.pins
+  delete session.pins
   for win in session.wins
-    chrome.windows.create win
+    chrome.windows.create win, (win) => 
+      for i in [0..(win.tabs.length - 1)]
+        chrome.tabs.update win.tabs[i].id, {pinned: pins[i]}
 
-add_session = (name, wins) ->
-  chrome.extension.sendRequest {
+save_session = (name, wins) ->
+  chrome.extension.sendRequest 
     action: 'create'
     value:
       name: name
       wins: wins
-  }, (response) ->
-
+  
 reload_window = (win) ->
-  chrome.tabs.update(tab.id, {url: tab.url}) for tab in win.tabs
+  chrome.tabs.update(tab.id, url: tab.url) for tab in win.tabs
 
 kill = (id) ->
-  chrome.tabs.update id, {url: 'about:kill'}
+  chrome.tabs.update id, url: 'about:kill'

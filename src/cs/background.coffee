@@ -1,6 +1,6 @@
 # update version when loaded
 request = new XMLHttpRequest
-request.open 'GET', chrome.extenstion.getURL('manifest.json'), false
+request.open 'GET', chrome.extension.getURL('manifest.json'), false
 request.send null
 old_version = localStorage.version
 localStorage.version = JSON.parse(request.responseText).version
@@ -18,7 +18,8 @@ inject_content_scripts = ->
         }
 
 update_content_scripts = (keys...) = ->
-  views = chrome.extension.getViews {type: 'tab'}
+  views = chrome.extension.getViews type: 'tab'
+  view.f ?= {}
   view.f[key] = localStorage[key] for key in keys
 
 update_content_scripts 'sessions', 'shortcut'
@@ -26,7 +27,8 @@ update_content_scripts 'sessions', 'shortcut'
 chrome.extension.onRequest.addListener (request, sender, sendResponse) ->
   switch request.action
     when 'delete'
-      localStorage['sessions'] = s for s in localStorage['sessions'] when s.name == request.value
+      for s in localStorage['sessions'] when s.name isnt request.value
+        localStorage['sessions'] = s 
     when 'create'
       localStorage['sessions'].concat request.value
   update_content_scripts 'sessions'

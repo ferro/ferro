@@ -1,0 +1,47 @@
+cmd_name
+  name
+  cmd
+    desc
+    context
+    fn
+
+special
+  name
+  desc
+  url
+
+session
+  name
+  wins
+    left
+    top
+    width
+    height
+    focused
+    url (array)
+    icons (url array)
+    pins (boolean array)
+
+tab
+  title
+  url
+  pinned
+  favIconUrl
+  ...
+
+bookmark (for icon use chrome://favicon/url)
+  title
+  url
+  children
+  ... 
+
+app/extension
+  name
+  description
+  enabled
+  isApp
+  homepageUrl
+  optionsUrl
+  icons 
+    size
+    url
