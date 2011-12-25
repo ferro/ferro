@@ -5,6 +5,13 @@ request.send null
 old_version = localStorage.version
 localStorage.version = JSON.parse(request.responseText).version
 
+unless localStorage.shortcut
+  localStorage.shortcut =
+    key: f.KEYS.CODES.SPACE
+    altKey: true
+    ctrlKey: true
+    shiftKey: false
+
 # if we haven't run before, then this was just installed, and currently-open tabs do not yet have our content script.
 inject_background_scripts unless old_version
 
@@ -19,8 +26,9 @@ inject_content_scripts = ->
 
 update_content_scripts = (keys...) ->
   views = chrome.extension.getViews type: 'tab'
-  view.f ?= {}
-  view.f[key] = localStorage[key] for key in keys
+  for view in views
+    view.f ?= {}
+    view.f[key] = localStorage[key] for key in keys
 
 update_content_scripts 'sessions', 'shortcut'
 

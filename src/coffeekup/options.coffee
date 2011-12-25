@@ -22,7 +22,7 @@ html ->
     h3 'Saved Sessions'
     ul id: 'session-list', ->
     h3 'Keyboard Shortcut'
-    p 'Changes only take effect todo'
+    input type: 'text'
     h2 'Recommendations'
     h3 'Other extensions'
     ul ->

@@ -174,9 +174,9 @@ set_entered = (e) ->
 
 shortcut_matches = (e) ->
   e.keyCode is f.shortcut.key and
-    e.altKey is f.shortcut.altKey and
-    e.ctrlKey is f.shortcut.ctrlKey and
-    e.shiftKey is f.shortcut.shiftKey
+    e.altKey is f.shortcut.alt and
+    e.ctrlKey is f.shortcut.ctrl and
+    e.shiftKey is f.shortcut.shift
 
 execute = ->
   main_i = suggestions[f.STATES.MAIN].selection
