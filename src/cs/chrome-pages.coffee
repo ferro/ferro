@@ -39,5 +39,5 @@ for x, o of chrome_pages
     f.SPECIAL_PAGES.push
       name: name
       desc: desc
-      url: o.prefix + name.replace('_', '-')}
+      url: o.prefix + name.replace('_', '-')
 

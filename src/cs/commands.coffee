@@ -159,7 +159,7 @@ f.COMMANDS =
   open:
     desc: 'Open page.'
     context: [f.CONTEXTS.TAB, f.CONTEXTS.SPECIAL, f.CONTEXTS.BOOKMARK]
-    fn: (page)
+    fn: (page) ->
       if page.url
         open page.url
       else
@@ -201,7 +201,7 @@ apply_to_matching_tabs = (text, fn) ->
     else
       http = '^https*://'
       domain = tab.url.match(new RegExp(http + '(.*\..{2,4}/)', 'i'))[1]
-      apply_to_regex_tabs new RegExp(http + domain, 'i') if domain, fn
+      apply_to_regex_tabs new RegExp(http + domain, 'i'), fn if domain
   else
     apply_to_regex_tabs new RegExp(text, 'i'), fn
 

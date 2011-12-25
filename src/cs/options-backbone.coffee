@@ -1,3 +1,6 @@
+window.l = (a) -> console.log a
+
+
 # key = String.fromCharCode e.keyCode
 # if key is ''
 #   key = f.KEYS.CODES[e.keyCode]
@@ -7,54 +10,56 @@
 #   ctrl: e.ctrlKey
 #   shift: e.shiftKey
 
+class Session extends Backbone.Model
+
+class SessionList extends Backbone.Collection
+  model: Session
+  localStorage: new Store 'sessions'
+
+sessions = new SessionList
+
+class SessionView extends Backbone.View
+
+  tagName: 'li'
+
+  events:
+    'click .delete': 'delete'
+    keyup: 'edited'
+    paste: 'edited'
+
+  initialize: ->
+    @model.view = @
+
+  edited: ->
+     if @model.get('x') isnt @el.firstChild.innerText
+       @save()
+
+  save: ->
+    @model.save x: @el.firstChild.innerText, silent: true
+
+  render: =>
+    $(@el).html '<span contenteditable=true>' + @model.get('x') + '</span> <button class="delete">Delete</button>'
+    @
+
+  delete: ->
+    @model.destroy()
+    $(@el).remove()
+
 $ ->
-
-  class Session extends Backbone.Model
-
-  class SessionList extends Backbone.Collection
-
-    model: Session
-
-    localStorage: new Store 'sessions'
-
-  window.sessions = new SessionList
-
-  class SessionView extends Backbone.View
-
-    tagName: 'li'
-
-    events:
-      'click .delete' : 'delete'
-
-    initialize: ->
-      @model.bind 'change', @render
-      @model.view = @
-
-    render: =>
-      @$(@el).html 'test' + @model.get('x')
-      @
-
-    delete: ->
-      @model.destroy()
-      $(@el).remove()
-
   sessions.fetch()
-
-  # sessions.each (m) ->
-  #   m.destroy()
-
-  # sessions.add [
-  #   {x: 1}
-  #   {x: 2}
-  # ]
-
-  # sessions.each (m) ->
-  #   m.save()
-
   sessions.each (m) ->
-    $('#session-list').append (new SessionView({model: m})).render().el
-  # sessions.each (m) ->
-  #   $('#session-list').append (new SessionView({model: m})).render().el
+    if m.attributes.id
+      $('#session-list').append (new SessionView({model: m})).render().el 
+  $('span')[0].focus()
 
+
+  
+  # localStorage.clear()
+  # sessions.add [
+  #   {x: '1'}
+  #   {x: '2'}
+  #   {x: '3'}
+  # ]
   # sessions.each (m) ->
-  #   $('#session-list').append (new SessionView({model: m})).render().el
+  #    m.save()
+

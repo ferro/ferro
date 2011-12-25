@@ -8,7 +8,7 @@ bold_entered = (t) ->
 
 get_icon = (o, accept_array) ->
   switch f.get_type o
-  when f.CONTEXTS.COMMAND
+  when f.CONTEXTS.COMMAND #todo doesn't recognize f
     chrome.extension.getURL 'gear.png'
   when f.CONTEXTS.SPECIAL
     chrome.extension.getURL 'page.ico'

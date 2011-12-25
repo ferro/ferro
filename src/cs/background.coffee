@@ -17,7 +17,7 @@ inject_content_scripts = ->
           allFrames: true
         }
 
-update_content_scripts = (keys...) = ->
+update_content_scripts = (keys...) ->
   views = chrome.extension.getViews type: 'tab'
   view.f ?= {}
   view.f[key] = localStorage[key] for key in keys
