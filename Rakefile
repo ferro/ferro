@@ -14,8 +14,12 @@ task :op do
   `sass --watch src/sass/:extension/`
 end
 
-task :coffee do
-  `coffee -c -o extension/js/ src/cs/options-backbone.coffee`
+task :options do
+  `cat src/cs/keys.coffee > tmp.coffee`
+  `cat src/cs/options-backbone.coffee >> tmp.coffee`
+  `coffee -c -o extension/js/ tmp.coffee`
+  `rm tmp.coffee`
+  `mv extension/js/tmp.js extension/js/options-backbone.js`
 end
 
 def exec cmd
@@ -39,3 +43,4 @@ def get url, name = nil
   name = url[url.rindex('/')+1..-1] unless name
   `wget #{url} -O extension/js/vendor/#{name}`
 end
+

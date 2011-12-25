@@ -23,6 +23,7 @@ html ->
     ul id: 'session-list', ->
     h3 'Keyboard Shortcut'
     input type: 'text'
+    p class: 'small', 'Recognized modifiers: Shift, Ctrl, and Alt'
     h2 'Recommendations'
     h3 'Other extensions'
     ul ->

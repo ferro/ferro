@@ -1,7 +1,5 @@
 window.l = (a) -> console.log a
 
-
-
 class Session extends Backbone.Model
 
 class SessionList extends Backbone.Collection
@@ -37,17 +35,12 @@ class SessionView extends Backbone.View
     @model.destroy()
     $(@el).remove()
 
-get_shortcut = ->
-  s = localStorage.shortcut
+get_shortcut = (s) ->
   text = ''
   text += 'Shift-' if s.shift
   text += 'Ctrl-' if s.ctrl
   text += 'Alt-' if s.alt
-  text +=
-    if s.key.length is 1
-      s.key
-    else
-      f.KEYS.NAMES[key] 
+  text += if s.key.length is 1 then s.key else f.KEYS.NAMES[s.key] 
   
 $ =>
   sessions.fetch()
@@ -56,18 +49,25 @@ $ =>
       $('#session-list').append (new SessionView({model: s})).render().el 
   $('span')[0].focus()
   
-  shortcut = $('input')[0]
-  shortcut.value = get_shortcut()
+  shortcut = $('input')
+  shortcut.val get_shortcut(JSON.parse localStorage.shortcut)
   shortcut.keydown (e) =>
-    key = String.fromCharCode e.keyCode
-    if key is ''
-      key = f.KEYS.CODES[e.keyCode]
-    localStorage.shortcut =
+    return if e.keyCode is 19 #tab
+
+    if f.KEYS.NAMES[e.keyCode]
+      key = e.keyCode
+    else
+      key = String.fromCharCode e.keyCode
+    new_shortcut = 
       key: key
       alt: e.altKey
       ctrl: e.ctrlKey
       shift: e.shiftKey
-    shortcut.value = get_shortcut
+    localStorage.shortcut = JSON.stringify new_shortcut
+    if e.altKey or e.ctrlKey or e.shiftKey or key is e.keyCode
+      shortcut.val get_shortcut new_shortcut
+    else 
+      shortcut.val ''
   
   # localStorage.clear()
   # sessions.add [

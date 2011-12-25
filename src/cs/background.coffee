@@ -28,7 +28,7 @@ update_content_scripts = (keys...) ->
   views = chrome.extension.getViews type: 'tab'
   for view in views
     view.f ?= {}
-    view.f[key] = localStorage[key] for key in keys
+    view.f[key] = JSON.parse localStorage[key] for key in keys
 
 update_content_scripts 'sessions', 'shortcut'
 

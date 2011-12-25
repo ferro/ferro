@@ -1,3 +1,5 @@
+window.f or= {}
+
 sentence_case = (s) ->
   ret = s[0].toUpperCase() + s[1..-1].toLowerCase()
   if (i = s.indexOf '_') > 0
@@ -26,3 +28,4 @@ f.KEYS =
 
 
 f.KEYS.NAMES = reverse f.KEYS.CODES
+
