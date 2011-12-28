@@ -96,8 +96,8 @@ refresh_all = ->
       .concat tabs
       .concat apps
       .concat f.sessions
-      .concat f.SPECIAL_PAGES
       .concat bookmarks
+#      .concat f.SPECIAL_PAGES
 
 flatten_bookmarks = (node) ->
   if node.children and node.children.length isnt 0
@@ -223,7 +223,7 @@ switch_to_command = ->
   $('f-main').className = ''  #todo for text
   $('f-cmd').className = 'f-selected'
   
-f.get_type = (o) -> #see, wouldn't a class system be nice?
+f.get_type = (o) -> # see, wouldn't a class system be nice?
   if o.cmd
     f.CONTEXTS.COMMAND
   else if o.version

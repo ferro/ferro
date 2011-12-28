@@ -10,16 +10,109 @@ task :watch do
 end
 
 task :op do
-  `node_modules/coffeekup/bin/coffeekup -fw -o extension/js/ src/coffeekup/options.coffee &`
+#  `node_modules/coffeekup/bin/coffeekup -fw -o extension/js/ src/coffeekup/options.coffee &`
   `sass --watch src/sass/:extension/`
 end
 
+task :options_template do
+  compile(
+          :coffeekup,
+          [],
+          [
+           'init',
+           'chrome-pages',
+           'commands'
+          ],
+          'options',
+          "
+window = {}
+f = {}
+"
+          )
+end
+
 task :options do
-  `cat src/cs/keys.coffee > tmp.coffee`
-  `cat src/cs/options-backbone.coffee >> tmp.coffee`
-  `coffee -c -o extension/js/ tmp.coffee`
-  `rm tmp.coffee`
-  `mv extension/js/tmp.js extension/js/options-backbone.js`
+  compile(
+          :coffee,
+          [
+           'jquery',
+           'underscore',
+           'backbone',
+           'backbone-localStorage'
+          ],
+          [
+           'init',
+           'model',
+           'keys',
+           'options-backbone',
+           'options-backbone'
+          ]
+          )
+end
+
+task :background do
+  compile(
+          [
+           'jquery',
+           'underscore',
+           'backbone',
+           'backbone-localStorage'
+          ],
+          [
+           'init',
+           'model',
+           'keys',
+           'background',
+           'background'
+          ]
+          )
+end
+
+task :content do
+  compile(
+          [
+           'underscore',
+           'underscore.string'
+          ],
+          [
+           'underscore-extensions',
+           'init',
+           'keys',
+           'chrome-pages',
+           'commands',
+           'content-main',
+           'content'
+          ]
+          )
+end
+
+def compile type, js, coffee, ckup = nil, init = nil
+  case type
+  when :coffee
+    `cat src/cs/#{coffee[0]}.coffee > tmp.coffee`
+    coffee[1..-2].each do |file|
+      `cat src/cs/#{file}.coffee >> tmp.coffee`
+    end
+    `coffee -c tmp.coffee`
+    `rm tmp.coffee`
+    `cat extension/js/vendor/#{js[0]}.js > tmp2.js`
+    js[1..-1].each do |file|
+      `cat extension/js/vendor/#{file}.js >> tmp2.js`
+    end
+    `cat tmp.js >> tmp2.js`
+    `mv tmp2.js extension/js/#{coffee[-1]}.js`
+  when :coffeekup
+    `echo "#{init}" > tmp.coffee`
+    `cat src/cs/#{coffee[0]}.coffee >> tmp.coffee`
+    coffee[1..-1].each do |file|
+      `cat src/cs/#{file}.coffee >> tmp.coffee`
+      `echo "\n" >> tmp.coffee`
+    end
+    `cat src/coffeekup/#{ckup}.coffee >> tmp.coffee`
+    `node_modules/coffeekup/bin/coffeekup -f tmp.coffee`
+    `mv tmp.html extension/js/#{ckup}.html`
+#    `rm tmp.coffee`
+  end
 end
 
 def exec cmd

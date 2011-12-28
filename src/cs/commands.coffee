@@ -1,6 +1,6 @@
 #TODO check file-global vars not covering local or getting overwritten
 
-f.CONTEXTS =
+f.CONTEXTS = # tied to f.DEFAULTS
   TAB: 0
   EXTENSION: 1
   APP: 2
@@ -11,39 +11,27 @@ f.CONTEXTS =
   MAIN: 7
   COMMAND: 8
 
-f.DEFAULTS = [
-  f.COMMANDS.open
-  f.COMMANDS.options
-  f.COMMANDS.launch
-  f.COMMANDS.restore
-  f.COMMANDS.history
-  f.COMMANDS.open
-  f.COMMANDS.open
-  null
-  null
-]
-  
 # don't add commands that have keyboard shortcuts, like close tab, close window, and create bookmark
 f.COMMANDS =
   duplicate:
-    desc: 'Duplicate tab.'
+    desc: 'Duplicate tab'
     context: [f.CONTEXTS.TAB, f.CONTEXTS.MAIN]
     fn: (tab) ->
       chrome.tabs.create _.copy(tab, 'windowId', 'index', 'url')
   reload_all_tabs:
-    desc: 'Reload every tab in every window.'
+    desc: 'Reload every tab in every window'
     context: f.CONTEXTS.MAIN
     fn: (x) ->
       chrome.windows.getAll { populate: true }, (wins) ->
         reload_window win for win in wins
   reload_all_tabs_in_window:
-    desc: 'Reload every tab in this window.'
+    desc: 'Reload every tab in this window'
     context: f.CONTEXTS.MAIN
     fn: (x) ->
       chrome.windows.getCurrent (win) ->
         reload_window win
   search_history:
-    desc: 'Search through your history.'
+    desc: 'Search through your history for the given text'
     context: f.CONTEXTS.TEXT
     fn: (text) ->
       f.open 'chrome://history/#q=' + text + '&p=0'
@@ -74,82 +62,88 @@ f.COMMANDS =
       apply_to_matching_tabs text, (tabs) ->
         kill tab.id for tab in tabs
   kill_all:
-    desc: 'Kill all tabs.'
+    desc: 'Kill all tabs'
     context: f.CONTEXTS.MAIN
     fn: (x) ->
       chrome.windows.getAll { populate: true }, (wins) ->
         (kill tab.id for tab in win.tabs) for win in wins
   pin:
-    desc: 'Pin tab.'
+    desc: 'Pin tab'
     context: [f.CONTEXTS.TAB, f.CONTEXTS.MAIN]
     fn: (tab) ->
       chrome.tabs.update tab.id, {pinned: true}
   unpin:
-    desc: 'Unpin tab.'
+    desc: 'Unpin tab'
     context: [f.CONTEXTS.TAB, f.CONTEXTS.MAIN]
     fn: (tab) ->
       chrome.tabs.update tab.id, {pinned: false}
   select:
-    desc: 'Select tab.'
+    desc: 'Select tab'
     context: f.CONTEXTS.TAB
     fn: (tab) ->
       chrome.tabs.update tab.id, {selected: true}
   enable:
+    desc: 'Enable extension or app'
     context: [f.CONTEXTS.EXTENSION, f.CONTEXTS.APP]
     fn: (ext) ->
       chrome.management.setEnabled ext.id, true
   disable:
+    desc: 'Disable extension or app'
     context: [f.CONTEXTS.EXTENSION, f.CONTEXTS.APP]
     fn: (ext) ->
       chrome.management.setEnabled ext.id, false
   options:
-    desc: 'Open the options page.'
+    desc: 'Open the options page of an extension or app'
     context: [f.CONTEXTS.EXTENSION, f.CONTEXTS.APP]
     fn: (ext) ->
       f.open ext.optionsUrl
   describe:
+    desc: 'Show description of extension or app'
     context: [f.CONTEXTS.EXTENSION, f.CONTEXTS.APP]
     fn: (ext) ->
       f.display ext.description + ' -- Version: ' + ext.version
   homepage:
+    desc: 'Open homepage of extension or app'
     context: [f.CONTEXTS.EXTENSION, f.CONTEXTS.APP]
     fn: (ext) ->
       f.open ext.homepageUrl
   launch:
+    desc: 'Launch app'
     context: f.CONTEXTS.APP
     fn: (app) ->
       chrome.management.launchApp app.id
   uninstall:
+    desc: 'Uninstall extension or app'
     context: [f.CONTEXTS.EXTENSION, f.CONTEXTS.APP]
     fn: (ext) ->
       chrome.management.uninstall ext.id
-  add:
-    desc: 'Add current tab to session.'
-    context: f.CONTEXTS.SESSION
-    fn: (session) ->
-      chrome.tabs.getCurrent (tab) =>
-        session.wins[0].url.push tab.url
-        session.wins[0].pins.push tab.pinned
-        save_session session.name, session.wins
+  # add:
+  #   desc: 'Add current tab to session'
+  #   context: f.CONTEXTS.SESSION
+  #   fn: (session) ->
+  #     chrome.tabs.getCurrent (tab) =>
+  #       session.wins[0].url.push tab.url
+  #       session.wins[0].pins.push tab.pinned
+  #       save_session session.name, session.wins
   save:
-    desc: 'Save the current window with the name given.'
+    desc: 'Save the current window with the name given'
     context: f.CONTEXTS.TEXT
     fn: (name) ->
       chrome.windows.getCurrent (win) =>
         save_session name, [prepare win]
   save_all:
-    desc: 'Save all open windows with the name given.'
+    desc: 'Save all open windows with the name given'
     context: f.CONTEXTS.TEXT
     fn: (name) ->
       chrome.windows.getAll {populate: true}, (wins) =>
         save_session name, prepare win for win in wins
   restore:
-    desc: 'Restore saved session.'
+    desc: 'Restore saved session'
     context: f.CONTEXTS.SESSION
     fn: (session) ->
       open_session session
   remove:
-    desc: 'Remove saved session.'
+    desc: 'Remove saved session'
     context: f.CONTEXTS.SESSION
     fn: (session) ->
       chrome.extension.sendRequest {
@@ -157,7 +151,7 @@ f.COMMANDS =
         value: session.name
       }, ->
   open:
-    desc: 'Open page.'
+    desc: 'Open page'
     context: [f.CONTEXTS.TAB, f.CONTEXTS.SPECIAL, f.CONTEXTS.BOOKMARK]
     fn: (page) ->
       if page.url
@@ -169,7 +163,7 @@ f.COMMANDS =
             return unless confirm "Open all #{pages.length} tabs in bookmark folder?"
           open page.url for page in pages 
   delete:
-    desc: 'Delete bookmark.'
+    desc: 'Delete bookmark'
     context: f.CONTEXTS.BOOKMARKS
     fn: (bookmark) ->
       if bookmark.children and bookmark.children.length isnt 0
@@ -177,15 +171,26 @@ f.COMMANDS =
       else
         chrome.bookmarks.remove bookmark.id
 
+f.DEFAULTS = [ # tied to f.CONTEXTS
+  f.COMMANDS.open
+  f.COMMANDS.options
+  f.COMMANDS.launch
+  f.COMMANDS.restore
+  f.COMMANDS.history
+  f.COMMANDS.open
+  f.COMMANDS.open
+  null
+  null
+]
+  
 f.COMMAND_NAMES = []
-
-for x, i of f.CONTEXTS
-  f.COMMAND_NAMES[i] = []
 
 for name, cmd of f.COMMANDS
   context = cmd.context
   context = [context] unless context instanceof Array
-  f.COMMAND_NAMES[c].push {name: name, cmd: cmd} for c in context
+  for c in context
+    f.COMMAND_NAMES[c] or= []
+    f.COMMAND_NAMES[c].push {name: name, cmd: cmd} 
 
 prepare = (win) ->
   _.extend _.copy(win, 'left', 'top', 'width', 'height', 'focused'),
@@ -223,9 +228,7 @@ open_session = (session) ->
 save_session = (name, wins) ->
   chrome.extension.sendRequest 
     action: 'create'
-    value:
-      name: name
-      wins: wins
+    value: {name, wins}
   
 reload_window = (win) ->
   chrome.tabs.update(tab.id, url: tab.url) for tab in win.tabs

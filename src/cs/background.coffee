@@ -8,9 +8,9 @@ localStorage.version = JSON.parse(request.responseText).version
 unless localStorage.shortcut
   localStorage.shortcut =
     key: f.KEYS.CODES.SPACE
-    altKey: true
-    ctrlKey: true
-    shiftKey: false
+    alt: true
+    ctrl: true
+    shift: false
 
 # if we haven't run before, then this was just installed, and currently-open tabs do not yet have our content script.
 inject_background_scripts unless old_version
@@ -24,20 +24,37 @@ inject_content_scripts = ->
           allFrames: true
         }
 
+convert_sessions = ->
+  ss = []
+  sessions.each (s) ->
+    ss.push
+      name: s.get 'name'
+      wins: s.get 'wins'
+  ss
+
 update_content_scripts = (keys...) ->
+  simple_sessions = convert_sessions() if _.include keys, 'sessions'
   views = chrome.extension.getViews type: 'tab'
   for view in views
     view.f ?= {}
-    view.f[key] = JSON.parse localStorage[key] for key in keys
+    for key in keys
+      switch key
+        when 'sessions'
+          view.f.sessions = simple_sessions
+        else
+          view.f[key] = JSON.parse localStorage[key]
+
+sessions.fetch()
 
 update_content_scripts 'sessions', 'shortcut'
 
 chrome.extension.onRequest.addListener (request, sender, sendResponse) ->
   switch request.action
     when 'delete'
-      for s in localStorage['sessions'] when s.name isnt request.value
-        localStorage['sessions'] = s 
+      sessions.get_by_name(request.value).destroy()
     when 'create'
-      localStorage['sessions'].concat request.value
+      s = new Session(request.value)
+      sessions.add s
+      s.save()
   update_content_scripts 'sessions'
 

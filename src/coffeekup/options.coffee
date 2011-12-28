@@ -18,12 +18,24 @@ html ->
     script src: 'options-backbone.js'
   body ->
     h1 'Ferro'
-    p "Note that Ferro does not work on any special chrome:// pages, including this one, or the Chrome Web Store. It also does not work on pages that have not finished loading and some pages that have their own keyboard shortcuts."
+    p ->
+      t 'Note that Ferro does not work on any special '
+      code 'chrome://'
+      t 'pages, including this one, or the Chrome Web Store. It also does not work on pages that have not finished loading and some pages that have their own keyboard shortcuts.'
     h3 'Saved Sessions'
     ul id: 'session-list', ->
     h3 'Keyboard Shortcut'
     input type: 'text'
     p class: 'small', 'Recognized modifiers: Shift, Ctrl, and Alt'
+    h3 'Commands'
+    table ->
+      tr ->
+        th 'Name'
+        th 'Description'
+      for name, cmd of f.COMMANDS
+        tr ->
+          td sentence_case name
+          td cmd.desc
     h2 'Recommendations'
     h3 'Other extensions'
     ul ->
@@ -48,10 +60,13 @@ html ->
     	li ->
     	  a href: 'https://chrome.google.com/webstore/detail/hihakjfhbmlmjdnnhegiciffjplmdhin', -> 'Rapportive'
     	  ': Replaces Gmail right-hand sidebar with information about with whom you are corresponding.'
+      li ->
+        a href: 'http://defunkt.io/dotjs/', -> 'Dotjs'
+        ': Better than Greasemonkey'
     h3 ->
       t 'Features to enable in '
       a href: 'chrome://flags', ->
-        'chrome://flags'
+        code 'chrome://flags'
     ul ->
     	li 'Tab Overview'
     	li 'GPU Accelerated Compositing'
@@ -60,3 +75,8 @@ html ->
     	li 'Confirm to Quit'
     	li 'Click to play'
     	li 'Enable better omnibox history matching'
+
+
+*Transfer Recipient's Last Name: 
+*Transfer Recipient's Account Number:
+*Transfer Recipient's Zip Code:

@@ -1,13 +1,5 @@
 window.l = (a) -> console.log a
 
-class Session extends Backbone.Model
-
-class SessionList extends Backbone.Collection
-  model: Session
-  localStorage: new Store 'sessions'
-
-sessions = new SessionList
-
 class SessionView extends Backbone.View
 
   tagName: 'li'
@@ -52,12 +44,13 @@ $ =>
   shortcut = $('input')
   shortcut.val get_shortcut(JSON.parse localStorage.shortcut)
   shortcut.keydown (e) =>
-    return if e.keyCode is 19 #tab
+    return if e.keyCode is 9 #tab
 
     if f.KEYS.NAMES[e.keyCode]
       key = e.keyCode
     else
       key = String.fromCharCode e.keyCode
+      return if not key or key is ''
     new_shortcut = 
       key: key
       alt: e.altKey
