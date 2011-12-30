@@ -56,5 +56,11 @@ chrome.extension.onRequest.addListener (request, sender, sendResponse) ->
       s = new Session(request.value)
       sessions.add s
       s.save()
+    when 'execute'
+      arg = request.arg
+      arg ?= sender.tab
+        request.fn arg
+
+        
   update_content_scripts 'sessions'
 

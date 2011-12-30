@@ -179,17 +179,22 @@ shortcut_matches = (e) ->
     e.shiftKey is f.shortcut.shift
 
 execute = ->
-  main_i = suggestions[f.STATES.MAIN].selection
+  main_i ?= suggestions[f.STATES.MAIN].selection
   main_choice ?= suggestions[f.STATES.MAIN].list[main_i]
   if main_choice.cmd
-    chrome.tabs.getCurrent (tab) =>
-      main_choice.cmd.fn tab
+    send_cmd main_choice
   else
     cmd_i = suggestions[f.STATES.CMD].selection
     cmd_choice = suggestions[f.STATES.CMD].list[cmd_i]
     arg = text or main_choice
-    cmd_choice.cmd.fn arg
+    send_cmd cmd_choice, arg
   close()
+
+# if no arg, uses current tab
+send_cmd = (choice, arg = null) ->
+  action: execute
+  fn: choice.cmd.fn
+  arg: arg
 
 close = ->
   state = f.STATES.INACTIVE
