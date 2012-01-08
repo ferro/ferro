@@ -57,6 +57,8 @@ $ =>
       ctrl: e.ctrlKey
       shift: e.shiftKey
     localStorage.shortcut = JSON.stringify new_shortcut
+    chrome.extension.sendRequest
+      action: 'update_shortcut'
     if e.altKey or e.ctrlKey or e.shiftKey or key is e.keyCode
       shortcut.val get_shortcut new_shortcut
     else 

@@ -146,10 +146,8 @@ f.COMMANDS =
     desc: 'Remove saved session'
     context: f.CONTEXTS.SESSION
     fn: (session) ->
-      chrome.extension.sendRequest {
-        action: 'delete'
-        value: session.name
-      }, ->
+      sessions.get_by_name(session.name).destroy()
+      update_content_scripts 'sessions'
   open:
     desc: 'Open page'
     context: [f.CONTEXTS.TAB, f.CONTEXTS.SPECIAL, f.CONTEXTS.BOOKMARK]
@@ -159,7 +157,7 @@ f.COMMANDS =
       else
         folder = page
         chrome.bookmarks.getChildren folder.id, (pages) ->
-          if pages.length > 30
+          if pages.length > 20
             return unless confirm "Open all #{pages.length} tabs in bookmark folder?"
           open page.url for page in pages 
   delete:
@@ -206,7 +204,7 @@ apply_to_matching_tabs = (text, fn) ->
     else
       http = '^https*://'
       domain = tab.url.match(new RegExp(http + '(.*\..{2,4}/)', 'i'))[1]
-      apply_to_regex_tabs new RegExp(http + domain, 'i'), fn if domain
+      apply_to_regex_tabs(new RegExp(http + domain, 'i'), fn) if domain
   else
     apply_to_regex_tabs new RegExp(text, 'i'), fn
 
@@ -226,9 +224,10 @@ open_session = (session) ->
         chrome.tabs.update win.tabs[i].id, {pinned: pins[i]}
 
 save_session = (name, wins) ->
-  chrome.extension.sendRequest 
-    action: 'create'
-    value: {name, wins}
+  s = new Session {name, wins}
+  sessions.add s
+  s.save()
+  update_content_scripts 'sessions'
   
 reload_window = (win) ->
   chrome.tabs.update(tab.id, url: tab.url) for tab in win.tabs

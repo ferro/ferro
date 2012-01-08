@@ -192,9 +192,10 @@ execute = ->
 
 # if no arg, uses current tab
 send_cmd = (choice, arg = null) ->
-  action: execute
-  fn: choice.cmd.fn
-  arg: arg
+  chrome.extension.sendRequest
+    action: execute
+    fn: choice.cmd.fn
+    arg: arg
 
 close = ->
   state = f.STATES.INACTIVE

@@ -15,7 +15,7 @@ Please do contribute! I'm not planning on doing these anytime soon. Message me i
 
 # The Code
 
-There is an instance of content script in each tab, and it brings up and handles the main Ferro UI when the shortcut is hit. There is one background script, which along with the options page has access to the extension's local storage. The content script saves and deletes sessions by sending messages to the background script, which makes the changes to local storage and then updates the `f.sessions` global variable in each tab. The options page provides an interface to change sessions and the Ferro keyboard shortcut, and it updates each tab's `f.sessions` and `f.shortcut` variables as well as saving the changes to local storage. 
+There is an instance of content script in each tab, and it brings up and handles the main Ferro UI when the shortcut is hit. There is one background script, which along with the options page has access to the extension's local storage and chrome extension API. The content script sends commands to the background script, which executes them. The background script also maintains sessions state by making changes to local storage and the `f.sessions` global variable in each tab. The options page provides an interface to change sessions and the Ferro keyboard shortcut, and it updates each tab's `f.sessions` and `f.shortcut` variables as well as saving the changes to local storage. 
 
 * `content-main:` the main logic of the content script - it listens to key events, dispatches commands from a state machine, and renders the UI
 * `keys:` lists the special keys Ferro recognizes

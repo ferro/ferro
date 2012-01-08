@@ -50,17 +50,10 @@ update_content_scripts 'sessions', 'shortcut'
 
 chrome.extension.onRequest.addListener (request, sender, sendResponse) ->
   switch request.action
-    when 'delete'
-      sessions.get_by_name(request.value).destroy()
-    when 'create'
-      s = new Session(request.value)
-      sessions.add s
-      s.save()
     when 'execute'
       arg = request.arg
       arg ?= sender.tab
         request.fn arg
-
+    when 'update_shortcut'
+      update_content_scripts 'shortcut'
         
-  update_content_scripts 'sessions'
-
