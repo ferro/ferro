@@ -32,7 +32,7 @@ apps = []
 bookmarks = []
 
 css = document.createElement 'link'
-css.href = chrome.extension.getURL 'content-script.css'
+css.href = chrome.extension.getURL 'css/content-script.css'
 css.media = 'all'
 css.rel = 'stylesheet'
 css.type = 'text/css'
@@ -97,7 +97,7 @@ refresh_all = ->
       .concat apps
       .concat f.sessions
       .concat bookmarks
-#      .concat f.SPECIAL_PAGES
+      .concat f.SPECIAL_PAGES
 
 flatten_bookmarks = (node) ->
   if node.children and node.children.length isnt 0
@@ -132,7 +132,7 @@ f.show_suggestions = =>
   display_suggestions()
   
 display_suggestions = ->
-  felem = $ 'ferro'
+  felem = $ '#ferro'
   body = $ 'body'
   body.removeChild felem if felem
   body.append templates.ferro {suggestions, state, entered}

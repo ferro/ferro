@@ -6,14 +6,14 @@ old_version = localStorage.version
 localStorage.version = JSON.parse(request.responseText).version
 
 unless localStorage.shortcut
-  localStorage.shortcut =
+  localStorage.shortcut = JSON.stringify
     key: f.KEYS.CODES.SPACE
     alt: true
     ctrl: true
     shift: false
 
 # if we haven't run before, then this was just installed, and currently-open tabs do not yet have our content script.
-inject_background_scripts unless old_version
+inject_content_scripts unless old_version
 
 inject_content_scripts = ->
   chrome.windows.getAll {populate: true}, (wins) ->
@@ -53,7 +53,7 @@ chrome.extension.onRequest.addListener (request, sender, sendResponse) ->
     when 'execute'
       arg = request.arg
       arg ?= sender.tab
-        request.fn arg
+      request.fn arg
     when 'update_shortcut'
       update_content_scripts 'shortcut'
         

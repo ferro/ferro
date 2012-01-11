@@ -4,6 +4,7 @@
 
 Please do contribute! I'm not planning on doing these anytime soon. Message me if you'd like to be pointed in the right direction on how to implement something.
 
+* history search, if it doesn't clutter the suggestions too much
 * icons for commands
 * allow for multiple search terms for extract, close, etc.
 * show entered capital letters

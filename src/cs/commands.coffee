@@ -36,7 +36,7 @@ f.COMMANDS =
     fn: (text) ->
       f.open 'chrome://history/#q=' + text + '&p=0'
   extract:
-    desc: "Extract tabs that match the given text or the given tab's domain into a new window."
+    desc: "Extract tabs that match the given text or the given tab's domain into a new window"
     context: [f.CONTEXTS.TEXT, f.CONTEXTS.MAIN, f.CONTEXTS.TAB]
     fn: (text) ->
       apply_to_matching_tabs text, (tabs) ->
@@ -50,13 +50,13 @@ f.COMMANDS =
               index: 0
             }
   close:
-    desc: "Close tabs that match the given text or the given tab's domain."
+    desc: "Close tabs that match the given text or the given tab's domain"
     context: [f.CONTEXTS.TEXT, f.CONTEXTS.MAIN, f.CONTEXTS.TAB]
     fn: (text) ->
       apply_to_matching_tabs text, (tabs) ->
         chrome.tabs.remove tab.id for tab in tabs
   kill:
-    desc: "Kill tabs that match the given text or the given tab's domain."
+    desc: "Kill tabs that match the given text or the given tab's domain"
     context: [f.CONTEXTS.TEXT, f.CONTEXTS.MAIN, f.CONTEXTS.TAB]
     fn: (text) ->
       apply_to_matching_tabs text, (tabs) ->
@@ -117,14 +117,17 @@ f.COMMANDS =
     context: [f.CONTEXTS.EXTENSION, f.CONTEXTS.APP]
     fn: (ext) ->
       chrome.management.uninstall ext.id
-  # add:
-  #   desc: 'Add current tab to session'
-  #   context: f.CONTEXTS.SESSION
-  #   fn: (session) ->
-  #     chrome.tabs.getCurrent (tab) =>
-  #       session.wins[0].url.push tab.url
-  #       session.wins[0].pins.push tab.pinned
-  #       save_session session.name, session.wins
+  add:
+    desc: 'Add current tab to session'
+    context: f.CONTEXTS.SESSION
+    fn: (session) ->
+      chrome.tabs.getCurrent (tab) =>
+        s = sessions.get_by_name session.name
+        wins = s.get 'wins'
+        wins[0].url.push tab.url
+        wins[0].pins.push tab.pinned
+        s.save {wins}
+        update_content_scripts 'sessions'
   save:
     desc: 'Save the current window with the name given'
     context: f.CONTEXTS.TEXT
@@ -193,8 +196,9 @@ for name, cmd of f.COMMANDS
 prepare = (win) ->
   _.extend _.copy(win, 'left', 'top', 'width', 'height', 'focused'),
     url: _(win.tabs).pluck 'url'
+    pins: _(win.tabs).pluck 'pinned' #or just save a count?
     icons: _(win.tabs).pluck 'favIconUrl'
-    pins: _(win.tabs).pluck 'pinned' #or just save a count
+
     
 apply_to_matching_tabs = (text, fn) ->
   if text.url

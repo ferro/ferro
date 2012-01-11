@@ -22,7 +22,8 @@ class SessionView extends Backbone.View
   render: =>
     $(@el).html '<span contenteditable=true>' + @model.get('x') + '</span> <button class="delete">Delete</button>'
     @
-
+#<img src="chrome://favicon/http://www.google.com/">
+  # 
   delete: ->
     @model.destroy()
     $(@el).remove()
@@ -39,8 +40,13 @@ $ =>
   sessions.each (s) =>
     if s.attributes.id
       $('#session-list').append (new SessionView({model: s})).render().el 
-  $('span')[0].focus()
-  
+
+  if sessions.size is 0
+    $('#session-list').before '<i>None</i>'
+
+  if $('span')[0]
+    $('span')[0].focus()
+    
   shortcut = $('input')
   shortcut.val get_shortcut(JSON.parse localStorage.shortcut)
   shortcut.keydown (e) =>

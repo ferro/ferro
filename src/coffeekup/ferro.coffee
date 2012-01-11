@@ -1,32 +1,40 @@
-bold_entered = (t) ->
+window or= {}
+window.f or= {}
+f or= {}
+f.CONTEXTS or= {}
+# needed?
+
+t = text
+
+bold_entered = (to_bold) ->
   last = 0
   for c in @entered
-    i = t.indexOf c
-    text t[last..i-1] unless last is i
+    i = to_bold.indexOf c
+    t to_bold[last..i-1] unless last is i
     b c
     last = i + 1
 
-get_icon = (o, accept_array) ->
+get_icon = (o, accept_array = false) ->
   switch f.get_type o
-  when f.CONTEXTS.COMMAND #todo doesn't recognize f
-    chrome.extension.getURL 'gear.png'
-  when f.CONTEXTS.SPECIAL
-    chrome.extension.getURL 'page.ico'
-  when f.CONTEXTS.BOOKMARK
-    'chrome://favicon/' + o.url
-  when f.CONTEXTS.APP, f.CONTEXTS.EXTENSION
-    icons = _.filter o.icons, (i) ->
-      i.size is 16
-    icons[0].url
-  when f.CONTEXTS.TAB
-    tab.favIconUrl
-  when f.CONTEXTS.SESSION
-    if accept_array
-      o.wins.icons
+    when f.CONTEXTS.COMMAND 
+      chrome.extension.getURL 'images/gear.png'
+    when f.CONTEXTS.SPECIAL
+      chrome.extension.getURL 'images/page.ico'
+    when f.CONTEXTS.BOOKMARK
+      'chrome://favicon/' + o.url
+    when f.CONTEXTS.APP, f.CONTEXTS.EXTENSION
+      icons = _.filter o.icons, (i) ->
+        i.size is 16
+      icons[0].url
+    when f.CONTEXTS.TAB
+      tab.favIconUrl
+    when f.CONTEXTS.SESSION
+      if accept_array #todo 
+        o.wins.icons
+      else
+        chrome.extension.getURL 'images/pages.ico'
     else
-      chrome.extension.getURL 'pages.ico'
-  else
-    null
+      null
 
 get_name = (o) ->
   o.name or o.title      
@@ -59,15 +67,18 @@ div id: 'ferro', ->
       main = sugs.list[sugs.selection]
       icon = get_icon main
       if icon
-        img id: 'f-icon-main', src: icon, width: 16px, height: 16px
+        img id: 'f-icon-main', src: icon, width: '16px', height: '16px'
       div id: 'f-name-main', ->
         bold_entered get_name main
-      div id: 'f-description-main', get_desc main
+      div id: 'f-description-main', ->
+        t get_desc main
     div id: 'f-cmd', class: cmd_klass, ->
       sugs = @suggestions[f.STATES.CMD]
       cmd = sugs.list[sugs.selection]
-      div id: 'f-name-cmd', get_name cmd
-      div id: 'f-description-cmd', cmd.cmd.desc
+      div id: 'f-name-cmd', ->
+        t get_name cmd
+      div id: 'f-description-cmd', ->
+        t cmd.cmd.desc
   div id: 'f-suggestions', ->
     div id: 'f-entered', ->
       span id: 'f-entered-text', 'entered'
@@ -79,5 +90,7 @@ div id: 'ferro', ->
         icon = get_icon cur
         if icon
           img class: 'f-icon', src: icon, width: '16px', height: '16px'
-        div class: 'f-title', get_name cur
-        div class: 'f-url', get_desc cur
+        div class: 'f-title', ->
+          t get_name cur
+        div class: 'f-url', ->
+          t get_desc cur

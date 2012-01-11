@@ -28,7 +28,7 @@ chrome_pages =
 
 f.SPECIAL_PAGES = []
 
-for name, dex of chrome_pages
+for name, desc of chrome_pages
   f.SPECIAL_PAGES.push
     name: name
     desc: desc
