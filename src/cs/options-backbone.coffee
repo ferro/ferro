@@ -33,7 +33,7 @@ get_shortcut = (s) ->
   text += 'Shift-' if s.shift
   text += 'Ctrl-' if s.ctrl
   text += 'Alt-' if s.alt
-  text += if s.key.length is 1 then s.key else f.KEYS.NAMES[s.key] 
+  text += if s.key.length is 1 then s.key else ferro.KEYS.NAMES[s.key] 
   
 $ =>
   sessions.fetch()
@@ -41,7 +41,7 @@ $ =>
     if s.attributes.id
       $('#session-list').append (new SessionView({model: s})).render().el 
 
-  if sessions.size is 0
+  if sessions.size() is 0
     $('#session-list').before '<i>None</i>'
 
   if $('span')[0]
@@ -50,9 +50,10 @@ $ =>
   shortcut = $('input')
   shortcut.val get_shortcut(JSON.parse localStorage.shortcut)
   shortcut.keydown (e) =>
+    l 'key'
     return if e.keyCode is 9 #tab
 
-    if f.KEYS.NAMES[e.keyCode]
+    if ferro.KEYS.NAMES[e.keyCode]
       key = e.keyCode
     else
       key = String.fromCharCode e.keyCode

@@ -1,9 +1,3 @@
-window or= {}
-window.f or= {}
-f or= {}
-f.CONTEXTS or= {}
-# needed?
-
 t = text
 
 bold_entered = (to_bold) ->
@@ -15,20 +9,20 @@ bold_entered = (to_bold) ->
     last = i + 1
 
 get_icon = (o, accept_array = false) ->
-  switch f.get_type o
-    when f.CONTEXTS.COMMAND 
+  switch ferro.get_type o
+    when ferro.CONTEXTS.COMMAND 
       chrome.extension.getURL 'images/gear.png'
-    when f.CONTEXTS.SPECIAL
+    when ferro.CONTEXTS.SPECIAL
       chrome.extension.getURL 'images/page.ico'
-    when f.CONTEXTS.BOOKMARK
+    when ferro.CONTEXTS.BOOKMARK
       'chrome://favicon/' + o.url
-    when f.CONTEXTS.APP, f.CONTEXTS.EXTENSION
+    when ferro.CONTEXTS.APP, ferro.CONTEXTS.EXTENSION
       icons = _.filter o.icons, (i) ->
         i.size is 16
       icons[0].url
-    when f.CONTEXTS.TAB
+    when ferro.CONTEXTS.TAB
       tab.favIconUrl
-    when f.CONTEXTS.SESSION
+    when ferro.CONTEXTS.SESSION
       if accept_array #todo 
         o.wins.icons
       else
@@ -56,14 +50,14 @@ div id: 'ferro', ->
     textarea id: 'f-text', cols: '20', rows: '4', style: 'visibility: ' + visibility
     main_klass = ''
     cmd_klass = ''
-    if @state is f.STATES.MAIN
+    if @state is ferro.STATES.MAIN
       main_klass = 'f-selected'
       cmd_klass = ''
     else
       main_klass = ''
       cmd_klass = 'f-selected'
     div id: 'f-main', class: main_klass, ->
-      sugs = @suggestions[f.STATES.MAIN]
+      sugs = @suggestions[ferro.STATES.MAIN]
       main = sugs.list[sugs.selection]
       icon = get_icon main
       if icon
@@ -73,7 +67,7 @@ div id: 'ferro', ->
       div id: 'f-description-main', ->
         t get_desc main
     div id: 'f-cmd', class: cmd_klass, ->
-      sugs = @suggestions[f.STATES.CMD]
+      sugs = @suggestions[ferro.STATES.CMD]
       cmd = sugs.list[sugs.selection]
       div id: 'f-name-cmd', ->
         t get_name cmd
@@ -82,7 +76,7 @@ div id: 'ferro', ->
   div id: 'f-suggestions', ->
     div id: 'f-entered', ->
       span id: 'f-entered-text', 'entered'
-    for i in [0..f.NUM_SUGGESTIONS-1]
+    for i in [0..ferro.NUM_SUGGESTIONS-1]
       cur = @suggestions[@state].list[i]
       klass = 'f-suggest'
       klass += ' f-selected' if i is @suggestions[@state].selection

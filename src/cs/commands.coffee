@@ -1,6 +1,6 @@
 #TODO check file-global vars not covering local or getting overwritten
 
-f.CONTEXTS = # tied to f.DEFAULTS
+ferro.CONTEXTS = # tied to ferro.DEFAULTS
   TAB: 0
   EXTENSION: 1
   APP: 2
@@ -12,32 +12,32 @@ f.CONTEXTS = # tied to f.DEFAULTS
   COMMAND: 8
 
 # don't add commands that have keyboard shortcuts, like close tab, close window, and create bookmark
-f.COMMANDS =
+ferro.COMMANDS =
   duplicate:
     desc: 'Duplicate tab'
-    context: [f.CONTEXTS.TAB, f.CONTEXTS.MAIN]
+    context: [ferro.CONTEXTS.TAB, ferro.CONTEXTS.MAIN]
     fn: (tab) ->
       chrome.tabs.create _.copy(tab, 'windowId', 'index', 'url')
   reload_all_tabs:
     desc: 'Reload every tab in every window'
-    context: f.CONTEXTS.MAIN
+    context: ferro.CONTEXTS.MAIN
     fn: (x) ->
       chrome.windows.getAll { populate: true }, (wins) ->
         reload_window win for win in wins
   reload_all_tabs_in_window:
     desc: 'Reload every tab in this window'
-    context: f.CONTEXTS.MAIN
+    context: ferro.CONTEXTS.MAIN
     fn: (x) ->
       chrome.windows.getCurrent (win) ->
         reload_window win
   search_history:
     desc: 'Search through your history for the given text'
-    context: f.CONTEXTS.TEXT
+    context: ferro.CONTEXTS.TEXT
     fn: (text) ->
-      f.open 'chrome://history/#q=' + text + '&p=0'
+      ferro.open 'chrome://history/#q=' + text + '&p=0'
   extract:
     desc: "Extract tabs that match the given text or the given tab's domain into a new window"
-    context: [f.CONTEXTS.TEXT, f.CONTEXTS.MAIN, f.CONTEXTS.TAB]
+    context: [ferro.CONTEXTS.TEXT, ferro.CONTEXTS.MAIN, ferro.CONTEXTS.TAB]
     fn: (text) ->
       apply_to_matching_tabs text, (tabs) ->
         chrome.windows.create {
@@ -51,75 +51,75 @@ f.COMMANDS =
             }
   close:
     desc: "Close tabs that match the given text or the given tab's domain"
-    context: [f.CONTEXTS.TEXT, f.CONTEXTS.MAIN, f.CONTEXTS.TAB]
+    context: [ferro.CONTEXTS.TEXT, ferro.CONTEXTS.MAIN, ferro.CONTEXTS.TAB]
     fn: (text) ->
       apply_to_matching_tabs text, (tabs) ->
         chrome.tabs.remove tab.id for tab in tabs
   kill:
     desc: "Kill tabs that match the given text or the given tab's domain"
-    context: [f.CONTEXTS.TEXT, f.CONTEXTS.MAIN, f.CONTEXTS.TAB]
+    context: [ferro.CONTEXTS.TEXT, ferro.CONTEXTS.MAIN, ferro.CONTEXTS.TAB]
     fn: (text) ->
       apply_to_matching_tabs text, (tabs) ->
         kill tab.id for tab in tabs
   kill_all:
     desc: 'Kill all tabs'
-    context: f.CONTEXTS.MAIN
+    context: ferro.CONTEXTS.MAIN
     fn: (x) ->
       chrome.windows.getAll { populate: true }, (wins) ->
         (kill tab.id for tab in win.tabs) for win in wins
   pin:
     desc: 'Pin tab'
-    context: [f.CONTEXTS.TAB, f.CONTEXTS.MAIN]
+    context: [ferro.CONTEXTS.TAB, ferro.CONTEXTS.MAIN]
     fn: (tab) ->
       chrome.tabs.update tab.id, {pinned: true}
   unpin:
     desc: 'Unpin tab'
-    context: [f.CONTEXTS.TAB, f.CONTEXTS.MAIN]
+    context: [ferro.CONTEXTS.TAB, ferro.CONTEXTS.MAIN]
     fn: (tab) ->
       chrome.tabs.update tab.id, {pinned: false}
   select:
     desc: 'Select tab'
-    context: f.CONTEXTS.TAB
+    context: ferro.CONTEXTS.TAB
     fn: (tab) ->
       chrome.tabs.update tab.id, {selected: true}
   enable:
     desc: 'Enable extension or app'
-    context: [f.CONTEXTS.EXTENSION, f.CONTEXTS.APP]
+    context: [ferro.CONTEXTS.EXTENSION, ferro.CONTEXTS.APP]
     fn: (ext) ->
       chrome.management.setEnabled ext.id, true
   disable:
     desc: 'Disable extension or app'
-    context: [f.CONTEXTS.EXTENSION, f.CONTEXTS.APP]
+    context: [ferro.CONTEXTS.EXTENSION, ferro.CONTEXTS.APP]
     fn: (ext) ->
       chrome.management.setEnabled ext.id, false
   options:
     desc: 'Open the options page of an extension or app'
-    context: [f.CONTEXTS.EXTENSION, f.CONTEXTS.APP]
+    context: [ferro.CONTEXTS.EXTENSION, ferro.CONTEXTS.APP]
     fn: (ext) ->
-      f.open ext.optionsUrl
+      ferro.open ext.optionsUrl
   describe:
     desc: 'Show description of extension or app'
-    context: [f.CONTEXTS.EXTENSION, f.CONTEXTS.APP]
+    context: [ferro.CONTEXTS.EXTENSION, ferro.CONTEXTS.APP]
     fn: (ext) ->
-      f.display ext.description + ' -- Version: ' + ext.version
+      ferro.display ext.description + ' -- Version: ' + ext.version
   homepage:
     desc: 'Open homepage of extension or app'
-    context: [f.CONTEXTS.EXTENSION, f.CONTEXTS.APP]
+    context: [ferro.CONTEXTS.EXTENSION, ferro.CONTEXTS.APP]
     fn: (ext) ->
-      f.open ext.homepageUrl
+      ferro.open ext.homepageUrl
   launch:
     desc: 'Launch app'
-    context: f.CONTEXTS.APP
+    context: ferro.CONTEXTS.APP
     fn: (app) ->
       chrome.management.launchApp app.id
   uninstall:
     desc: 'Uninstall extension or app'
-    context: [f.CONTEXTS.EXTENSION, f.CONTEXTS.APP]
+    context: [ferro.CONTEXTS.EXTENSION, ferro.CONTEXTS.APP]
     fn: (ext) ->
       chrome.management.uninstall ext.id
   add:
     desc: 'Add current tab to session'
-    context: f.CONTEXTS.SESSION
+    context: ferro.CONTEXTS.SESSION
     fn: (session) ->
       chrome.tabs.getCurrent (tab) =>
         s = sessions.get_by_name session.name
@@ -130,30 +130,30 @@ f.COMMANDS =
         update_content_scripts 'sessions'
   save:
     desc: 'Save the current window with the name given'
-    context: f.CONTEXTS.TEXT
+    context: ferro.CONTEXTS.TEXT
     fn: (name) ->
       chrome.windows.getCurrent (win) =>
         save_session name, [prepare win]
   save_all:
     desc: 'Save all open windows with the name given'
-    context: f.CONTEXTS.TEXT
+    context: ferro.CONTEXTS.TEXT
     fn: (name) ->
       chrome.windows.getAll {populate: true}, (wins) =>
         save_session name, prepare win for win in wins
   restore:
     desc: 'Restore saved session'
-    context: f.CONTEXTS.SESSION
+    context: ferro.CONTEXTS.SESSION
     fn: (session) ->
       open_session session
   remove:
     desc: 'Remove saved session'
-    context: f.CONTEXTS.SESSION
+    context: ferro.CONTEXTS.SESSION
     fn: (session) ->
       sessions.get_by_name(session.name).destroy()
       update_content_scripts 'sessions'
   open:
     desc: 'Open page'
-    context: [f.CONTEXTS.TAB, f.CONTEXTS.SPECIAL, f.CONTEXTS.BOOKMARK]
+    context: [ferro.CONTEXTS.TAB, ferro.CONTEXTS.SPECIAL, ferro.CONTEXTS.BOOKMARK]
     fn: (page) ->
       if page.url
         open page.url
@@ -165,33 +165,33 @@ f.COMMANDS =
           open page.url for page in pages 
   delete:
     desc: 'Delete bookmark'
-    context: f.CONTEXTS.BOOKMARKS
+    context: ferro.CONTEXTS.BOOKMARKS
     fn: (bookmark) ->
       if bookmark.children and bookmark.children.length isnt 0
         chrome.bookmarks.removeTree bookmark.id if confirm "Recursively delete all #{bookmark.children.length} bookmarks in folder?"
       else
         chrome.bookmarks.remove bookmark.id
 
-f.DEFAULTS = [ # tied to f.CONTEXTS
-  f.COMMANDS.open
-  f.COMMANDS.options
-  f.COMMANDS.launch
-  f.COMMANDS.restore
-  f.COMMANDS.history
-  f.COMMANDS.open
-  f.COMMANDS.open
+ferro.DEFAULTS = [ # tied to ferro.CONTEXTS
+  ferro.COMMANDS.open
+  ferro.COMMANDS.options
+  ferro.COMMANDS.launch
+  ferro.COMMANDS.restore
+  ferro.COMMANDS.history
+  ferro.COMMANDS.open
+  ferro.COMMANDS.open
   null
   null
 ]
   
-f.COMMAND_NAMES = []
+ferro.COMMAND_NAMES = []
 
-for name, cmd of f.COMMANDS
+for name, cmd of ferro.COMMANDS
   context = cmd.context
   context = [context] unless context instanceof Array
   for c in context
-    f.COMMAND_NAMES[c] or= []
-    f.COMMAND_NAMES[c].push {name: name, cmd: cmd} 
+    ferro.COMMAND_NAMES[c] or= []
+    ferro.COMMAND_NAMES[c].push {name: name, cmd: cmd} 
 
 prepare = (win) ->
   _.extend _.copy(win, 'left', 'top', 'width', 'height', 'focused'),

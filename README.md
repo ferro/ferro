@@ -27,6 +27,8 @@ There is an instance of content script in each tab, and it brings up and handles
 * `options:` CoffeeKup template of the extension's options page, converted to HTML before packaging
 * `ferro:` CoffeeKup template of the main UI, converted to JS before packaging
 
+Since in all my wisdom I didn't use classes, `types.txt` lists the fields of different types of suggestions.
+
 # Credits
 
  - Nicholas Jitkoff and the Quicksilver development community for [Quicksilver](http://qsapp.com/), which inspired Ferro

@@ -1,11 +1,11 @@
-window.f or= {}
+window.ferro or= {} #todo needed?
 
 reverse = (h) ->
   o = {}
   o[v] = sentence_case k for k, v of h
   o
 
-f.KEYS =
+ferro.KEYS =
   CODES:
     RETURN: 13
     ESC: 27
@@ -21,5 +21,5 @@ f.KEYS =
 
 
 
-f.KEYS.NAMES = reverse f.KEYS.CODES
+ferro.KEYS.NAMES = reverse ferro.KEYS.CODES
 

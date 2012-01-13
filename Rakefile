@@ -16,7 +16,7 @@ task :sass do
   `sass --watch src/sass/:extension/css/`
 end
 
-task :compile => [:options_template, :options, :background, :content, :sass]
+task :compile => [:options_template, :options, :background, :content_stager, :content, :sass]
 
 task :options_template do
   compile(
@@ -102,6 +102,16 @@ task :content do
           )
 end
 
+task :content_stager do
+  compile(
+          [],
+          [
+           'content-stager',
+           'content-stager'
+          ]
+          )
+end
+
 def compile js, coffee, opts = {}
   if opts[:ckup_only]
     `echo "#{opts[:pre]}" > tmp.coffee`
@@ -114,7 +124,7 @@ def compile js, coffee, opts = {}
     `cat src/coffeekup/#{opts[:ckup]}.coffee >> tmp.coffee`
     `node_modules/coffeekup/bin/coffeekup -f tmp.coffee`
     `mv tmp.html extension/#{opts[:ckup]}.html`
-    #    `rm tmp.coffee`
+    `rm tmp.coffee`
 
   else
     `cat src/cs/#{coffee[0]}.coffee > tmp.coffee`
@@ -122,30 +132,34 @@ def compile js, coffee, opts = {}
       `echo "\n" >> tmp.coffee`
       `cat src/cs/#{file}.coffee >> tmp.coffee`
     end
-    `coffee -c tmp.coffee`
-    #    `rm tmp.coffee`
+    `coffee -bc tmp.coffee`
+    `rm tmp.coffee`
 
     if ENV['env'] == 'production'
       js.each do |s|
         s << '.min'
       end
     end
-
+    
     `echo "#{opts[:pre]}" > tmp2.js`
-    `cat extension/js/vendor/#{js[0]}.js >> tmp2.js`
-    `echo "\n" >> tmp2.js`
-    js[1..-1].each do |file|
-      `cat extension/js/vendor/#{file}.js >> tmp2.js`
+    
+    unless js.empty?
+      `cat extension/js/vendor/#{js[0]}.js >> tmp2.js`
+      `echo "\n" >> tmp2.js`
+      js[1..-1].each do |file|
+        `cat extension/js/vendor/#{file}.js >> tmp2.js`
+      end
+      `echo "#{opts[:post]}" >> tmp2.js`
     end
-
-    `cat tmp.js >> tmp2.js`
 
     if opts[:ckup]
       `node_modules/coffeekup/bin/coffeekup --js src/coffeekup/#{opts[:ckup]}.coffee`
       `cat src/coffeekup/#{opts[:ckup]}.js >> tmp2.js`
+      `rm src/coffeekup/#{opts[:ckup]}.js`
     end
 
-    `echo "#{opts[:post]}" >> tmp2.js`
+    `cat tmp.js >> tmp2.js`
+
     opts[:ext] ||= 'js'
     opts[:dest] ||= 'extension/js'
     `mv tmp2.js #{opts[:dest]}/#{coffee[-1]}.#{opts[:ext]}`

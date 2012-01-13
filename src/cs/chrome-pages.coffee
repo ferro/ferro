@@ -26,10 +26,10 @@ chrome_pages =
   internets: 'the internets are a series of tubes'
   plugins: 'enable/disable plugins'
 
-f.SPECIAL_PAGES = []
+ferro.SPECIAL_PAGES = []
 
 for name, desc of chrome_pages
-  f.SPECIAL_PAGES.push
+  ferro.SPECIAL_PAGES.push
     name: name
     desc: desc
     url: 'chrome://' + name.replace('_', '-')

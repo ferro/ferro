@@ -27,7 +27,7 @@ html ->
       tr ->
         th 'Name'
         th 'Description'
-      for name, cmd of f.COMMANDS
+      for name, cmd of ferro.COMMANDS
         tr ->
           td sentence_case name
           td cmd.desc
