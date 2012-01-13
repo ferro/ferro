@@ -1,4 +1,5 @@
 t = text
+ferro = @ferro
 
 bold_entered = (to_bold) ->
   last = 0
@@ -11,22 +12,22 @@ bold_entered = (to_bold) ->
 get_icon = (o, accept_array = false) ->
   switch ferro.get_type o
     when ferro.CONTEXTS.COMMAND 
-      chrome.extension.getURL 'images/gear.png'
+      @gear_icon      
     when ferro.CONTEXTS.SPECIAL
-      chrome.extension.getURL 'images/page.ico'
+      @page_icon
     when ferro.CONTEXTS.BOOKMARK
       'chrome://favicon/' + o.url
     when ferro.CONTEXTS.APP, ferro.CONTEXTS.EXTENSION
-      icons = _.filter o.icons, (i) ->
+      icons = @filter o.icons, (i) ->
         i.size is 16
       icons[0].url
     when ferro.CONTEXTS.TAB
-      tab.favIconUrl
+      o.favIconUrl
     when ferro.CONTEXTS.SESSION
       if accept_array #todo 
         o.wins.icons
       else
-        chrome.extension.getURL 'images/pages.ico'
+        @pages_icon
     else
       null
 

@@ -141,11 +141,16 @@ ferro.show_suggestions = =>
   suggestions_are_visible = true # done early to diminish race
   display_suggestions()
   
+gear_icon = chrome.extension.getURL 'images/gear.png'
+page_icon = chrome.extension.getURL 'images/page.ico'
+pages_icon = chrome.extension.getURL 'images/pages.ico'
+filter = _.filter
+  
 display_suggestions = ->
   felem = $ '#ferro'
   body = $ 'body'
   body.removeChild felem if felem
-  body.append templates.ferro {suggestions, state, entered}
+  body.append templates.ferro {suggestions, state, entered, ferro, gear_icon, page_icon, pages_icon, filter}
   set_suggestions_visibility true
 
 re_sort = ->
