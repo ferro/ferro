@@ -227,15 +227,15 @@ show = (id) ->
   $(id).style.visibility = 'visible'
 
 ferro.get_type = (o) -> # see, wouldn't a class system be nice?
-  if o.cmd
+  if o?.cmd
     ferro.CONTEXTS.COMMAND
-  else if o.version
-    if o.isApp then ferro.CONTEXTS.APP else ferro.CONTEXTS.EXTENSION
-  else if o.dateAdded
+  else if o?.version
+    if o?.isApp then ferro.CONTEXTS.APP else ferro.CONTEXTS.EXTENSION
+  else if o?.dateAdded
     ferro.CONTEXTS.BOOKMARK
-  else if o.index
+  else if o?.index
     ferro.CONTEXTS.TAB
-  else if o.wins
+  else if o?.wins
     ferro.CONTEXTS.SESSION
   else
     ferro.CONTEXTS.SPECIAL
@@ -268,5 +268,7 @@ switch_from_command = ->
   $('f-cmd').className = ''
   
 d 'templates:', templates
-$('body').append templates.ferro {suggestions, state, entered}
+$ =>
+  body.append templates.ferro {suggestions, state, entered, ferro, gear_icon, page_icon, pages_icon, filter}
+
 

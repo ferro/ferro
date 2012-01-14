@@ -16,7 +16,7 @@ task :sass do
   `sass --watch src/sass/:extension/css/`
 end
 
-task :compile => [:options_template, :options, :background, :content_stager, :content, :sass]
+task :compile => [:options_template, :options, :background, :content, :sass]
 
 task :options_template do
   compile(
