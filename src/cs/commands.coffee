@@ -191,7 +191,7 @@ for name, cmd of ferro.COMMANDS
   context = [context] unless context instanceof Array
   for c in context
     ferro.COMMAND_NAMES[c] or= []
-    ferro.COMMAND_NAMES[c].push {name: name, cmd: cmd} 
+    ferro.COMMAND_NAMES[c].push {name: sentence_case(name), cmd: cmd} 
 
 prepare = (win) ->
   _.extend _.copy(win, 'left', 'top', 'width', 'height', 'focused'),

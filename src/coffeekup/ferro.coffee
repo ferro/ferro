@@ -9,6 +9,7 @@ bold_entered = (to_bold) ->
     last = i + 1
 
 get_icon = (o, accept_array = false) ->
+  return null unless o
   switch @ferro.get_type o
     when @ferro.CONTEXTS.COMMAND 
       @gear_icon      
@@ -42,7 +43,8 @@ get_desc = (o) ->
       desc = o?.url[8..-1]
     else
       desc = o?.url
-  desc[0..39] if desc
+#  desc[0..39] if desc
+  desc
 
 div id: 'ferro', ->
   div id: 'f-box', ->
@@ -58,28 +60,31 @@ div id: 'ferro', ->
       cmd_klass = 'f-selected'
     div id: 'f-main', class: main_klass, ->
       sugs = @suggestions[@ferro?.STATES?.MAIN]
-      main = sugs?.list[sugs?.selection]
+      main = sugs?.list[sugs?.selection] 
+      d 'ferro'
+      d sugs
+      d main
       icon = get_icon main
       if icon
         img id: 'f-icon-main', src: icon, width: '16px', height: '16px'
       div id: 'f-name-main', ->
-        bold_entered get_name main
+        bold_entered get_name main if main
       div id: 'f-description-main', ->
-        t get_desc main
+        t get_desc main if main
     div id: 'f-cmd', class: cmd_klass, ->
       sugs = @suggestions[@ferro?.STATES?.CMD]
       cmd = sugs?.list[sugs.selection]
       div id: 'f-name-cmd', ->
-        t get_name cmd
+        t get_name(cmd) or ''
       div id: 'f-description-cmd', ->
-        t cmd?.cmd?.desc
+        t cmd?.cmd?.desc or ''
   div id: 'f-suggestions', ->
     div id: 'f-entered', ->
-      span id: 'f-entered-text', 'entered'
+      span id: 'f-entered-text', @entered
     for i in [0..@ferro?.NUM_SUGGESTIONS-1]
-      cur = @suggestions[@state].list[i]
+      cur = @suggestions[@state]?.list[i]
       klass = 'f-suggest'
-      klass += ' f-selected' if i is @suggestions[@state].selection
+      klass += ' f-selected' if i is @suggestions[@state]?.selection
       div id: 'f-' + i, class: klass, ->
         icon = get_icon cur
         if icon

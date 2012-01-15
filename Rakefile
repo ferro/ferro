@@ -87,7 +87,8 @@ task :content do
   compile(
           [
            'underscore',
-           'underscore.string'
+           'underscore.string',
+           'string-score'
           ],
           [
            'underscore-extensions',
@@ -178,6 +179,7 @@ def exec cmd
 end
 
 task :vendor do
+  get 'https://raw.github.com/joshaven/string_score/master/string_score.js', 'string-score.js'
   get 'http://code.jquery.com/jquery-1.7.1.js', 'jquery.js' 
   get 'http://documentcloud.github.com/underscore/underscore.js'
   get 'https://raw.github.com/jeromegn/Backbone.localStorage/master/backbone.localStorage.js', 'backbone-localstorage.js'

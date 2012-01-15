@@ -9,10 +9,10 @@ ferro.STATES =
 suggestions =
   1: #main
     list: []
-    selection: 0
+    selection: null
   3: #cmd
     list: []
-    selection: 0
+    selection: null
 
 ferro.NUM_SUGGESTIONS = 5
 
@@ -32,6 +32,7 @@ timer_id = null
 suggestions_are_visible = false
 apps = []
 bookmarks = []
+ferro.sessions = []
 
 # css = document.createElement 'link'
 # css.href = chrome.extension.getURL 'css/content-script.css'
@@ -48,10 +49,12 @@ chrome.extension.onRequest.addListener (request, sender, sendResponse) ->
 chrome.extension.sendRequest action: 'get_state'
     
 $ = (id) ->
-  document.getElementById id
+  if id[0] is '#'
+    document.getElementById id[1..]
+  else
+    document.getElementsByTagName(id)[0]
 
 window.onkeydown = (e) =>
-  d 'templates:', templates
   if state != ferro.STATES.INACTIVE
     if e.keyCode is ferro.KEYS.RETURN and selection
       execute()
@@ -61,13 +64,13 @@ window.onkeydown = (e) =>
   switch state
     when ferro.STATES.INACTIVE
       if shortcut_matches e
+        d 'matches'
         refresh_all()
-        $('f-box').style.opacity = 1
         state = ferro.STATES.MAIN
     when ferro.STATES.MAIN
       if e.keyCode is PERIOD
-        $('f-text').style.visibility = 'visible'
-        $('f-text').focus()
+        $('#f-text').style.visibility = 'visible'
+        $('#f-text').focus()
         state = ferro.STATES.TEXT
       else if e.keyCode is TAB
         switch_to_command()
@@ -79,7 +82,7 @@ window.onkeydown = (e) =>
         update e
     when ferro.STATES.TEXT
       if e.keyCode is TAB
-        text = $('f-text').value
+        text = $('#f-text').value
         switch_to_command()
     when ferro.STATES.CMD
       if e.keyCode is TAB
@@ -94,20 +97,27 @@ window.onkeydown = (e) =>
 
   document.querySelector 'div.blah'
 
-# todo race conditions
+# todo race conditions - tame
 refresh_all = ->
-  chrome.management.getAll (_apps) ->
+  d 'refresh_all'
+  chrome.extension.sendRequest action: 'get_apps', (_apps) =>
     apps = _apps
-  chrome.bookmarks.getTree (tree) ->
+  chrome.extension.sendRequest action: 'get_bookmarks',  (tree) =>
     flatten_bookmarks tree  
-  chrome.windows.getAll {populate: true}, (wins) =>
-    tabs = tab for tab in _.flatten(win.tabs for win in wins) when regex.test tab.url
-    suggestions[ferro.STATES.MAIN].list = ferro.CMD_NAMES[ferro.CONTEXTS.MAIN]
+  chrome.extension.sendRequest action: 'get_windows', (wins) =>
+    tabs = (tab for tab in _.flatten(win.tabs for win in wins)) #when regex.test tab.url
+    suggestions[ferro.STATES.MAIN].list = ferro.COMMAND_NAMES[ferro.CONTEXTS.MAIN]
       .concat tabs
       .concat apps
       .concat ferro.sessions
       .concat bookmarks
       .concat ferro.SPECIAL_PAGES
+    if $ '#ferro'
+      $('#f-box').style.opacity = 1
+    else
+      append_template()
+
+  
 
 flatten_bookmarks = (node) ->
   if node.children and node.children.length isnt 0
@@ -118,12 +128,12 @@ update_selection = (down, state) ->
   unless suggestions_are_visible
     display_suggestions()
   cur = suggestions[state].selection
-  $('f-' + cur).className = 'f-suggest';
+  $('#f-' + cur).className = 'f-suggest';
   if down
     cur = (cur + 1) % NUM_SUGGESTIONS
   else
     cur = (cur - 1) % NUM_SUGGESTIONS
-  $('f-' + cur).className += ' f-selected';
+  $('#f-' + cur).className += ' f-selected';
   suggestions[state].selection = cur
   
 update = (e) ->
@@ -146,11 +156,19 @@ page_icon = chrome.extension.getURL 'images/page.ico'
 pages_icon = chrome.extension.getURL 'images/pages.ico'
 filter = _.filter
   
+append_template = ->
+  d 'templ el:'
+  tem = templates.ferro {suggestions, state, entered, ferro, gear_icon, page_icon, pages_icon, filter}
+  div = document.createElement 'div'
+  div.innerHTML = tem
+  d div
+  $('body').appendChild div
+
 display_suggestions = ->
-  felem = $ '#ferro'
+  felem = $ '#ferro-container'
   body = $ 'body'
+  append_template
   body.removeChild felem if felem
-  body.append templates.ferro {suggestions, state, entered, ferro, gear_icon, page_icon, pages_icon, filter}
   set_suggestions_visibility true
 
 re_sort = ->
@@ -159,13 +177,14 @@ re_sort = ->
     if choice.name
       choice.name.score entered
     else
-      _.max [choice.title.score entered, choice.url.score entered]
+      _.max [choice.title?.score entered, choice.url?.score entered]
 
   if suggestions_are_visible
     display_suggestions
 
 set_suggestions_visibility = (visible) ->
-  $('f-suggestions').style.opacity = if visible then 1 else 0
+  d 'set_suggestions_visibility'
+  $('#f-suggestions').style.opacity = if visible then 1 else 0
   suggestions_are_visible = visible
   if timer_id
     clearTimeout timer_id
@@ -185,7 +204,7 @@ is_up = (e) ->
 
 set_entered = (e) ->
   entered = e
-  $('f-entered-text').innerHtml = e
+  $('#f-entered-text').innerHtml = e
 
 shortcut_matches = (e) ->
   e.keyCode is ferro.shortcut.key and
@@ -217,14 +236,11 @@ close = ->
   set_entered ''
   context = null
   text = null
-  $('f-box').style.opacity = 0
-  $('f-main').className = 'f-selected' 
-  $('f-cmd').className = ''
-  $('f-text').value = ''
-  $('f-text').style.visibility = 'hidden'
-
-show = (id) ->
-  $(id).style.visibility = 'visible'
+  $('#f-box').style.opacity = 0
+  $('#f-main').className = 'f-selected' 
+  $('#f-cmd').className = ''
+  $('#f-text').value = ''
+  $('#f-text').style.visibility = 'hidden'
 
 ferro.get_type = (o) -> # see, wouldn't a class system be nice?
   if o?.cmd
@@ -255,20 +271,17 @@ switch_to_command = ->
   state = ferro.STATES.CMD
   set_entered ''
   set_suggestions_visibility false
-  $('f-main').className = ''  #todo for text
-  $('f-cmd').className = 'f-selected'
+  $('#f-main').className = ''  #todo for text
+  $('#f-cmd').className = 'f-selected'
   
 switch_from_command = ->
   state = if text then ferro.STATES.TEXT else ferro.STATES.MAIN
   set_entered ''
 
   set_suggestions_visibility false
-  $('f-main').className = 'f-selected'
-  $('f-text').focus() if text
-  $('f-cmd').className = ''
+  $('#f-main').className = 'f-selected'
+  $('#f-text').focus() if text
+  $('#f-cmd').className = ''
   
-d 'templates:', templates
-$ =>
-  body.append templates.ferro {suggestions, state, entered, ferro, gear_icon, page_icon, pages_icon, filter}
 
 

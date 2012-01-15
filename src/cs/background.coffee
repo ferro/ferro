@@ -69,3 +69,12 @@ chrome.extension.onRequest.addListener (request, sender, sendResponse) ->
       update_content_scripts 'shortcut'
     when 'get_state'
       update_tab sender.tab.id, 'sessions', 'shortcut'
+    when 'get_apps'
+      chrome.management.getAll (apps) =>
+        sendResponse apps
+    when 'get_bookmarks'
+      chrome.bookmarks.getTree (tree) =>
+        sendResponse tree
+    when 'get_windows'
+      chrome.windows.getAll populate: true, (wins) =>
+        sendResponse wins
