@@ -2,30 +2,33 @@
 
 ## TODO
 
-Please do contribute! I'm not planning on doing these anytime soon. Message me if you'd like to be pointed in the right direction on how to implement something.
+Please do contribute! I'm not planning on doing these anytime soon. Open an issue if you'd like to be pointed in the right direction on how to implement something.
 
+* when url has highest score, title is still text-match emboldened 
 * history search, if it doesn't clutter the suggestions too much
 * icons for commands
 * allow for multiple search terms for extract, close, etc.
 * show entered capital letters
 * have < 5 suggestions if < 5 have a nonzero score
 * implement/use pubsub for shortcut, sessions, and chrome.* getters
-* weight scoring for previously-used key sequences
+* weigh scoring for previously-used key sequences
+* filter exts/apps when `mayDisable` is false and `cmd` is disable
+* make cross-browser with Crossrider
+* put tips based on past usage (eg 'try out saving your session') in the broswer action tooltip and options page
+* allow omnibox keyword interaction, eg `f extract google.com`
+* remove custom compilation system - make modules and require them
 * class system for different types of suggestions
-* filter exts/apps when mayDisable is false and cmd is disable
 
 ## The Code
 
-There is an instance of the content script in each tab, and it brings up and handles the main Ferro UI when the shortcut is hit. There is one background script, which along with the options page has access to the extension's local storage and chrome extension API. The content script sends commands to the background script, which executes them. The background script also maintains sessions state by making changes to local storage and the `f.sessions` global variable in each tab. The options page provides an interface to change sessions and the Ferro keyboard shortcut, and it updates each tab's `f.sessions` and `f.shortcut` variables (via requests to the background) as well as saving the changes to `localStorage`. 
+There is one background script, which along with the options page and action page has access to the extension's local storage and chrome extension API. The background script also maintains sessions state by making changes to local storage and the `f.sessions` global variable in each tab. The options page provides an interface to change sessions and the Ferro keyboard shortcut, and it updates each tab's `f.sessions` and `f.shortcut` variables (via requests to the background) as well as saving the changes to `localStorage`. 
 
-* `content-main:` the main logic of the content script - it listens to key events, dispatches commands from a state machine, and renders the UI
-* `keys:` lists the special keys Ferro recognizes
-* `commands:` defines the available commands
+* `commands:` defines available commands
 * `chrome-pages:` lists the special `about:` and `chrome://` pages
-* `background:` injects content script on initial run, handles session update requests from the content scripts
+* `keys:` lists the special keys Ferro recognizes
 * `options:` CoffeeKup template of the extension's options page, converted to HTML before packaging
 * `options-backbone:` the Backbone.js application that `options` loads
-* `ferro:` CoffeeKup template of the main UI, converted to JS function before packaging
+* `popup:` CoffeeKup template of the main UI
 
 Since in all my wisdom I didn't use classes, `types.txt` lists the fields of different types of suggestions.
 

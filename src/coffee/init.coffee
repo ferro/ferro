@@ -5,15 +5,11 @@ d = (ss...) ->
     for s in ss
       console.log s 
 
-d window.ferro
-
-window.ferro ?= {}
-ferro ?= {}
-
-d window.ferro
-d ferro
-
-ferro.open = (url) ->
+#todo
+main_i = -1 
+main_choice = -1
+  
+tab_open = (url) ->
   chrome.tabs.create {url}
 
 sentence_case = (s) ->

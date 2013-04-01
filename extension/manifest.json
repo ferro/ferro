@@ -1,29 +1,64 @@
 {
     "name": "Ferro",
-    "version": "0.0.1",
-    "description": "The keyboard interface to Chrome. Hit Ctrl-Alt-Space, type, (optionally hit tab and type again) and return.",
-    "homepage_url": "http://getferro.com",
-    "offline_enabled": true,
-    "content_security_policy": "default-src 'self'; style-src 'self' 'unsafe-inline'",
-    "permissions": [
-	"tabs",
-	"*://*/*",
-	"bookmarks",
-	"chrome://favicon/",
-	"management",
-	"history"
-    ],
-    "content_scripts": [{
-        "matches": ["*://*/*"],
-        "js": ["js/content.js"],
-	"css": ["css/content.css"],
-        "run_at": "document_end"
-    }],
+    "version": "1.0.0",
+    "manifest_version": 2,
+    "description": "The keyboard interface to Chrome. Hit Alt-Shift-F, type, (optionally hit tab and type again) and return.",
     "icons": {
         "16": "images/icon-16.gif",
         "48": "images/icon-48.gif",
         "128": "images/icon-128.gif"
     },
-    "background_page": "background.html",
-    "options_page": "options.html"
+    "default_locale": "en",
+    "browser_action": {
+	"default_icon": {
+	    "19": "images/icon-19.gif",
+	    "38": "images/icon-38.gif"
+	},
+	"default_title": "Ferro",
+	"default_popup": "popup.html"
+    },
+    "background": {
+	"scripts": ["background.js"]
+    }
+    "content_security_policy": "default-src 'self'; style-src 'self' 'unsafe-inline'",
+    "homepage_url": "http://getferro.com",
+    "incognito": "spanning",
+    "offline_enabled": true,
+    "options_page": "options.html",
+    "permissions": [
+	"tabs",
+	"bookmarks",
+	"chrome://favicon/",
+	"management",
+	"history"
+    ]
+    "commands": {
+	"_execute_browser_action": {
+	    "suggested_key": {
+		"default": "Alt+Shift+F"
+	    }
+	},
+	"toggle_pin": {
+	    "suggested_key": {
+		"default": "Alt+Shift+P"
+	    }
+	},
+	"duplicate": {
+	    "suggested_key": {
+		"default": "Alt+Shift+D"
+	    }
+	},
+	"reload_all_tabs_in_window": {
+	    "suggested_key": {
+		"default": "Alt+Shift+R"
+	    }
+	},
+	"kill": {
+	    "suggested_key": {
+		"default": "Alt+Shift+K"
+	    }
+	}
+    }
 }
+
+

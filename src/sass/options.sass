@@ -8,7 +8,7 @@ h2
   outline: 1px dotted #ccc
     
 body
-  margin: 0 25%
+  margin: 0 30%
 
 p.small
   font-size: .8em
@@ -25,5 +25,48 @@ td
   border-top: 1px solid #ddd
 
 td:first-child
-  width: 7em
-  
+  width: 5em
+  padding-left: .5em
+
+#session-list
+  display: table
+  border-spacing: 0 1em
+
+  > li
+    display: table-row
+    height: 2em
+    margin-bottom: 20px
+
+    > span, > ul, > button
+      display: table-cell
+      vertical-align: top
+
+    > ul
+      list-style-type: none
+      width: 3em
+
+    > span
+      width: 6em
+	
+.sessions
+  padding-top: .15em
+
+ul
+  padding: 0
+  margin: 0
+
+#prefix
+  float: left
+  padding: 5em 1em 0
+
+code
+  border-radius: 3px
+  background-color: #f0f0f0
+  border: 1px solid #e5e5e5
+  padding: 0 5px
+
+footer
+  text-align: center
+  margin: 2em 5em 0
+  border-top: 1px solid #dddddd
+  padding: .5em 0 1em

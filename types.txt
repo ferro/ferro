@@ -18,7 +18,7 @@ session
     width
     height
     focused
-    url (array)
+    urls (array)
     icons (url array)
     pins (boolean array)
 

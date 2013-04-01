@@ -6,164 +6,150 @@ require 'crxmake'
 task :default => :compile
 
 task :watch do
-  exec 'coffee -cw -o extension/js/ src/cs/'
-  exec 'sass --watch src/sass/:extension/'
-  exec 'coffeekup -fw -o extension/js/ src/coffeekup/options.coffee'
+  exec 'coffee -cw -o extension/js/ src/coffee/'
+  exec 'sass --watch src/sass/options.sass:extension/options.sass'
+  exec 'sass --watch src/sass/popup.sass:extension/popup.sass'
+  exec 'coffeecup -fw -o extension/js/ src/coffeecup/options.coffee'
 end
 
 task :sass do
-  #  `node_modules/coffeekup/bin/coffeekup -fw -o extension/js/ src/coffeekup/options.coffee &`
+  #  `node_modules/coffeecup/bin/coffeecup -fw -o extension/js/ src/coffeecup/options.coffee &`
   `sass --watch src/sass/:extension/css/`
 end
 
-task :compile => [:options_template, :options, :background, :content, :sass]
+task :compile => [:options_template, :options_app, :sass] # todo popup
 
 task :options_template do
   compile(
           [],
           [
            'init',
-           'chrome-pages',
            'commands'
           ],
           {
-            ckup: 'options',
-            pre: "
-window = {}
-f = {}
-",
-            ckup_only: true
+            ccup: 'options'
           }
           )
 end
 
-task :options do
+task :popup do
   compile(
           [
-           'jquery',
-           'underscore',
-           'backbone',
-           'backbone-localStorage'
+            'jquery',
+            'underscore',
+            'backbone',
+            'backbone-localStorage'
           ],
           [
-           'init',
-           'model',
-           'keys',
-           'options-backbone',
-           'options'
-          ]
-          )
-end
-
-task :background do
-  compile(
-          [
-           'jquery',
-           'underscore',
-           'backbone',
-           'backbone-localStorage'
-          ],
-          [
-           'init',
-           'model',
-           'keys',
-           'background',
-           'background'
+            'init',
+            'model',
+            'keys',
+            'commands',
+            'underscore-extensions'
           ],
           {
-#             pre: "
-# <script type=text/javascript>
-# ",
-#             post: "
-# </script>
-# ",
-#            ext: 'html',
-#            dest: 'extension'
+            js: 'popup'
+            # use_node: true,
+#             head: "
+# Backbone = require 'backbone'
+# "
           }
-          )
+  )
 end
 
-task :content do
+task :options_app do
   compile(
           [
-           'underscore',
-           'underscore.string',
-           'string-score'
+            'jquery',
+            'underscore',
+            'backbone',
+            'backbone-localStorage',
+            'coffeecup'
           ],
           [
-           'underscore-extensions',
-           'init',
-           'keys',
-           'chrome-pages',
-           'commands',
-           'content-main',
-           'content'
-          ],
-          ckup: 'ferro'
-          )
-end
-
-task :content_stager do
-  compile(
-          [],
-          [
-           'content-stager',
-           'content-stager'
+           'model',
+           'options-backbone'
           ]
           )
 end
 
 def compile js, coffee, opts = {}
-  if opts[:ckup_only]
-    `echo "#{opts[:pre]}" > tmp.coffee`
-    `cat src/cs/#{coffee[0]}.coffee >> tmp.coffee`
+  if opts[:ccup] or opts[:js]
+
+    unless js.empty?
+      `cat vendor/#{js[0]}.js >> tmp2.js`
+      `echo "\n" >> tmp2.js`
+      js[1..-1].each do |file|
+        `cat vendor/#{file}.js >> tmp2.js`
+      end
+    end
+
+
+    opts[:head] ||= ""
+    opts[:head] << "
+window = {}
+f = {}
+"
+    `echo "#{opts[:head]}" > tmp.coffee`
+    `cat src/coffee/#{coffee[0]}.coffee >> tmp.coffee`
     coffee[1..-1].each do |file|
       `echo "\n" >> tmp.coffee`
-      `cat src/cs/#{file}.coffee >> tmp.coffee`
+      `cat src/coffee/#{file}.coffee >> tmp.coffee`
     end
     `echo "\n" >> tmp.coffee`
-    `cat src/coffeekup/#{opts[:ckup]}.coffee >> tmp.coffee`
-    `node_modules/coffeekup/bin/coffeekup -f tmp.coffee`
-    `mv tmp.html extension/#{opts[:ckup]}.html`
-    `rm tmp.coffee`
+    `cat src/coffeecup/#{opts[:ccup]}.coffee >> tmp.coffee`
+
+    if opts[:js]
+      `coffee -bc tmp.coffee`
+      `mv tmp.js extension/js/#{opts[:js]}`
+    else
+      `node_modules/coffeecup/bin/coffeecup -f tmp.coffee`
+      `mv tmp.html extension/#{opts[:ccup]}.html`
+    end
+    # if opts[:use_node]
+    #   `coffee -bc tmp.coffee`
+    #   `node tmp.js`
+    # else
+    # end
+#    `rm tmp.coffee`
 
   else
-    `cat src/cs/#{coffee[0]}.coffee > tmp.coffee`
-    coffee[1..-2].each do |file|
+    `cat src/coffee/#{coffee[0]}.coffee > tmp.coffee`
+    coffee.each do |file|
       `echo "\n" >> tmp.coffee`
-      `cat src/cs/#{file}.coffee >> tmp.coffee`
+      `cat src/coffee/#{file}.coffee >> tmp.coffee`
     end
     `coffee -bc tmp.coffee`
-    `rm tmp.coffee`
+#    `rm tmp.coffee`
 
     if ENV['env'] == 'production'
       js.each do |s|
         s << '.min'
       end
     end
-    
+
     `echo "#{opts[:pre]}" > tmp2.js`
-    
+
     unless js.empty?
-      `cat extension/js/vendor/#{js[0]}.js >> tmp2.js`
+      `cat vendor/#{js[0]}.js >> tmp2.js`
       `echo "\n" >> tmp2.js`
       js[1..-1].each do |file|
-        `cat extension/js/vendor/#{file}.js >> tmp2.js`
+        `cat vendor/#{file}.js >> tmp2.js`
       end
       `echo "#{opts[:post]}" >> tmp2.js`
     end
 
-    if opts[:ckup]
-      `node_modules/coffeekup/bin/coffeekup --js src/coffeekup/#{opts[:ckup]}.coffee`
-      `cat src/coffeekup/#{opts[:ckup]}.js >> tmp2.js`
-      `rm src/coffeekup/#{opts[:ckup]}.js`
-    end
+    # if opts[:ccup]
+    #   `node_modules/coffeecup/bin/coffeecup --js src/coffeecup/#{opts[:ccup]}.coffee`
+    #   `cat src/coffeecup/#{opts[:ccup]}.js >> tmp2.js`
+    #   `rm src/coffeecup/#{opts[:ccup]}.js`
+    # end
 
     `cat tmp.js >> tmp2.js`
 
     opts[:ext] ||= 'js'
     opts[:dest] ||= 'extension/js'
-    `mv tmp2.js #{opts[:dest]}/#{coffee[-1]}.#{opts[:ext]}`
+    `mv tmp2.js #{opts[:dest]}/options.#{opts[:ext]}`
   end
 end
 
@@ -180,16 +166,18 @@ end
 
 task :vendor do
   get 'https://raw.github.com/joshaven/string_score/master/string_score.js', 'string-score.js'
-  get 'http://code.jquery.com/jquery-1.7.1.js', 'jquery.js' 
+  get 'http://code.jquery.com/jquery-1.7.1.js', 'jquery.js'
   get 'http://documentcloud.github.com/underscore/underscore.js'
   get 'https://raw.github.com/jeromegn/Backbone.localStorage/master/backbone.localStorage.js', 'backbone-localstorage.js'
   get 'http://epeli.github.com/underscore.string/lib/underscore.string.js'
   get 'http://documentcloud.github.com/backbone/backbone.js'
+  get 'https://raw.github.com/gradus/coffeecup/master/lib/coffeecup.js'
 end
+
 
 def get url, name = nil
   name = url[url.rindex('/')+1..-1] unless name
-  `wget #{url} -O extension/js/vendor/#{name}`
+  `wget #{url} -O vendor/#{name}`
 end
 
 task :make do

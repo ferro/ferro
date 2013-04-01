@@ -29,6 +29,7 @@ $height-trans: height .2s ease-in-out
   top: 3% //todo
   font-size: 16px
   font-family: Monaco, 'Lucida Console', monospace
+  z-index: 100000
 
 b
   text-decoration: underline
@@ -80,6 +81,15 @@ b
 
 #f-description-main, #f-description-cmd, .f-url
   color: $border
+
+.f-title, .f-url
+  white-space: nowrap
+  text-overflow: ellipsis
+  margin-right: 10px
+//  overflow-x: hidden
+
+//.f-url
+//  margin-top: -.1em
 
 #f-name-cmd
   margin: 20px 0 10px 0
