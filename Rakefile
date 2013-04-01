@@ -45,14 +45,12 @@ task :popup do
             'model',
             'keys',
             'commands',
-            'underscore-extensions'
+            'underscore-extensions',
+            'main-logic'
           ],
           {
-            js: 'popup'
-            # use_node: true,
-#             head: "
-# Backbone = require 'backbone'
-# "
+            ccup_js: 'popup',
+            output: 'popup'
           }
   )
 end
@@ -69,7 +67,10 @@ task :options_app do
           [
            'model',
            'options-backbone'
-          ]
+          ],
+          {
+            output: 'options'
+          }
           )
 end
 
@@ -78,6 +79,8 @@ def compile js, coffee, opts = {}
 
     unless js.empty?
       `cat vendor/#{js[0]}.js >> tmp2.js`
+      `echo "\n" >> tmp2.js`
+      `echo "var _ = require('underscore');" >> tmp2.js` if opts
       `echo "\n" >> tmp2.js`
       js[1..-1].each do |file|
         `cat vendor/#{file}.js >> tmp2.js`
@@ -90,6 +93,7 @@ def compile js, coffee, opts = {}
 window = {}
 f = {}
 "
+
     `echo "#{opts[:head]}" > tmp.coffee`
     `cat src/coffee/#{coffee[0]}.coffee >> tmp.coffee`
     coffee[1..-1].each do |file|
@@ -97,11 +101,18 @@ f = {}
       `cat src/coffee/#{file}.coffee >> tmp.coffee`
     end
     `echo "\n" >> tmp.coffee`
-    `cat src/coffeecup/#{opts[:ccup]}.coffee >> tmp.coffee`
+    `cat src/coffeecup/#{opts[:ccup] or opts[:js]}.coffee >> tmp.coffee`
 
     if opts[:js]
       `coffee -bc tmp.coffee`
-      `mv tmp.js extension/js/#{opts[:js]}`
+      `cat tmp.js >> tmp2.js`
+
+      `echo "#{pre}" > tmp.js`
+      `cat tmp2.js >> tmp.js`
+
+      # `rm tmp.js`
+      # `rm tmp.coffee`
+#      `mv tmp.js extension/js/#{opts[:js]}`
     else
       `node_modules/coffeecup/bin/coffeecup -f tmp.coffee`
       `mv tmp.html extension/#{opts[:ccup]}.html`
@@ -118,6 +129,10 @@ f = {}
     coffee.each do |file|
       `echo "\n" >> tmp.coffee`
       `cat src/coffee/#{file}.coffee >> tmp.coffee`
+    end
+    if opts[:ccup_js]
+      `echo "\n" >> tmp.coffee`
+      `cat src/coffeecup/#{opts[:ccup_js]}.coffee >> tmp.coffee`
     end
     `coffee -bc tmp.coffee`
 #    `rm tmp.coffee`
@@ -149,7 +164,7 @@ f = {}
 
     opts[:ext] ||= 'js'
     opts[:dest] ||= 'extension/js'
-    `mv tmp2.js #{opts[:dest]}/options.#{opts[:ext]}`
+    `mv tmp2.js #{opts[:dest]}/#{opts[:output]}.#{opts[:ext]}`
   end
 end
 

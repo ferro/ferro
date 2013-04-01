@@ -116,7 +116,7 @@ CONTEXTS = # tied to DEFAULTS
     desc: 'Uninstall extension or app'
     context: [CONTEXTS.EXTENSION, CONTEXTS.APP]
     fn: (ext) ->
-      chrome.management.uninstall ext.id
+      chrome.management.uninstall ext.id, {showConfirmDialog: true}
   add:
     desc: 'Add current tab to session'
     context: CONTEXTS.SESSION

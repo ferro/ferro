@@ -9,7 +9,7 @@ class SessionView extends Backbone.View
       for win in @model.get 'wins'
         li ->
           for icon in win.icons
-            img src: icon, height: '16', width: '16'
+            img src: icon, height: '16', width: '16' #todo chrome://favicon, and in manifest permissions
     button '.delete', ->
       text 'Delete'
 
