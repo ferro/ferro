@@ -19,6 +19,17 @@ Please do contribute! I'm not planning on doing these anytime soon. Open an issu
 * remove custom compilation system - make modules and require them
 * class system for different types of suggestions
 
+### TODO when the manifest command limit of 4 is lifted
+
+```
+	"kill": {
+	    "suggested_key": {
+		"default": "Alt+Shift+K"
+	    }
+	}
+```
+and others?
+
 ## The Code
 
 There is one background script, which along with the options page and action page has access to the extension's local storage and chrome extension API. The background script also maintains sessions state by making changes to local storage and the `f.sessions` global variable in each tab. The options page provides an interface to change sessions and the Ferro keyboard shortcut, and it updates each tab's `f.sessions` and `f.shortcut` variables (via requests to the background) as well as saving the changes to `localStorage`. 

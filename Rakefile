@@ -17,7 +17,11 @@ task :sass do
   `sass --watch src/sass/:extension/css/`
 end
 
-task :compile => [:options_template, :options_app, :sass] # todo popup
+task :compile => [:options_template, :options_app, :sass, :popup, :background]
+
+task :background do
+  compile([],['background'],{output: 'background'})
+end
 
 task :options_template do
   compile(
@@ -201,7 +205,7 @@ task :make do
                :pkey   => "~/.ssh/ferro.pem",
                :crx_output => "./ferro.crx",
                :verbose => true,
-               :ignorefile => /.*~/,
+               :ignorefile => /~$/,
 #               :ignoredir => /\.(?:svn|git|cvs)/
                )
 end

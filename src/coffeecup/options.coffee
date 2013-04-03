@@ -52,10 +52,11 @@ html ->
         td ->
           code 'R'
         td 'Reload all tabs in window'
-      tr ->
-        td ->
-          code 'K'
-        td 'Kill tab'
+      # tr ->
+      #   td ->
+      #     code 'K'
+      #   td 'Kill tab'
+    t 'Note that if you already have these shortcuts set to other extensions, you will have to set shortcuts for Ferro yourself.'
     h3 'Available Commands'
     table ->
       tr ->

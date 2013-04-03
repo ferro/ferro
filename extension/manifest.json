@@ -8,7 +8,6 @@
         "48": "images/icon-48.gif",
         "128": "images/icon-128.gif"
     },
-    "default_locale": "en",
     "browser_action": {
 	"default_icon": {
 	    "19": "images/icon-19.gif",
@@ -18,8 +17,8 @@
 	"default_popup": "popup.html"
     },
     "background": {
-	"scripts": ["background.js"]
-    }
+	"scripts": ["js/background.js"]
+    },
     "content_security_policy": "default-src 'self'; style-src 'self' 'unsafe-inline'",
     "homepage_url": "http://getferro.com",
     "incognito": "spanning",
@@ -31,7 +30,7 @@
 	"chrome://favicon/",
 	"management",
 	"history"
-    ]
+    ],
     "commands": {
 	"_execute_browser_action": {
 	    "suggested_key": {
@@ -41,22 +40,20 @@
 	"toggle_pin": {
 	    "suggested_key": {
 		"default": "Alt+Shift+P"
-	    }
+	    },
+	    "description": "Toggle tab pin"
 	},
 	"duplicate": {
 	    "suggested_key": {
 		"default": "Alt+Shift+D"
-	    }
+	    },
+	    "description": "Duplicate tab"
 	},
 	"reload_all_tabs_in_window": {
 	    "suggested_key": {
 		"default": "Alt+Shift+R"
-	    }
-	},
-	"kill": {
-	    "suggested_key": {
-		"default": "Alt+Shift+K"
-	    }
+	    },
+	    "description": "Reload all tabs in window"
 	}
     }
 }

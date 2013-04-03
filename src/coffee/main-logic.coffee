@@ -3,7 +3,6 @@ d = (z) ->
 d 'test'
 
 STATES =
-  INACTIVE: 0
   MAIN: 1
   TEXT: 2
   CMD: 3
@@ -26,7 +25,7 @@ P = 80
 J = 74
 K = 75
 
-state = STATES.INACTIVE
+state = STATES.MAIN
 entered = ''
 context = null
 text = null
@@ -36,82 +35,18 @@ apps = []
 bookmarks = []
 sessions = []
 
-# css = document.createElement 'link'
-# css.href = chrome.extension.getURL 'css/content-script.css'
-# css.media = 'all'
-# css.rel = 'stylesheet'
-# css.type = 'text/css'
-# document.getElementsByTagName('head')[0].appendChild css
-
-# chrome.extension.onRequest.addListener (request, sender, sendResponse) ->
-#   d 'setting:'
-#   d request
-#   _.extend ferro, request
-        
-# chrome.extension.sendRequest action: 'get_state'
-    
 $ = (id) ->
   if id[0] is '#'
     document.getElementById id[1..]
   else
     document.getElementsByTagName(id)[0]
 
-window.onkeydown = (e) =>
-  d e.keyCode
-  d KEYS.CODES.RETURN
-  return if e.keyCode is 91 #apple command key
-  unless state is STATES.INACTIVE
-    if e.keyCode is KEYS.CODES.RETURN and @entered
-      execute()
-      return
-    else if e.keyCode is KEYS.CODES.ESC or shortcut_matches e
-      close()
-      return
+is_down = (e) ->
+  k = e.keyCode
+  k is KEYS.CODES.PAGE_DOWN or
+    k is KEYS.CODES.DOWN or
+    ((e.altKey or e.ctrlKey) and (k is N or k is J))
 
-  switch state
-    when STATES.INACTIVE
-      if shortcut_matches e
-        d 'matches'
-        refresh_all()
-        state = STATES.MAIN
-    when STATES.MAIN
-      if e.keyCode is PERIOD
-        $('#f-text').style.visibility = 'visible'
-        $('#f-text').focus()
-        state = STATES.TEXT
-      else if e.keyCode is TAB
-        switch_to_command()
-        return false
-      else if e.keyCode is BACKSPACE
-        set_entered ''
-        return false
-      else if is_down(e) or is_up(e)
-        update_selection is_down e
-        return false
-      else
-        d 'else'
-        update e
-    when STATES.TEXT
-      if e.keyCode is TAB
-        text = $('#f-text').value
-        switch_to_command()
-        return false
-    when STATES.CMD
-      if e.keyCode is TAB
-        switch_from_command()
-        return false
-      else if is_down(e) or is_up(e)
-        update_selection is_down e
-        return false
-      else
-        suggestions[state].selection or= 0
-        update e
-  
-  # log 'down ' + String.fromCharCode e.keyCode
-  # if _(keys.codes).chain().values().include(e.keyCode).value()
-  #   log 'h'
-
-  #  document.querySelector 'div.blah'
 
 # todo race conditions - tame
 refresh_all = ->
@@ -234,12 +169,6 @@ set_suggestions_visibility = (visible) ->
     clearTimeout timer_id
     timer_id = null
 
-is_down = (e) ->
-  k = e.keyCode
-  k is KEYS.CODES.PAGE_DOWN or
-    k is KEYS.CODES.DOWN or
-    ((e.altKey or e.ctrlKey) and (k is N or k is J))
-
 is_up = (e) ->
   k = e.keyCode
   k is KEYS.CODES.PAGE_UP or
@@ -250,12 +179,6 @@ is_up = (e) ->
 set_entered = (e) ->
   entered = e
   $('#f-entered-text').innerHTML = e.toLowerCase()
-
-shortcut_matches = (e) ->
-  e.keyCode is shortcut.key and
-    e.altKey is shortcut.alt and
-    e.ctrlKey is shortcut.ctrl and
-    e.shiftKey is shortcut.shift
 
 execute = ->
   main_i ?= suggestions[STATES.MAIN].selection
@@ -281,16 +204,7 @@ send_cmd = (choice, arg = null) ->
 
 close = ->
   d 'CLOSING'
-  set_suggestions_visibility false
-  state = STATES.INACTIVE
-  set_entered ''
-  context = null
-  text = null
-  $('#f-box').style.opacity = 0
-  $('#f-main').className = 'f-selected' 
-  $('#f-cmd').className = ''
-  $('#f-text').value = ''
-  $('#f-text').style.visibility = 'hidden'
+  window.close()
 
 get_type = (o) -> # see, wouldn't a class system be nice?
   if o?.cmd
@@ -334,6 +248,54 @@ switch_from_command = ->
   $('#f-cmd').className = ''
   
 
+# state machine
+window.onkeydown = (e) =>
+  d e.keyCode
+  d KEYS.CODES.RETURN
+  return if e.keyCode is 91 #apple command key
+  if e.keyCode is KEYS.CODES.RETURN and entered
+    execute()
+    return
+
+  switch state
+    when STATES.MAIN
+      if e.keyCode is PERIOD
+        $('#f-text').style.visibility = 'visible'
+        $('#f-text').focus()
+        state = STATES.TEXT
+      else if e.keyCode is TAB
+        switch_to_command()
+        return false
+      else if e.keyCode is BACKSPACE
+        set_entered ''
+        return false
+      else if is_down(e) or is_up(e)
+        update_selection is_down e
+        return false
+      else
+        d 'else'
+        update e
+    when STATES.TEXT
+      if e.keyCode is TAB
+        text = $('#f-text').value
+        switch_to_command()
+        return false
+    when STATES.CMD
+      if e.keyCode is TAB
+        switch_from_command()
+        return false
+      else if is_down(e) or is_up(e)
+        update_selection is_down e
+        return false
+      else
+        suggestions[state].selection or= 0
+        update e
+  
+  # log 'down ' + String.fromCharCode e.keyCode
+  # if _(keys.codes).chain().values().include(e.keyCode).value()
+  #   log 'h'
+
+  #  document.querySelector 'div.blah'
 
 
 
