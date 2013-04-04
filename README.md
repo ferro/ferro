@@ -4,6 +4,7 @@
 
 Please do contribute! I'm not planning on doing these anytime soon. Open an issue if you'd like to be pointed in the right direction on how to implement something.
 
+* make icons fade to transparent
 * when url has highest score, title is still text-match emboldened 
 * history search, if it doesn't clutter the suggestions too much
 * icons for commands
@@ -19,7 +20,7 @@ Please do contribute! I'm not planning on doing these anytime soon. Open an issu
 * remove custom compilation system - make modules and require them
 * class system for different types of suggestions
 
-### TODO when the manifest command limit of 4 is lifted
+### When the manifest command limit of 4 is lifted
 
 ```
 	"kill": {

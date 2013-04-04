@@ -9,7 +9,7 @@ task :watch do
   exec 'coffee -cw -o extension/js/ src/coffee/'
   exec 'sass --watch src/sass/options.sass:extension/options.sass'
   exec 'sass --watch src/sass/popup.sass:extension/popup.sass'
-  exec 'coffeecup -fw -o extension/js/ src/coffeecup/options.coffee'
+  exec 'coffeecup -w -o extension/js/ src/coffeecup/options.coffee'
 end
 
 task :sass do
@@ -118,7 +118,7 @@ f = {}
       # `rm tmp.coffee`
 #      `mv tmp.js extension/js/#{opts[:js]}`
     else
-      `node_modules/coffeecup/bin/coffeecup -f tmp.coffee`
+      `node_modules/coffeecup/bin/coffeecup tmp.coffee`
       `mv tmp.html extension/#{opts[:ccup]}.html`
     end
     # if opts[:use_node]
