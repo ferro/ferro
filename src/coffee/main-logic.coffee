@@ -1,6 +1,5 @@
 d = (z) ->
   console.log z
-d 'test'
 
 STATES =
   MAIN: 1
@@ -26,16 +25,16 @@ J = 74
 K = 75
 
 state = STATES.MAIN
-entered = ''
+text_entered = ''
 context = null
-text = null
+text_mode_text = ''
 timer_id = null
 suggestions_are_visible = false
 apps = []
 bookmarks = []
 sessions = []
 
-$ = (id) ->
+$f = (id) ->
   if id[0] is '#'
     document.getElementById id[1..]
   else
@@ -65,8 +64,8 @@ refresh_all = ->
       .concat sessions
       .concat bookmarks
       .concat SPECIAL_PAGES
-    if $ '#ferro'
-      $('#f-box').style.opacity = 1
+    if $f '#ferro'
+      $f('#f-box').style.opacity = 1
     else
       append_template()
 
@@ -78,22 +77,15 @@ flatten_bookmarks = (node) ->
     bookmarks.push node
 
 update_selection = (down) -> 
-  d 'update_selection'
-  d down
   unless suggestions_are_visible
     display_suggestions()
-  d suggestions
-  d state
-  d 'cur'
   cur = suggestions[state].selection
-  d cur
-#  $('#f-' + cur).className = 'f-suggest';
+#  $f('#f-' + cur).className = 'f-suggest';
   if down
     cur = (cur + 1) % NUM_SUGGESTIONS
   else
     cur = (cur - 1 + NUM_SUGGESTIONS) % NUM_SUGGESTIONS
-#  $('#f-' + cur).className += ' f-selected';
-  d cur
+#  $f('#f-' + cur).className += ' f-selected';
   suggestions[state].selection = cur
   display_suggestions()
 
@@ -102,6 +94,7 @@ show_suggestions = =>
   display_suggestions()
   
 update = (e) ->
+  d 'inside update'
   suggestions[state].selection = 0
   c = String.fromCharCode e.keyCode
   d c
@@ -114,7 +107,7 @@ update = (e) ->
     if timer_id # very minor race condition
       clearTimeout timer_id
     timer_id = setTimeout (-> show_suggestions()), 600
-  set_entered entered + c
+  set_entered text_entered + c
   re_sort()
 
 gear_icon = chrome.extension.getURL 'images/gear.png'
@@ -122,22 +115,6 @@ page_icon = chrome.extension.getURL 'images/page.ico'
 pages_icon = chrome.extension.getURL 'images/pages.ico'
 filter = _.filter
   
-append_template = ->
-  d 'templ el:'
-  tem = templates.ferro {suggestions, state, entered: entered.toLowerCase(), ferro, gear_icon, page_icon, pages_icon, filter}
-  div = document.createElement 'div'
-  div.innerHTML = tem
-  div.id = 'ferro-container'
-  d div
-  $('body').appendChild div
-
-display_suggestions = ->
-  felem = $ '#ferro-container'
-  body = $ 'body'
-  append_template()
-  body.removeChild felem if felem
-  set_suggestions_visibility true
-
 re_sort = ->
   d bookmarks
   suggestions[state].list = _.sortBy suggestions[state].list, (s) =>
@@ -147,29 +124,35 @@ re_sort = ->
 
     # everything has a name except for tabs
     if s.name
-      weight = s.name.score entered
+      weight = s.name.score text_entered
     else
-      weight = _.max [s.title?.score entered, s.url?.score entered]
+      weight = _.max [s.title?.score text_entered, s.url?.score text_entered]
     1 - weight 
 
   # for s in suggestions[state].list
   #   if s.name
-  #     weight = s.name.score entered
+  #     weight = s.name.score text_entered
   #   else
-  #     weight = _.max [s.title?.score entered, s.url?.score entered]
+  #     weight = _.max [s.title?.score text_entered, s.url?.score text_entered]
   #   d 1 - weight 
   if suggestions_are_visible
     display_suggestions()
 
 set_suggestions_visibility = (visible) ->
   d 'set_suggestions_visibility'
-  $('#f-suggestions').style.opacity = if visible then 1 else 0
+  $f('#f-suggestions').style.opacity = if visible then 1 else 0
   suggestions_are_visible = visible
+  if visible
+    $('body').addClass('full')
+  else
+    $('body').removeClass('full')
   if timer_id
     clearTimeout timer_id
     timer_id = null
 
 is_up = (e) ->
+  d 'is_up'
+  d KEYS.CODES.UP
   k = e.keyCode
   k is KEYS.CODES.PAGE_UP or
     k is KEYS.CODES.UP or
@@ -177,8 +160,8 @@ is_up = (e) ->
 
 # todo remove?
 set_entered = (e) ->
-  entered = e
-  $('#f-entered-text').innerHTML = e.toLowerCase()
+  text_entered = e
+  $f('#f-entered-text').innerHTML = e.toLowerCase()
 
 execute = ->
   main_i ?= suggestions[STATES.MAIN].selection
@@ -191,7 +174,7 @@ execute = ->
     d 'cmd_choice', cmd_choice
     cmd_choice or= DEFAULTS[get_type main_choice]
     d cmd_choice
-    arg = text or main_choice
+    arg = text_mode_text or main_choice
     send_cmd cmd_choice, arg #here
   close()
 
@@ -221,7 +204,7 @@ get_type = (o) -> # see, wouldn't a class system be nice?
     CONTEXTS.SPECIAL
   
 switch_to_command = ->
-  if text
+  if text_mode_text
     context = CONTEXTS.TEXT
   else
     main_i = suggestions[STATES.MAIN].selection
@@ -235,74 +218,82 @@ switch_to_command = ->
   state = STATES.CMD
   set_entered ''
   set_suggestions_visibility false
-  $('#f-main').className = ''  #todo for text
-  $('#f-cmd').className = 'f-selected'
+  $f('#f-main').className = ''  #todo for text
+  $f('#f-cmd').className = 'f-selected'
   
-switch_from_command = ->
-  state = if text then STATES.TEXT else STATES.MAIN
+switch_to_main = ->
+  state = if text_mode_text then STATES.TEXT else STATES.MAIN
   set_entered ''
 
   set_suggestions_visibility false
-  $('#f-main').className = 'f-selected'
-  $('#f-text').focus() if text
-  $('#f-cmd').className = ''
+  $f('#f-main').className = 'f-selected'
+  $f('#f-text').focus() if text_mode_text
+  $f('#f-cmd').className = ''
   
+append_template = =>
+  d 'appending template'
+  # tem = templates.ferro {suggestions, state, text_entered: text_entered.toLowerCase(), ferro, gear_icon, page_icon, pages_icon, filter}
+  div = document.createElement 'div'
+  # div.innerHTML = tem
+#  $f('body').appendChild
+  x = coffeecup.render popup_template, {
+    text_mode_text, state, STATES, suggestions, text_entered: text_entered.toLowerCase(), NUM_SUGGESTIONS, gear_icon, page_icon, pages_icon, filter
+  }
+  div.innerHTML = x
+  div.id = 'ferro-container'
+  $f('body').appendChild div
+  d 'done appending'
+
+display_suggestions = ->
+  felem = $f '#ferro-container'
+  # felem = $f '#ferro'
+  body = $f 'body'
+  body.removeChild felem if felem
+  append_template()
+  set_suggestions_visibility true
 
 # state machine
-window.onkeydown = (e) =>
-  d e.keyCode
-  d KEYS.CODES.RETURN
-  return if e.keyCode is 91 #apple command key
-  if e.keyCode is KEYS.CODES.RETURN and entered
+# TODO key.preventDefault()
+window.onkeydown = (key) =>
+  d 'onkeydown ' + key.keyCode
+  return if key.keyCode is 91 # apple command key
+
+  if key.keyCode is KEYS.CODES.RETURN and text_entered
     execute()
     return
 
   switch state
     when STATES.MAIN
-      if e.keyCode is PERIOD
-        $('#f-text').style.visibility = 'visible'
-        $('#f-text').focus()
+      if key.keyCode is PERIOD
+        $f('#f-text').style.visibility = 'visible'
+        $f('#f-text').focus()
         state = STATES.TEXT
-      else if e.keyCode is TAB
+      else if key.keyCode is TAB
         switch_to_command()
-        return false
-      else if e.keyCode is BACKSPACE
+      else if key.keyCode is BACKSPACE
         set_entered ''
-        return false
-      else if is_down(e) or is_up(e)
-        update_selection is_down e
-        return false
+      else if is_down(key) or is_up(key)
+        update_selection is_down key
       else
-        d 'else'
-        update e
+        update key if key.keyCode > 31 # is viewable char
     when STATES.TEXT
-      if e.keyCode is TAB
-        text = $('#f-text').value
+      if key.keyCode is TAB
+        text_mode_text = $f('#f-text').value
         switch_to_command()
-        return false
     when STATES.CMD
-      if e.keyCode is TAB
-        switch_from_command()
-        return false
-      else if is_down(e) or is_up(e)
-        update_selection is_down e
-        return false
+      if key.keyCode is TAB
+        switch_to_main()
+      else if is_down(key) or is_up(key)
+        update_selection is_down key
       else
         suggestions[state].selection or= 0
         update e
   
-  # log 'down ' + String.fromCharCode e.keyCode
-  # if _(keys.codes).chain().values().include(e.keyCode).value()
+  # log 'down ' + String.fromCharCode key.keyCode
+  # if _(keys.codes).chain().values().include(key.keyCode).value()
   #   log 'h'
 
   #  document.querySelector 'div.blah'
-
-
-
-
-
-
-
 
 
 

@@ -5,6 +5,7 @@ d = (ss...) ->
     for s in ss
       console.log s 
 
+
 #todo
 main_i = -1 
 main_choice = -1

@@ -17,7 +17,7 @@ task :sass do
   `sass --watch src/sass/:extension/css/`
 end
 
-task :compile => [:options_template, :options_app, :sass, :popup, :background]
+task :compile => [:options_template, :options_app,  :popup, :background, :sass]
 
 task :background do
   compile([],['background'],{output: 'background'})
@@ -42,7 +42,8 @@ task :popup do
             'jquery',
             'underscore',
             'backbone',
-            'backbone-localStorage'
+            'backbone-localStorage',
+            'coffeecup'
           ],
           [
             'init',
@@ -50,7 +51,8 @@ task :popup do
             'keys',
             'commands',
             'underscore-extensions',
-            'main-logic'
+            'main-logic',
+            'template-loader'
           ],
           {
             ccup_js: 'popup',
@@ -185,7 +187,7 @@ end
 
 task :vendor do
   get 'https://raw.github.com/joshaven/string_score/master/string_score.js', 'string-score.js'
-  get 'http://code.jquery.com/jquery-1.7.1.js', 'jquery.js'
+  get 'http://code.jquery.com/jquery-1.9.1.min.js', 'jquery.js'
   get 'http://documentcloud.github.com/underscore/underscore.js'
   get 'https://raw.github.com/jeromegn/Backbone.localStorage/master/backbone.localStorage.js', 'backbone-localstorage.js'
   get 'http://epeli.github.com/underscore.string/lib/underscore.string.js'

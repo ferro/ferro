@@ -1,3 +1,8 @@
+d $
+d $.keys
+d 'init d done'
+
+
 class Session extends Backbone.Model
 
 class SessionList extends Backbone.Collection

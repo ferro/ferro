@@ -1,5 +1,3 @@
-t = text
-
 bold_entered = (to_bold) ->
   @entered = @entered.toLowerCase()
   to_bold_lower = to_bold.toLowerCase()
@@ -7,16 +5,16 @@ bold_entered = (to_bold) ->
   for c in @entered
     i = to_bold_lower[last..].indexOf c
     if i is -1
-      t to_bold[last..]
+      text to_bold[last..]
       return
     else
       if i isnt 0
-        t to_bold[last..last+i-1] 
+        text to_bold[last..last+i-1] 
       b to_bold[last+i] 
       last += i + 1
       if last is to_bold.length
         return
-  t to_bold[last..]
+  text to_bold[last..]
 
 get_icon = (o, accept_array = false) ->
   return null unless o
@@ -56,10 +54,10 @@ get_desc = (o) ->
 #  desc[0..39] if desc
   desc
 
-template = ->
+popup_template = ->
   div id: 'ferro', ->
     div id: 'f-box', ->
-      visibility = if @text then 'visible' else 'hidden'
+      visibility = if @text_mode_text then 'visible' else 'hidden'
       textarea id: 'f-text', cols: '20', rows: '4', style: 'visibility: ' + visibility
       main_klass = ''
       cmd_klass = ''
@@ -73,7 +71,7 @@ template = ->
         sugs = @suggestions[@STATES?.MAIN]
         if @entered
           main = sugs?.list[sugs?.selection] 
-        d 'ferro'
+        d 'sugs, main: '
         d sugs
         d main
         icon = get_icon main
@@ -85,32 +83,39 @@ template = ->
             console.log 'entered:'
             bold_entered n #here
           else
-            t ''
+            text ''
         div id: 'f-description-main', ->
-          t get_desc main if main
+          text get_desc main if main
       div id: 'f-cmd', class: cmd_klass, ->
         sugs = @suggestions[@STATES?.CMD]
         cmd = sugs?.list[sugs.selection]
         div id: 'f-name-cmd', ->
-          t get_name(cmd) or ''
+          text get_name(cmd) or ''
         div id: 'f-description-cmd', ->
-          t cmd?.cmd?.desc or ''
+          text cmd?.cmd?.desc or ''
     div id: 'f-suggestions', ->
       div id: 'f-entered', ->
         span id: 'f-entered-text', ->
-          t @entered
-      for i in [0..@NUM_SUGGESTIONS-1]
-        cur = @suggestions[@state]?.list[i]
-        klass = 'f-suggest'
-        klass += ' f-selected' if i is @suggestions[@state]?.selection
-        div id: 'f-' + i, class: klass, ->
-          icon = get_icon cur
-          if icon
-            img class: 'f-icon', src: icon, width: '16px', height: '16px'
-          div class: 'f-title', ->
-            t get_name cur
-          div class: 'f-url', ->
-            t get_desc cur
+          text @text_entered
+      if @text_entered
+        for i in [0..@NUM_SUGGESTIONS-1]
+          cur = @suggestions[@state]?.list[i]
+          klass = 'f-suggest'
+          klass += ' f-selected' if i is @suggestions[@state]?.selection
+          div id: 'f-' + i, class: klass, ->
+            icon = get_icon cur
+            if icon
+              img class: 'f-icon', src: icon, width: '16px', height: '16px'
+            div class: 'f-title', ->
+              console.log 'cur: '
+              console.log cur
+              console.log(get_name cur)
+              # text get_name cur
+              text 'cur'
+            div class: 'f-url', ->
+              console.log(get_desc cur)
+              text 'desc'
+          #     text get_desc cur
 
 
 

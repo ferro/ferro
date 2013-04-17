@@ -21,12 +21,19 @@ $shadow-trans: box-shadow .5s ease-in-out
 $width-trans: width .2s ease-in-out
 $height-trans: height .2s ease-in-out
 
+body
+  width: $width * 1.05
+  height: $height * 1.2
+
+body.full
+  height: ($height + $sub-height) * 1.5
+
 #ferro
   -webkit-transition: $opacity-trans
   opacity: 1
   position: fixed
   left: 50%
-  top: 3% //todo
+  top: 20px //todo
   font-size: 16px
   font-family: Monaco, 'Lucida Console', monospace
   z-index: 100000
