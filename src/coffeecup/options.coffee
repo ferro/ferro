@@ -23,9 +23,7 @@ html ->
         code 'tab'
         t 'and type again) and hit '
         code 'enter'
-        t '. TODO Note that Ferro works neither on the special '
-        code 'chrome://'
-        t 'pages, including this one, nor on the Chrome Web Store.'
+        t '. TODO '
       h3 'Saved Sessions'
       ul id: 'session-list', ->
       h3 'Keyboard Shortcuts'
@@ -59,7 +57,8 @@ html ->
         #   td ->
         #     code 'K'
         #   td 'Kill tab'
-      t 'Note that if you already have these shortcuts set to other extensions, you will have to set shortcuts for Ferro yourself.'
+      p ->
+        t 'Note that if you already have these shortcuts set to other extensions, you will have to set shortcuts for Ferro yourself.'
       h3 'Available Commands'
       table ->
         tr ->

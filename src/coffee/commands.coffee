@@ -11,7 +11,7 @@ CONTEXTS = # tied to DEFAULTS
   MAIN: 7
   COMMAND: 8
 
-# don't add commands that have keyboard shortcuts, like close tab, close window, and create bookmark
+# don't add commands that have keyboard shortcuts by default, like close tab, close window, and create bookmark
  COMMANDS =
   duplicate:
     desc: 'Duplicate tab'
@@ -28,13 +28,14 @@ CONTEXTS = # tied to DEFAULTS
     desc: 'Reload every tab in this window'
     context: CONTEXTS.MAIN
     fn: (x) ->
-      chrome.windows.getCurrent (win) ->
+      chrome.windows.getCurrent { populate: true }, (win) ->
         reload_window win
   search_history:
     desc: 'Search through your history for the given text'
     context: CONTEXTS.TEXT
     fn: (text) ->
-      tab_open 'chrome://history/#q=' + text + '&p=0'
+      d 'tab_open' #doesn't go here, closes and opens extension page 
+      # tab_open 'chrome://history/#q=' + text + '&p=0'
   extract:
     desc: "Extract tabs that match the given text or the given tab's domain into a new window"
     context: [CONTEXTS.TEXT, CONTEXTS.MAIN, CONTEXTS.TAB]
@@ -121,7 +122,7 @@ CONTEXTS = # tied to DEFAULTS
     desc: 'Add current tab to session'
     context: CONTEXTS.SESSION
     fn: (session) ->
-      chrome.tabs.getCurrent (tab) =>
+      chrome.tabs.getSelected (tab) =>
         s = sessions.get_by_name session.name
         wins = s.get 'wins'
         wins[0].url.push tab.url
@@ -145,7 +146,8 @@ CONTEXTS = # tied to DEFAULTS
     fn: (page) ->
       if page.wins
         # it's actually a session. typechecking classes would be nice...
-        open_session page
+        session = page
+        open_session session
       else if page.url
         tab_open page.url
       else

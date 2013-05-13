@@ -1,20 +1,20 @@
 bold_entered = (to_bold) ->
-  @entered = @entered.toLowerCase()
+  @text_entered = @text_entered.toLowerCase()
   to_bold_lower = to_bold.toLowerCase()
+  emboldened = ''
   last = 0
-  for c in @entered
+  for c in @text_entered
     i = to_bold_lower[last..].indexOf c
     if i is -1
-      text to_bold[last..]
-      return
+      return emboldened + to_bold[last..]
     else
       if i isnt 0
-        text to_bold[last..last+i-1] 
-      b to_bold[last+i] 
+        emboldened += to_bold[last...last+i]
+      emboldened += '<b>' + to_bold[last+i] + '</b>'
       last += i + 1
       if last is to_bold.length
-        return
-  text to_bold[last..]
+        return emboldened
+  return emboldened + to_bold[last..]
 
 get_icon = (o, accept_array = false) ->
   return null unless o
@@ -24,11 +24,17 @@ get_icon = (o, accept_array = false) ->
     when @CONTEXTS.SPECIAL
       @page_icon
     when @CONTEXTS.BOOKMARK
-      'chrome://favicon/' + o.url
+      # this only goes through your local browser cache
+      # 'chrome://favicon/' + o.url
+  
+      'https://plus.google.com/_/favicon?domain=' + o.url
     when @CONTEXTS.APP, @CONTEXTS.EXTENSION
       icons = @filter o.icons, (i) ->
         i.size is 16
-      icons[0].url
+      if icons[0]
+        icons[0].url
+      else
+        'chrome://theme/IDR_EXTENSIONS_FAVICON@2x'
     when @CONTEXTS.TAB
       o.favIconUrl
     when @CONTEXTS.SESSION
@@ -69,9 +75,10 @@ popup_template = ->
         cmd_klass = 'f-selected'
       div id: 'f-main', class: main_klass, ->
         sugs = @suggestions[@STATES?.MAIN]
-        if @entered
+        if @text_entered
           main = sugs?.list[sugs?.selection] 
-        d 'sugs, main: '
+        d 'text_entered, sugs, main: '
+        d @text_entered
         d sugs
         d main
         icon = get_icon main
@@ -80,8 +87,7 @@ popup_template = ->
         div id: 'f-name-main', ->
           if main
             n = get_name main
-            console.log 'entered:'
-            bold_entered n #here
+            text bold_entered n
           else
             text ''
         div id: 'f-description-main', ->
@@ -110,12 +116,10 @@ popup_template = ->
               console.log 'cur: '
               console.log cur
               console.log(get_name cur)
-              # text get_name cur
-              text 'cur'
+              text get_name cur
             div class: 'f-url', ->
               console.log(get_desc cur)
-              text 'desc'
-          #     text get_desc cur
+              text get_desc cur
 
 
 

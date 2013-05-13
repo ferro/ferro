@@ -1,6 +1,4 @@
-console.log 'template loader'
-console.log $
-console.log $.keys  
 $(document).ready ->
-  console.log 'loaded template'
+  console.log 'template loader, document.ready'
+  refresh_all()
   append_template()

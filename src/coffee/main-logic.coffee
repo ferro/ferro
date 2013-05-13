@@ -27,6 +27,8 @@ K = 75
 state = STATES.MAIN
 text_entered = ''
 context = null
+main_i = -2
+main_choice = null
 text_mode_text = ''
 timer_id = null
 suggestions_are_visible = false
@@ -50,14 +52,14 @@ is_down = (e) ->
 # todo race conditions - tame
 refresh_all = ->
   d 'refresh_all'
-  chrome.extension.sendRequest action: 'get_apps', (_apps) =>
+  chrome.management.getAll (_apps) =>
     apps = _apps
-  chrome.extension.sendRequest action: 'get_bookmarks',  (tree) =>
-    d 'tree'
+  chrome.bookmarks.getTree (tree) =>
+    d 'tree: '
     d tree
     flatten_bookmarks tree[0]
-  chrome.extension.sendRequest action: 'get_windows', (wins) =>
-    tabs = (tab for tab in _.flatten(win.tabs for win in wins)) #when regex.test tab.url
+  chrome.windows.getAll populate: true, (wins) =>
+    tabs = (tab for tab in _.flatten(win.tabs for win in wins)) 
     suggestions[STATES.MAIN].list = COMMAND_NAMES[CONTEXTS.MAIN]
       .concat tabs
       .concat apps
@@ -151,8 +153,6 @@ set_suggestions_visibility = (visible) ->
     timer_id = null
 
 is_up = (e) ->
-  d 'is_up'
-  d KEYS.CODES.UP
   k = e.keyCode
   k is KEYS.CODES.PAGE_UP or
     k is KEYS.CODES.UP or
@@ -164,30 +164,37 @@ set_entered = (e) ->
   $f('#f-entered-text').innerHTML = e.toLowerCase()
 
 execute = ->
-  main_i ?= suggestions[STATES.MAIN].selection
-  main_choice ?= suggestions[STATES.MAIN].list[main_i]
+  if main_i < 0
+    d 'yes'
+    d suggestions[STATES.MAIN].selection
+    main_i = suggestions[STATES.MAIN].selection
+    main_choice = suggestions[STATES.MAIN].list[main_i]
+  d 'suggestions'
+  d suggestions
+  d 'main_i'
+  d main_i
+  d 'main_choice:'
+  d main_choice
   if main_choice.cmd
     send_cmd main_choice.cmd
   else
+    d 'execute else'
     cmd_i = suggestions[STATES.CMD].selection
     cmd_choice = suggestions[STATES.CMD].list[cmd_i]?.cmd
-    d 'cmd_choice', cmd_choice
+    d 'cmd_choice'
     cmd_choice or= DEFAULTS[get_type main_choice]
     d cmd_choice
     arg = text_mode_text or main_choice
     send_cmd cmd_choice, arg #here
-  close()
+  # window.close()
+  d 'window.close'
 
 # if no arg, uses current tab
 send_cmd = (choice, arg = null) ->
-  chrome.extension.sendRequest
-    action: execute
-    fn: choice.fn
-    arg: arg
-
-close = ->
-  d 'CLOSING'
-  window.close()
+  chrome.tabs.getSelected (tab) ->
+    d 'send_cmd current tab'
+    d tab
+    choice.fn arg or tab
 
 get_type = (o) -> # see, wouldn't a class system be nice?
   if o?.cmd
@@ -264,7 +271,7 @@ window.onkeydown = (key) =>
 
   switch state
     when STATES.MAIN
-      if key.keyCode is PERIOD
+      if _([PERIOD, 190, 110]).contains key.keyCode # todo are there other equiv key codes? switch to keypressed and char codes?
         $f('#f-text').style.visibility = 'visible'
         $f('#f-text').focus()
         state = STATES.TEXT
@@ -287,13 +294,6 @@ window.onkeydown = (key) =>
         update_selection is_down key
       else
         suggestions[state].selection or= 0
-        update e
-  
-  # log 'down ' + String.fromCharCode key.keyCode
-  # if _(keys.codes).chain().values().include(key.keyCode).value()
-  #   log 'h'
-
-  #  document.querySelector 'div.blah'
-
+        update key
 
 

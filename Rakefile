@@ -43,12 +43,14 @@ task :popup do
             'underscore',
             'backbone',
             'backbone-localStorage',
-            'coffeecup'
+            'coffeecup',
+            'string-score'
           ],
           [
             'init',
             'model',
             'keys',
+            'chrome-pages',
             'commands',
             'underscore-extensions',
             'main-logic',
