@@ -1,4 +1,6 @@
-require 'crxmake'
+
+
+#require 'crxmake'
 
 #https://github.com/documentcloud/backbone/raw/master/backbone.js
 #https://github.com/douglascrockford/JSON-js/raw/master/json2.js

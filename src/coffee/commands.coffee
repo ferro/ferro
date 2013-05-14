@@ -34,8 +34,7 @@ CONTEXTS = # tied to DEFAULTS
     desc: 'Search through your history for the given text'
     context: CONTEXTS.TEXT
     fn: (text) ->
-      d 'tab_open' #doesn't go here, closes and opens extension page 
-      # tab_open 'chrome://history/#q=' + text + '&p=0'
+      tab_open 'chrome://history/#q=' + text
   extract:
     desc: "Extract tabs that match the given text or the given tab's domain into a new window"
     context: [CONTEXTS.TEXT, CONTEXTS.MAIN, CONTEXTS.TAB]
@@ -210,7 +209,7 @@ apply_to_matching_tabs = (text, fn) ->
 apply_to_regex_tabs = (regex, fn) ->
   tabs = get_tabs regex
   chrome.windows.getAll {populate: true}, (wins) =>
-    tabs = tab for tab in _.flatten(win.tabs for win in wins) when regex.test tab.url
+    tabs = tab for tab in _.flatten(win.tabs for win in wins) when (regex.test tab.url or regex.test tab.title)
     fn tabs
   
 # todo works? assumes order of pins is same as window, which api doesn't guarantee

@@ -175,16 +175,19 @@ execute = ->
   d main_i
   d 'main_choice:'
   d main_choice
-  if main_choice.cmd
+  if main_choice.cmd and not text_mode_text
+    d 'main_choice.cmd'
     send_cmd main_choice.cmd
   else
     d 'execute else'
     cmd_i = suggestions[STATES.CMD].selection
     cmd_choice = suggestions[STATES.CMD].list[cmd_i]?.cmd
-    d 'cmd_choice'
     cmd_choice or= DEFAULTS[get_type main_choice]
+    d 'cmd_choice'
     d cmd_choice
     arg = text_mode_text or main_choice
+    d 'arg'
+    d arg      
     send_cmd cmd_choice, arg #here
   # window.close()
   d 'window.close'
@@ -249,6 +252,7 @@ append_template = =>
   div.innerHTML = x
   div.id = 'ferro-container'
   $f('body').appendChild div
+  $f('#f-text').value = text_mode_text
   d 'done appending'
 
 display_suggestions = ->
@@ -272,6 +276,9 @@ window.onkeydown = (key) =>
   switch state
     when STATES.MAIN
       if _([PERIOD, 190, 110]).contains key.keyCode # todo are there other equiv key codes? switch to keypressed and char codes?
+        window.setTimeout ->
+          $f('#f-text').value = ''
+        , 10
         $f('#f-text').style.visibility = 'visible'
         $f('#f-text').focus()
         state = STATES.TEXT
@@ -281,11 +288,12 @@ window.onkeydown = (key) =>
         set_entered ''
       else if is_down(key) or is_up(key)
         update_selection is_down key
-      else
+      else 
         update key if key.keyCode > 31 # is viewable char
     when STATES.TEXT
       if key.keyCode is TAB
         text_mode_text = $f('#f-text').value
+        $f('#f-cmd').focus()
         switch_to_command()
     when STATES.CMD
       if key.keyCode is TAB
@@ -295,5 +303,6 @@ window.onkeydown = (key) =>
       else
         suggestions[state].selection or= 0
         update key
+        key.preventDefault() # prevents character briefly showing up in #f-text
 
 
