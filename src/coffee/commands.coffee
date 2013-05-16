@@ -189,10 +189,14 @@ prepare = (win) ->
     icons: _(win.tabs).pluck 'favIconUrl'
 
     
+starts_with = (str, starts) ->
+  str.length >= starts.length and str.slice(0, starts.length) is starts
+
+
 apply_to_matching_tabs = (text, fn) ->
   if text.url #is a tab
     tab = text
-    if _(tab.url).startsWith 'chrome' or _(tab.url).startsWith 'about'
+    if (starts_with tab.url, 'chrome') or (starts_with tab.url, 'about')
       apply_to_regex_tabs /^(chrome|about)/, fn
     else
       http = '^https*://'

@@ -121,7 +121,7 @@ f = {}
       `cat tmp2.js >> tmp.js`
 
       # `rm tmp.js`
-      # `rm tmp.coffee`
+      `rm tmp.coffee`
 #      `mv tmp.js extension/js/#{opts[:js]}`
     else
       `node_modules/coffeecup/bin/coffeecup tmp.coffee`
@@ -132,7 +132,7 @@ f = {}
     #   `node tmp.js`
     # else
     # end
-#    `rm tmp.coffee`
+    `rm tmp.coffee`
 
   else
     `cat src/coffee/#{coffee[0]}.coffee > tmp.coffee`
@@ -145,7 +145,7 @@ f = {}
       `cat src/coffeecup/#{opts[:ccup_js]}.coffee >> tmp.coffee`
     end
     `coffee -bc tmp.coffee`
-#    `rm tmp.coffee`
+    `rm tmp.coffee`
 
     if ENV['env'] == 'production'
       js.each do |s|
@@ -194,7 +194,6 @@ task :vendor do
   get 'http://code.jquery.com/jquery-1.9.1.min.js', 'jquery.js'
   get 'http://documentcloud.github.com/underscore/underscore.js'
   get 'https://raw.github.com/jeromegn/Backbone.localStorage/master/backbone.localStorage.js', 'backbone-localstorage.js'
-  get 'http://epeli.github.com/underscore.string/lib/underscore.string.js'
   get 'http://documentcloud.github.com/backbone/backbone.js'
   get 'https://raw.github.com/gradus/coffeecup/master/lib/coffeecup.js'
 end
