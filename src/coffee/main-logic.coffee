@@ -237,7 +237,8 @@ switch_to_main = ->
 
   set_suggestions_visibility false
   $f('#f-main').className = 'f-selected'
-  $f('#f-text').focus() if text_mode_text
+  if text_mode_text
+    $f('#f-text').focus() 
   $f('#f-cmd').className = ''
   
 append_template = =>
@@ -298,6 +299,7 @@ window.onkeydown = (key) =>
     when STATES.CMD
       if key.keyCode is TAB
         switch_to_main()
+        key.preventDefault()
       else if is_down(key) or is_up(key)
         update_selection is_down key
       else

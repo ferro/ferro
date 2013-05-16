@@ -39,16 +39,11 @@ CONTEXTS = # tied to DEFAULTS
     desc: "Extract tabs that match the given text or the given tab's domain into a new window"
     context: [CONTEXTS.TEXT, CONTEXTS.MAIN, CONTEXTS.TAB]
     fn: (text) ->
-      apply_to_matching_tabs text, (tabs) ->
-        chrome.windows.create {
-          focused: true
-          tabId: tabs[0].id
-        }, (win) =>
-          for i in [1..tabs.length]
-            chrome.tabs.move tabs[i].id, {
-              windowId: win.id
-              index: 0
-            }
+      apply_to_matching_tabs text, (tabs) =>
+        d 'tabs'
+        d tabs
+        if tabs and tabs.length > 0
+          chrome.extension.getBackgroundPage().create_window _.pluck(tabs, 'id')
   close:
     desc: "Close tabs that match the given text or the given tab's domain"
     context: [CONTEXTS.TEXT, CONTEXTS.MAIN, CONTEXTS.TAB]
@@ -207,12 +202,12 @@ apply_to_matching_tabs = (text, fn) ->
     apply_to_regex_tabs new RegExp(text, 'i'), fn
 
 apply_to_regex_tabs = (regex, fn) ->
-  tabs = get_tabs regex
   chrome.windows.getAll {populate: true}, (wins) =>
-    tabs = tab for tab in _.flatten(win.tabs for win in wins) when (regex.test tab.url or regex.test tab.title)
+    d 'wins'
+    d wins
+    tabs = (tab for tab in _.flatten(win.tabs for win in wins) when ((regex.test tab.url) or (regex.test tab.title)))
     fn tabs
   
-# todo works? assumes order of pins is same as window, which api doesn't guarantee
 open_session = (session) ->
   for win in session.wins
     win.url = win.urls.toString() #todo syntax http://developer.chrome.com/extensions/windows.html
