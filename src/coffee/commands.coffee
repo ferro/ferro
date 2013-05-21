@@ -1,4 +1,4 @@
-#TODO check file-global vars not covering local or getting overwritten
+#TODO check global vars not covering local or getting overwritten
 
 CONTEXTS = # tied to DEFAULTS
   TAB: 0
@@ -10,6 +10,7 @@ CONTEXTS = # tied to DEFAULTS
   BOOKMARK: 6
   MAIN: 7
   COMMAND: 8
+  HISTORY: 9
 
 # don't add commands that have keyboard shortcuts by default, like close tab, close window, and create bookmark
  COMMANDS =
@@ -56,7 +57,7 @@ CONTEXTS = # tied to DEFAULTS
     fn: (text) ->
       apply_to_matching_tabs text, (tabs) ->
         kill tab.id for tab in tabs
-  kill_all:
+  kill_all: #todo test
     desc: 'Kill all tabs'
     context: CONTEXTS.MAIN
     fn: (x) ->
@@ -162,16 +163,16 @@ CONTEXTS = # tied to DEFAULTS
         chrome.bookmarks.remove bookmark.id
 
 DEFAULTS =  # tied to CONTEXTS
-  0: COMMANDS.select
-  1: COMMANDS.options
-  2: COMMANDS.launch
-  3: COMMANDS.restore
-  4: COMMANDS.history
-  5: COMMANDS.open
-  6: COMMANDS.open
+  0: 'select'
+  1: 'options'
+  2: 'launch'
+  3: 'restore'
+  4: 'history'
+  5: 'open'
+  6: 'open'
   7: null
   8: null
-
+  9: 'open'
   
 COMMAND_NAMES = []
 

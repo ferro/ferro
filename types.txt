@@ -45,3 +45,11 @@ app/extension
   icons 
     size
     url
+
+history item
+  id
+  url
+  title
+  lastVisitTime
+  visitCount
+  typedCount

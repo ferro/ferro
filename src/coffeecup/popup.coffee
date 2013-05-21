@@ -95,10 +95,14 @@ popup_template = ->
       div id: 'f-cmd', class: cmd_klass, ->
         sugs = @suggestions[@STATES?.CMD]
         cmd = sugs?.list[sugs.selection]
+        d 'AAAA sugs'
+        d sugs
+        d 'cmd'
+        d cmd  
         div id: 'f-name-cmd', ->
           text get_name(cmd) or ''
         div id: 'f-description-cmd', ->
-          text cmd?.cmd?.desc or ''
+          text get_desc(cmd) or ''
     div id: 'f-suggestions', ->
       div id: 'f-entered', ->
         span id: 'f-entered-text', ->

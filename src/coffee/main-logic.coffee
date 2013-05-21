@@ -32,9 +32,8 @@ main_choice = null
 text_mode_text = ''
 timer_id = null
 suggestions_are_visible = false
-apps = []
+sessions = []#todo load
 bookmarks = []
-sessions = []
 
 $f = (id) ->
   if id[0] is '#'
@@ -49,27 +48,25 @@ is_down = (e) ->
     ((e.altKey or e.ctrlKey) and (k is N or k is J))
 
 
-# todo race conditions - tame
+# need some delay between calling this and user entering text
 refresh_all = ->
-  d 'refresh_all'
-  chrome.management.getAll (_apps) =>
-    apps = _apps
-  chrome.bookmarks.getTree (tree) =>
-    d 'tree: '
-    d tree
-    flatten_bookmarks tree[0]
-  chrome.windows.getAll populate: true, (wins) =>
-    tabs = (tab for tab in _.flatten(win.tabs for win in wins)) 
-    suggestions[STATES.MAIN].list = COMMAND_NAMES[CONTEXTS.MAIN]
-      .concat tabs
-      .concat apps
-      .concat sessions
-      .concat bookmarks
-      .concat SPECIAL_PAGES
-    if $f '#ferro'
-      $f('#f-box').style.opacity = 1
-    else
-      append_template()
+  chrome.management.getAll (apps) =>
+    chrome.bookmarks.getTree (tree) =>
+      flatten_bookmarks tree[0]
+      chrome.windows.getAll populate: true, (wins) =>
+        tabs = (tab for tab in _.flatten(win.tabs for win in wins)) 
+        suggestions[STATES.MAIN].list = COMMAND_NAMES[CONTEXTS.MAIN]
+          .concat tabs
+          .concat apps
+          .concat sessions
+          .concat bookmarks
+          .concat SPECIAL_PAGES
+
+        #todo remove?
+        # if $f '#ferro'
+        #   $f('#f-box').style.opacity = 1
+        # else
+        #   append_template()
 
 flatten_bookmarks = (node) ->
   if node.children
@@ -108,9 +105,11 @@ update = (e) ->
   unless suggestions_are_visible
     if timer_id # very minor race condition
       clearTimeout timer_id
-    timer_id = setTimeout (-> show_suggestions()), 600
+    timer_id = setTimeout (-> show_suggestions()), 200
   set_entered text_entered + c
-  re_sort()
+  chrome.history.search {text: text_entered, maxResults: 5}, (results) =>
+    suggestions[state].list = suggestions[state].list.concat results
+    re_sort()
 
 gear_icon = chrome.extension.getURL 'images/gear.png'
 page_icon = chrome.extension.getURL 'images/page.ico'
@@ -118,7 +117,6 @@ pages_icon = chrome.extension.getURL 'images/pages.ico'
 filter = _.filter
   
 re_sort = ->
-  d bookmarks
   suggestions[state].list = _.sortBy suggestions[state].list, (s) =>
 #     x = s.name or s.title or s.url
 # #    d s
@@ -167,28 +165,24 @@ execute = ->
   if main_i < 0
     d 'yes'
     d suggestions[STATES.MAIN].selection
-    main_i = suggestions[STATES.MAIN].selection
-    main_choice = suggestions[STATES.MAIN].list[main_i]
   d 'suggestions'
   d suggestions
-  d 'main_i'
-  d main_i
   d 'main_choice:'
-  d main_choice
-  if main_choice.cmd and not text_mode_text
+  d main_choice()
+  if main_choice().cmd and not text_mode_text
     d 'main_choice.cmd'
-    send_cmd main_choice.cmd
+    send_cmd main_choice().cmd
   else
     d 'execute else'
     cmd_i = suggestions[STATES.CMD].selection
     cmd_choice = suggestions[STATES.CMD].list[cmd_i]?.cmd
-    cmd_choice or= DEFAULTS[get_type main_choice]
+    cmd_choice or= COMMANDS[DEFAULTS[get_type main_choice()]]
     d 'cmd_choice'
     d cmd_choice
-    arg = text_mode_text or main_choice
+    arg = text_mode_text or main_choice()
     d 'arg'
     d arg      
-    send_cmd cmd_choice, arg #here
+    send_cmd cmd_choice, arg
   # window.close()
   d 'window.close'
 
@@ -200,16 +194,18 @@ send_cmd = (choice, arg = null) ->
     choice.fn arg or tab
 
 get_type = (o) -> # see, wouldn't a class system be nice?
-  if o?.cmd
+  if 'cmd' of o
     CONTEXTS.COMMAND
-  else if o?.version
+  else if 'version' of o
     if o?.isApp then CONTEXTS.APP else CONTEXTS.EXTENSION
-  else if o?.dateAdded
+  else if 'dateAdded' of o
     CONTEXTS.BOOKMARK
-  else if o?.index
+  else if 'index' of o
     CONTEXTS.TAB
-  else if o?.wins
+  else if 'wins' of o
     CONTEXTS.SESSION
+  else if 'id' of o
+    CONTEXTS.HISTORY
   else
     CONTEXTS.SPECIAL
   
@@ -217,9 +213,7 @@ switch_to_command = ->
   if text_mode_text
     context = CONTEXTS.TEXT
   else
-    main_i = suggestions[STATES.MAIN].selection
-    main_choice = suggestions[STATES.MAIN].list[main_i]
-    type = get_type main_choice
+    type = get_type main_choice()
     if type is CONTEXTS.COMMAND
       return
     else
@@ -264,7 +258,23 @@ display_suggestions = ->
   append_template()
   set_suggestions_visibility true
 
-# state machine
+main_choice = ->
+  main_i = suggestions[STATES.MAIN].selection
+  suggestions[STATES.MAIN].list[main_i]
+
+#here not changing
+update_default_cmd = ->
+  setTimeout ->
+    suggestions[STATES.CMD].selection = 0
+    cmd_name = DEFAULTS[get_type main_choice()]
+    cmd = COMMANDS[cmd_name]
+    cmd.name = cmd_name      
+    suggestions[STATES.CMD].list = [cmd]
+    display_suggestions()
+  , 800 
+
+
+# STATE machine
 # TODO key.preventDefault()
 window.onkeydown = (key) =>
   d 'onkeydown ' + key.keyCode
@@ -290,7 +300,9 @@ window.onkeydown = (key) =>
       else if is_down(key) or is_up(key)
         update_selection is_down key
       else 
-        update key if key.keyCode > 31 # is viewable char
+        if key.keyCode > 31 # is viewable char
+          update key
+          update_default_cmd()
     when STATES.TEXT
       if key.keyCode is TAB
         text_mode_text = $f('#f-text').value
