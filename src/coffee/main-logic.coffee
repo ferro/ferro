@@ -265,17 +265,21 @@ main_choice = ->
 #here not changing
 update_default_cmd = ->
   setTimeout ->
+    d 'AAA update_default_cmd'
     suggestions[STATES.CMD].selection = 0
     cmd_name = DEFAULTS[get_type main_choice()]
     cmd = COMMANDS[cmd_name]
     cmd.name = cmd_name      
     suggestions[STATES.CMD].list = [cmd]
     display_suggestions()
-  , 800 
+    d 'AAA displayed_suggestions'
+  , 400 
 
+clear_cmd = ->
+  suggestions[STATES.CMD].selection = null
+  display_suggestions()
 
 # STATE machine
-# TODO key.preventDefault()
 window.onkeydown = (key) =>
   d 'onkeydown ' + key.keyCode
   return if key.keyCode is 91 # apple command key
@@ -297,8 +301,10 @@ window.onkeydown = (key) =>
         switch_to_command()
       else if key.keyCode is BACKSPACE
         set_entered ''
+        clear_cmd()
       else if is_down(key) or is_up(key)
         update_selection is_down key
+        update_default_cmd()
       else 
         if key.keyCode > 31 # is viewable char
           update key
