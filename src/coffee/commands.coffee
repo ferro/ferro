@@ -13,24 +13,30 @@ CONTEXTS = # tied to DEFAULTS
   HISTORY: 9
 
 # don't add commands that have keyboard shortcuts by default, like close tab, close window, and create bookmark
- COMMANDS =
+#
+# end each command with a return true because:  
+# chrome has this weird behavior in which if you call a chrome extension api from the background page in a return statement, the function is not actually called
+COMMANDS =
   duplicate:
     desc: 'Duplicate tab'
     context: [CONTEXTS.TAB, CONTEXTS.MAIN]
     fn: (tab) ->
       chrome.tabs.create _.copy(tab, 'windowId', 'index', 'url')
+      return true
   reload_all_tabs:
     desc: 'Reload every tab in every window'
     context: CONTEXTS.MAIN
     fn: (x) ->
       chrome.windows.getAll { populate: true }, (wins) ->
         reload_window win for win in wins
+      return true
   reload_all_tabs_in_window:
     desc: 'Reload every tab in this window'
     context: CONTEXTS.MAIN
     fn: (x) ->
       chrome.windows.getCurrent { populate: true }, (win) ->
         reload_window win
+      return true
   search_history:
     desc: 'Search through your history for the given text'
     context: CONTEXTS.TEXT
@@ -68,6 +74,7 @@ CONTEXTS = # tied to DEFAULTS
     context: [CONTEXTS.TAB, CONTEXTS.MAIN]
     fn: (tab) ->
       chrome.tabs.update tab.id, {pinned: true}
+      return true
   unpin:
     desc: 'Unpin tab'
     context: [CONTEXTS.TAB, CONTEXTS.MAIN]
@@ -78,6 +85,7 @@ CONTEXTS = # tied to DEFAULTS
     context: CONTEXTS.TAB
     fn: (tab) ->
       chrome.tabs.update tab.id, {selected: true}
+      return true
   enable:
     desc: 'Enable extension or app'
     context: [CONTEXTS.EXTENSION, CONTEXTS.APP]
@@ -151,6 +159,7 @@ CONTEXTS = # tied to DEFAULTS
           if pages.length > 20
             return unless confirm "Open all #{pages.length} tabs in bookmark folder?"
           tab_open page.url for page in pages 
+      return true
   delete:
     desc: 'Delete session or bookmark'
     context: [CONTEXTS.SESSION, CONTEXTS.BOOKMARKS]

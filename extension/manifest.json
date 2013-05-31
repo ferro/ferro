@@ -49,11 +49,11 @@
 	    },
 	    "description": "Duplicate tab"
 	},
-	"reload_all_tabs_in_window": {
+	"repeat_last_command": {
 	    "suggested_key": {
 		"default": "Alt+Shift+R"
 	    },
-	    "description": "Reload all tabs in window"
+	    "description": "Repeat the last command"
 	}
     }
 }

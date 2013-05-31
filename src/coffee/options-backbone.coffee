@@ -57,7 +57,7 @@ $ =>
   # ]
 
 
-  l 'here'
+  l 'start'
   sessions.each (m) ->
     l m  
     m.save()

@@ -187,11 +187,14 @@ execute = ->
   d 'window.close'
 
 # if no arg, uses current tab
-send_cmd = (choice, arg = null) ->
+send_cmd = (cmd, arg = null) ->
   chrome.tabs.getSelected (tab) ->
     d 'send_cmd current tab'
     d tab
-    choice.fn arg or tab
+    copy = {}
+    $.extend(copy, cmd.fn)
+    chrome.extension.getBackgroundPage().update_cmd cmd.fn, (arg or tab)
+    cmd.fn arg or tab
 
 get_type = (o) -> # see, wouldn't a class system be nice?
   if 'cmd' of o
@@ -262,17 +265,15 @@ main_choice = ->
   main_i = suggestions[STATES.MAIN].selection
   suggestions[STATES.MAIN].list[main_i]
 
-#here not changing
 update_default_cmd = ->
   setTimeout ->
-    d 'AAA update_default_cmd'
     suggestions[STATES.CMD].selection = 0
     cmd_name = DEFAULTS[get_type main_choice()]
-    cmd = COMMANDS[cmd_name]
-    cmd.name = cmd_name      
-    suggestions[STATES.CMD].list = [cmd]
-    display_suggestions()
-    d 'AAA displayed_suggestions'
+    if cmd_name
+      cmd = COMMANDS[cmd_name]
+      cmd.name = cmd_name      
+      suggestions[STATES.CMD].list = [cmd]
+      display_suggestions()
   , 400 
 
 clear_cmd = ->
