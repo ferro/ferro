@@ -191,9 +191,7 @@ send_cmd = (cmd, arg = null) ->
   chrome.tabs.getSelected (tab) ->
     d 'send_cmd current tab'
     d tab
-    copy = {}
-    $.extend(copy, cmd.fn)
-    chrome.extension.getBackgroundPage().update_cmd cmd.fn, (arg or tab)
+    chrome.extension.getBackgroundPage().update_cmd cmd.fn, arg, tab
     cmd.fn arg or tab
 
 get_type = (o) -> # see, wouldn't a class system be nice?

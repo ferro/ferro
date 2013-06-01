@@ -8,9 +8,11 @@ localStorage.version = JSON.parse(request.responseText).version
 # state
 
 last_fn = last_arg = null
+use_current_tab = false
     
-window.update_cmd = (fn, arg) ->
-  last_arg = arg
+window.update_cmd = (fn, arg, tab) ->
+  use_current_tab = not arg
+  last_arg = arg or tab
 
 #  TODO simply assigning does not work. why is this? last_fn seems to be assigned correctly when viewed in the debugger, but when it is called in the key listener, it has no effect
   # here
@@ -29,7 +31,12 @@ chrome.commands.onCommand.addListener (command) ->
         else 
           COMMANDS.pin.fn tab
       when 'repeat_last_command'
-        last_fn last_arg if last_fn
+        if last_fn
+          if use_current_tab
+            chrome.tabs.getSelected (tab) ->
+              last_fn tab
+          else
+            last_fn last_arg
       else
         update_cmd fn, tab
         COMMANDS[command].fn tab
