@@ -75,8 +75,8 @@ popup_template = ->
         cmd_klass = 'f-selected'
       div id: 'f-main', class: main_klass, ->
         sugs = @suggestions[@STATES?.MAIN]
-        if @text_entered
-          main = sugs?.list[sugs?.selection] 
+#        if @text_entered
+        main = sugs.list[sugs.selection] 
         d 'text_entered, sugs, main: '
         d @text_entered
         d sugs
@@ -107,11 +107,11 @@ popup_template = ->
       div id: 'f-entered', ->
         span id: 'f-entered-text', ->
           text @text_entered
-      if @text_entered
+      if @suggestions[@state].selection isnt null
         for i in [0..@NUM_SUGGESTIONS-1]
           cur = @suggestions[@state]?.list[i]
           klass = 'f-suggest'
-          klass += ' f-selected' if i is @suggestions[@state]?.selection
+          klass += ' f-selected' if i is @suggestions[@state].selection
           div id: 'f-' + i, class: klass, ->
             icon = get_icon cur
             if icon

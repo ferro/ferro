@@ -9,7 +9,7 @@ STATES =
 suggestions =
   1: #main
     list: []
-    selection: 0
+    selection: null
   3: #cmd
     list: []
     selection: null
@@ -95,11 +95,11 @@ show_suggestions = =>
 update = (e) ->
   d 'inside update'
   suggestions[state].selection = 0
-  c = String.fromCharCode e.keyCode
+  c = String.fromCharCode e.charCode
   d c
 
   # don't do anything with unprintable chars
-  return if not c or e.altKey or e.ctrlKey or e.shiftKey 
+  return if not c or e.altKey or e.ctrlKey
 
   d c
   unless suggestions_are_visible
@@ -167,30 +167,25 @@ execute = ->
     d suggestions[STATES.MAIN].selection
   d 'suggestions'
   d suggestions
-  d 'main_choice:'
-  d main_choice()
   if main_choice().cmd and not text_mode_text
     d 'main_choice.cmd'
     send_cmd main_choice().cmd
   else
     d 'execute else'
-    cmd_i = suggestions[STATES.CMD].selection
-    cmd_choice = suggestions[STATES.CMD].list[cmd_i]?.cmd
-    cmd_choice or= COMMANDS[DEFAULTS[get_type main_choice()]]
-    d 'cmd_choice'
-    d cmd_choice
+    cmd = cmd_choice() or COMMANDS[DEFAULTS[get_type main_choice()]]
+    d 'cmd'
+    d cmd
     arg = text_mode_text or main_choice()
     d 'arg'
     d arg      
-    send_cmd cmd_choice, arg
+    send_cmd cmd, arg
   # window.close()
   d 'window.close'
 
 # if no arg, uses current tab
 send_cmd = (cmd, arg = null) ->
   chrome.tabs.getSelected (tab) ->
-    d 'send_cmd current tab'
-    d tab
+    d 'send_cmd'
     chrome.extension.getBackgroundPage().update_cmd cmd.fn, arg, tab
     cmd.fn arg or tab
 
@@ -230,25 +225,26 @@ switch_to_main = ->
   state = if text_mode_text then STATES.TEXT else STATES.MAIN
   set_entered ''
 
-  set_suggestions_visibility false
   $f('#f-main').className = 'f-selected'
+  $f('#f-cmd').className = ''
   if text_mode_text
     $f('#f-text').focus() 
-  $f('#f-cmd').className = ''
+  else
+    set_suggestions_visibility true
+#    append_template()
   
 append_template = =>
-  d 'appending template'
-  # tem = templates.ferro {suggestions, state, text_entered: text_entered.toLowerCase(), ferro, gear_icon, page_icon, pages_icon, filter}
+  body = $f('body')
+  if body.firstChild
+    body.removeChild body.firstChild
   div = document.createElement 'div'
-  # div.innerHTML = tem
-#  $f('body').appendChild
-  x = coffeecup.render popup_template, {
+  html = coffeecup.render popup_template, {
     text_mode_text, state, STATES, suggestions, text_entered: text_entered.toLowerCase(), NUM_SUGGESTIONS, gear_icon, page_icon, pages_icon, filter
   }
-  div.innerHTML = x
+  div.innerHTML = html
   div.id = 'ferro-container'
-  $f('body').appendChild div
-  $f('#f-text').value = text_mode_text
+  body.appendChild div
+  $f('#f-text').value = text_mode_text #todo needed?
   d 'done appending'
 
 display_suggestions = ->
@@ -262,6 +258,11 @@ display_suggestions = ->
 main_choice = ->
   main_i = suggestions[STATES.MAIN].selection
   suggestions[STATES.MAIN].list[main_i]
+
+cmd_choice = ->
+  cmd_i = suggestions[STATES.CMD].selection
+  suggestions[STATES.CMD].list[cmd_i]?.cmd
+
 
 update_default_cmd = ->
   setTimeout ->
@@ -278,25 +279,25 @@ clear_cmd = ->
   suggestions[STATES.CMD].selection = null
   display_suggestions()
 
+ready_to_execute = ->
+  text_entered or (suggestions[STATES.CMD].selection isnt null)
+
+#here prevent double refresh of suggestions when going back to main
+
+is_transition = (key) ->  
+  _([TAB, KEYS.CODES.LEFT, KEYS.CODES.RIGHT]).contains key.keyCode
+  
 # STATE machine
 window.onkeydown = (key) =>
   d 'onkeydown ' + key.keyCode
-  return if key.keyCode is 91 # apple command key
 
-  if key.keyCode is KEYS.CODES.RETURN and text_entered
+  if key.keyCode is KEYS.CODES.RETURN and ready_to_execute()
     execute()
     return
 
   switch state
     when STATES.MAIN
-      if _([PERIOD, 190, 110]).contains key.keyCode # todo are there other equiv key codes? switch to keypressed and char codes?
-        window.setTimeout ->
-          $f('#f-text').value = ''
-        , 10
-        $f('#f-text').style.visibility = 'visible'
-        $f('#f-text').focus()
-        state = STATES.TEXT
-      else if key.keyCode is TAB
+      if is_transition key
         switch_to_command()
       else if key.keyCode is BACKSPACE
         set_entered ''
@@ -304,24 +305,38 @@ window.onkeydown = (key) =>
       else if is_down(key) or is_up(key)
         update_selection is_down key
         update_default_cmd()
-      else 
-        if key.keyCode > 31 # is viewable char
-          update key
-          update_default_cmd()
     when STATES.TEXT
-      if key.keyCode is TAB
+      if is_transition key
         text_mode_text = $f('#f-text').value
         $f('#f-cmd').focus()
         switch_to_command()
     when STATES.CMD
-      if key.keyCode is TAB
+      if is_transition key
         switch_to_main()
         key.preventDefault()
       else if is_down(key) or is_up(key)
-        update_selection is_down key
-      else
-        suggestions[state].selection or= 0
+        update_selection(is_down key) if cmd_choice()
+
+window.onkeypress = (key) =>
+  d 'onkeypress ' + key.keyCode
+  d key
+
+  switch state
+    when STATES.MAIN
+      if key.charCode is PERIOD
+        window.setTimeout ->
+          $f('#f-text').value = ''
+        , 10
+        $f('#f-text').style.visibility = 'visible'
+        $f('#f-text').focus()
+        state = STATES.TEXT
+      else 
         update key
-        key.preventDefault() # prevents character briefly showing up in #f-text
+        update_default_cmd()
+    when STATES.CMD
+      suggestions[state].selection or= 0
+      update key
+      key.preventDefault() # prevents character briefly showing up in #f-text
+  
 
-
+#here allow arrow keys L + R instead of tab

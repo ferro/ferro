@@ -22,7 +22,17 @@ end
 task :compile => [:options_template, :options_app,  :popup, :background, :sass]
 
 task :background do
-  compile([],['background'],{output: 'background'})
+  compile(
+          [],
+          [
+            'init',
+            'commands',
+            'background'
+          ],
+          {
+            output: 'background'
+          }
+          )
 end
 
 task :options_template do

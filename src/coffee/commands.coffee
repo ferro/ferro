@@ -13,30 +13,24 @@ CONTEXTS = # tied to DEFAULTS
   HISTORY: 9
 
 # don't add commands that have keyboard shortcuts by default, like close tab, close window, and create bookmark
-#
-# end each command with a return true because:  
-# chrome has this weird behavior in which if you call a chrome extension api from the background page in a return statement, the function is not actually called
 COMMANDS =
   duplicate:
     desc: 'Duplicate tab'
     context: [CONTEXTS.TAB, CONTEXTS.MAIN]
     fn: (tab) ->
       chrome.tabs.create _.copy(tab, 'windowId', 'index', 'url')
-      return true
   reload_all_tabs:
     desc: 'Reload every tab in every window'
     context: CONTEXTS.MAIN
     fn: (x) ->
       chrome.windows.getAll { populate: true }, (wins) ->
         reload_window win for win in wins
-      return true
   reload_all_tabs_in_window:
     desc: 'Reload every tab in this window'
     context: CONTEXTS.MAIN
     fn: (x) ->
       chrome.windows.getCurrent { populate: true }, (win) ->
         reload_window win
-      return true
   search_history:
     desc: 'Search through your history for the given text'
     context: CONTEXTS.TEXT
@@ -74,7 +68,6 @@ COMMANDS =
     context: [CONTEXTS.TAB, CONTEXTS.MAIN]
     fn: (tab) ->
       chrome.tabs.update tab.id, {pinned: true}
-      return true
   unpin:
     desc: 'Unpin tab'
     context: [CONTEXTS.TAB, CONTEXTS.MAIN]
@@ -85,7 +78,6 @@ COMMANDS =
     context: CONTEXTS.TAB
     fn: (tab) ->
       chrome.tabs.update tab.id, {selected: true}
-      return true
   enable:
     desc: 'Enable extension or app'
     context: [CONTEXTS.EXTENSION, CONTEXTS.APP]
@@ -159,7 +151,6 @@ COMMANDS =
           if pages.length > 20
             return unless confirm "Open all #{pages.length} tabs in bookmark folder?"
           tab_open page.url for page in pages 
-      return true
   delete:
     desc: 'Delete session or bookmark'
     context: [CONTEXTS.SESSION, CONTEXTS.BOOKMARKS]
@@ -185,6 +176,7 @@ DEFAULTS =  # tied to CONTEXTS
   
 COMMAND_NAMES = []
 
+# load COMMAND_NAMES 2D array
 for name, cmd of COMMANDS
   context = cmd.context
   context = [context] unless context instanceof Array
@@ -192,16 +184,26 @@ for name, cmd of COMMANDS
     COMMAND_NAMES[c] or= []
     COMMAND_NAMES[c].push {name: sentence_case(name), cmd: cmd} 
 
+equals_ignore_case = (a,b) ->
+  sentence_case(a) is sentence_case(b)
+ 
+# put defaults first
+#
+# needs to only be called in browser, because needs underscore
+init = () ->
+  for i, cmd of DEFAULTS
+    if cmd
+      COMMAND_NAMES[i] = _.reject(COMMAND_NAMES[i], (o) => equals_ignore_case o.name, cmd)
+      COMMAND_NAMES[i].unshift {name: sentence_case cmd, cmd: COMMANDS[cmd]}
+
 prepare = (win) ->
   _.extend _.copy(win, 'left', 'top', 'width', 'height', 'focused'),
     urls: _(win.tabs).pluck 'url'
     pins: _(win.tabs).pluck 'pinned' #or just save a count?
     icons: _(win.tabs).pluck 'favIconUrl'
 
-    
 starts_with = (str, starts) ->
   str.length >= starts.length and str.slice(0, starts.length) is starts
-
 
 apply_to_matching_tabs = (text, fn) ->
   if text.url #is a tab

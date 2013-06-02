@@ -5,8 +5,8 @@
 Please do contribute! I'm not planning on doing these anytime soon. Open an issue if you'd like to be pointed in the right direction on how to implement something.
 
 * make icons fade to transparent
+* make something funny happen when a suggestion is clicked
 * when url has highest score, title is still text-match emboldened 
-* history search, if it doesn't clutter the suggestions too much
 * icons for commands
 * allow for multiple search terms for extract, close, etc.
 * show entered capital letters
@@ -19,6 +19,7 @@ Please do contribute! I'm not planning on doing these anytime soon. Open an issu
 * allow omnibox keyword interaction, eg `f extract google.com`
 * remove custom compilation system - make modules and require them
 * class system for different types of suggestions
+* write some tests? need to mock chrome api
 
 ### When the manifest command limit of 4 is lifted
 
@@ -29,7 +30,7 @@ Please do contribute! I'm not planning on doing these anytime soon. Open an issu
 	    }
 	}
 ```
-and others?
+and duplicate.
 
 ## The Code
 

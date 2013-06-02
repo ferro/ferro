@@ -52,7 +52,7 @@ html ->
         tr ->
           td ->
             code 'R'
-          td 'Reload all tabs in window'
+          td 'Repeat previous command'
         # tr ->
         #   td ->
         #     code 'K'
