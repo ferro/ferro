@@ -18,3 +18,4 @@ sentence_case = (s) ->
   while (i = ret.indexOf '_') > 0
     ret = ret[0..i-1] + ' ' + s[i+1].toUpperCase() + s[i+2..-1].toLowerCase()
   ret
+

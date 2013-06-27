@@ -93,12 +93,12 @@ popup_template = ->
         div id: 'f-description-main', ->
           text get_desc main if main
       div id: 'f-cmd', class: cmd_klass, ->
-        sugs = @suggestions[@STATES?.CMD]
-        cmd = sugs?.list[sugs.selection]
+        sugs = @suggestions[@STATES.CMD]
+        cmd = sugs.list[sugs.selection]
         d 'AAAA sugs'
         d sugs
         d 'cmd'
-        d cmd  
+        d cmd
         div id: 'f-name-cmd', ->
           text get_name(cmd) or ''
         div id: 'f-description-cmd', ->
@@ -108,7 +108,8 @@ popup_template = ->
         span id: 'f-entered-text', ->
           text @text_entered
       if @suggestions[@state].selection isnt null
-        for i in [0..@NUM_SUGGESTIONS-1]
+        size = Math.min(@suggestions[@state].list.length, @NUM_SUGGESTIONS)
+        for i in [0...size]
           cur = @suggestions[@state]?.list[i]
           klass = 'f-suggest'
           klass += ' f-selected' if i is @suggestions[@state].selection

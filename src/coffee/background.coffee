@@ -15,7 +15,6 @@ window.update_cmd = (fn, arg, tab) ->
   last_arg = arg or tab
 
 #  TODO simply assigning does not work. why is this? last_fn seems to be assigned correctly when viewed in the debugger, but when it is called in the key listener, it has no effect
-  # here
 #  last_fn = fn
   eval 'last_fn = ' + fn.toString()
 

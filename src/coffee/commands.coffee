@@ -136,8 +136,8 @@ COMMANDS =
       chrome.windows.getAll {populate: true}, (wins) =>
         save_session name, prepare win for win in wins
   open:
-    desc: 'Open saved session, bookmark, or special page'
-    context: [CONTEXTS.SESSION, CONTEXTS.SPECIAL, CONTEXTS.BOOKMARK]
+    desc: 'Open saved session, bookmark, history item, or special page'
+    context: [CONTEXTS.SESSION, CONTEXTS.SPECIAL, CONTEXTS.BOOKMARK, CONTEXTS.HISTORY]
     fn: (page) ->
       if page.wins
         # it's actually a session. typechecking classes would be nice...
@@ -194,7 +194,7 @@ init = () ->
   for i, cmd of DEFAULTS
     if cmd
       COMMAND_NAMES[i] = _.reject(COMMAND_NAMES[i], (o) => equals_ignore_case o.name, cmd)
-      COMMAND_NAMES[i].unshift {name: sentence_case cmd, cmd: COMMANDS[cmd]}
+      COMMAND_NAMES[i].unshift {name: sentence_case(cmd), cmd: COMMANDS[cmd]}
 
 prepare = (win) ->
   _.extend _.copy(win, 'left', 'top', 'width', 'height', 'focused'),

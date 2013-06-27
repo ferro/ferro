@@ -79,13 +79,16 @@ update_selection = (down) ->
   unless suggestions_are_visible
     display_suggestions()
   cur = suggestions[state].selection
-#  $f('#f-' + cur).className = 'f-suggest';
+
   if down
     cur = (cur + 1) % NUM_SUGGESTIONS
   else
     cur = (cur - 1 + NUM_SUGGESTIONS) % NUM_SUGGESTIONS
-#  $f('#f-' + cur).className += ' f-selected';
+
   suggestions[state].selection = cur
+
+  if state is STATES.MAIN
+    suggestions[STATES.CMD].selection = null
   display_suggestions()
 
 show_suggestions = =>
@@ -96,7 +99,6 @@ update = (e) ->
   d 'inside update'
   suggestions[state].selection = 0
   c = String.fromCharCode e.charCode
-  d c
 
   # don't do anything with unprintable chars
   return if not c or e.altKey or e.ctrlKey
@@ -107,9 +109,15 @@ update = (e) ->
       clearTimeout timer_id
     timer_id = setTimeout (-> show_suggestions()), 200
   set_entered text_entered + c
-  chrome.history.search {text: text_entered, maxResults: 5}, (results) =>
-    suggestions[state].list = suggestions[state].list.concat results
-    re_sort()
+
+  switch state
+    when STATES.MAIN
+      chrome.history.search {text: text_entered, maxResults: 5}, (results) =>
+        suggestions[state].list = suggestions[state].list.concat results
+        re_sort()
+    when STATES.CMD
+      re_sort()
+
 
 gear_icon = chrome.extension.getURL 'images/gear.png'
 page_icon = chrome.extension.getURL 'images/page.ico'
@@ -214,7 +222,13 @@ switch_to_command = ->
       return
     else
       context = type
+  
   suggestions[STATES.CMD].list = COMMAND_NAMES[context]
+  d 'context:'
+  d context
+  d COMMAND_NAMES
+  d 'cmd sugs:'
+  d suggestions[STATES.CMD].list
   state = STATES.CMD
   set_entered ''
   set_suggestions_visibility false
@@ -266,14 +280,19 @@ cmd_choice = ->
 
 update_default_cmd = ->
   setTimeout ->
+    if state is STATES.CMD and text_entered
+      return
     suggestions[STATES.CMD].selection = 0
     cmd_name = DEFAULTS[get_type main_choice()]
     if cmd_name
-      cmd = COMMANDS[cmd_name]
-      cmd.name = cmd_name      
+      cmd = {name: sentence_case(cmd_name), cmd: COMMANDS[cmd_name]}
       suggestions[STATES.CMD].list = [cmd]
+      d '****** cmd'
+      d cmd
       display_suggestions()
-  , 400 
+  , 3000
+
+  #here blanking out 
 
 clear_cmd = ->
   suggestions[STATES.CMD].selection = null
@@ -281,8 +300,6 @@ clear_cmd = ->
 
 ready_to_execute = ->
   text_entered or (suggestions[STATES.CMD].selection isnt null)
-
-#here prevent double refresh of suggestions when going back to main
 
 is_transition = (key) ->  
   _([TAB, KEYS.CODES.LEFT, KEYS.CODES.RIGHT]).contains key.keyCode
@@ -314,6 +331,9 @@ window.onkeydown = (key) =>
       if is_transition key
         switch_to_main()
         key.preventDefault()
+      else if key.keyCode is BACKSPACE
+        set_entered ''
+        clear_cmd()
       else if is_down(key) or is_up(key)
         update_selection(is_down key) if cmd_choice()
 
@@ -339,4 +359,3 @@ window.onkeypress = (key) =>
       key.preventDefault() # prevents character briefly showing up in #f-text
   
 
-#here allow arrow keys L + R instead of tab
