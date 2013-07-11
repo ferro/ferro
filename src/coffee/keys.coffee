@@ -16,6 +16,10 @@ KEYS =
     UP: 38
     RIGHT: 39
     DOWN: 40
+    N: 78
+    J: 74
+    P: 80
+    K: 75
 
 
 

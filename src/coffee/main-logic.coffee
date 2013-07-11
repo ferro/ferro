@@ -1,5 +1,9 @@
 d = (z) ->
-  console.log z
+  0
+#  console.log z
+
+z = (x) ->
+  console.log x
 
 STATES =
   MAIN: 1
@@ -13,6 +17,9 @@ suggestions =
   3: #cmd
     list: []
     selection: null
+
+main = suggestions[STATES.MAIN]
+command = suggestions[STATES.CMD]
 
 NUM_SUGGESTIONS = 5
 
@@ -45,7 +52,7 @@ is_down = (e) ->
   k = e.keyCode
   k is KEYS.CODES.PAGE_DOWN or
     k is KEYS.CODES.DOWN or
-    ((e.altKey or e.ctrlKey) and (k is N or k is J))
+    ((e.altKey or e.ctrlKey) and (k is KEYS.CODES.N or k is KEYS.CODES.J))
 
 
 # need some delay between calling this and user entering text
@@ -55,7 +62,7 @@ refresh_all = ->
       flatten_bookmarks tree[0]
       chrome.windows.getAll populate: true, (wins) =>
         tabs = (tab for tab in _.flatten(win.tabs for win in wins)) 
-        suggestions[STATES.MAIN].list = COMMAND_NAMES[CONTEXTS.MAIN]
+        main.list = COMMAND_NAMES[CONTEXTS.MAIN]
           .concat tabs
           .concat apps
           .concat sessions
@@ -88,7 +95,7 @@ update_selection = (down) ->
   suggestions[state].selection = cur
 
   if state is STATES.MAIN
-    suggestions[STATES.CMD].selection = null
+    command.selection = null
   display_suggestions()
 
 show_suggestions = =>
@@ -162,7 +169,7 @@ is_up = (e) ->
   k = e.keyCode
   k is KEYS.CODES.PAGE_UP or
     k is KEYS.CODES.UP or
-    ((e.altKey or e.ctrlKey) and (k is P or k is K))
+    ((e.altKey or e.ctrlKey) and (k is KEYS.CODES.P or k is KEYS.CODES.K))
 
 # todo remove?
 set_entered = (e) ->
@@ -172,7 +179,7 @@ set_entered = (e) ->
 execute = ->
   if main_i < 0
     d 'yes'
-    d suggestions[STATES.MAIN].selection
+    d main.selection
   d 'suggestions'
   d suggestions
   if main_choice().cmd and not text_mode_text
@@ -223,12 +230,12 @@ switch_to_command = ->
     else
       context = type
   
-  suggestions[STATES.CMD].list = COMMAND_NAMES[context]
+  command.list = COMMAND_NAMES[context]
   d 'context:'
   d context
   d COMMAND_NAMES
   d 'cmd sugs:'
-  d suggestions[STATES.CMD].list
+  d command.list
   state = STATES.CMD
   set_entered ''
   set_suggestions_visibility false
@@ -246,7 +253,7 @@ switch_to_main = ->
   else
     set_suggestions_visibility true
 #    append_template()
-  
+
 append_template = =>
   body = $f('body')
   if body.firstChild
@@ -262,6 +269,10 @@ append_template = =>
   d 'done appending'
 
 display_suggestions = ->
+  z '_display_suggestions'
+  z 'suggestions'
+  z suggestions
+  z suggestions[1].selection
   felem = $f '#ferro-container'
   # felem = $f '#ferro'
   body = $f 'body'
@@ -270,43 +281,37 @@ display_suggestions = ->
   set_suggestions_visibility true
 
 main_choice = ->
-  main_i = suggestions[STATES.MAIN].selection
-  suggestions[STATES.MAIN].list[main_i]
+  main_i = main.selection
+  main.list[main_i]
 
 cmd_choice = ->
-  cmd_i = suggestions[STATES.CMD].selection
-  suggestions[STATES.CMD].list[cmd_i]?.cmd
-
+  cmd_i = command.selection
+  command.list[cmd_i]?.cmd
 
 update_default_cmd = ->
   setTimeout ->
-    if state is STATES.CMD and text_entered
+    if (state is STATES.CMD) and (command.selection isnt null)
       return
-    suggestions[STATES.CMD].selection = 0
-    cmd_name = DEFAULTS[get_type main_choice()]
-    if cmd_name
-      cmd = {name: sentence_case(cmd_name), cmd: COMMANDS[cmd_name]}
-      suggestions[STATES.CMD].list = [cmd]
-      d '****** cmd'
-      d cmd
+    context = get_type main_choice()
+    if DEFAULTS[context]
+      command.list = COMMAND_NAMES[context]
+      command.selection = 0
       display_suggestions()
   , 3000
 
-  #here blanking out 
-
 clear_cmd = ->
-  suggestions[STATES.CMD].selection = null
+  command.selection = null
   display_suggestions()
 
 ready_to_execute = ->
-  text_entered or (suggestions[STATES.CMD].selection isnt null)
+  text_entered or (command.selection isnt null)
 
 is_transition = (key) ->  
   _([TAB, KEYS.CODES.LEFT, KEYS.CODES.RIGHT]).contains key.keyCode
   
 # STATE machine
 window.onkeydown = (key) =>
-  d 'onkeydown ' + key.keyCode
+  z 'onkeydown ' + key.keyCode
 
   if key.keyCode is KEYS.CODES.RETURN and ready_to_execute()
     execute()
@@ -338,8 +343,11 @@ window.onkeydown = (key) =>
         update_selection(is_down key) if cmd_choice()
 
 window.onkeypress = (key) =>
-  d 'onkeypress ' + key.keyCode
-  d key
+  z 'onkeypress ' + key.keyCode
+
+  # ctrl-j,k,n,p are handled in onkeydown
+  if _.contains [10,11,14,16], key.keyCode
+    return
 
   switch state
     when STATES.MAIN

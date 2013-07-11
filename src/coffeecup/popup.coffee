@@ -76,22 +76,22 @@ popup_template = ->
       div id: 'f-main', class: main_klass, ->
         sugs = @suggestions[@STATES?.MAIN]
 #        if @text_entered
-        main = sugs.list[sugs.selection] 
-        d 'text_entered, sugs, main: '
+        main_selection = sugs.list[sugs.selection] 
+        d 'text_entered, sugs, main_selection: '
         d @text_entered
         d sugs
-        d main
-        icon = get_icon main
+        d main_selection
+        icon = get_icon main_selection
         if icon
           img id: 'f-icon-main', src: icon, width: '16px', height: '16px'
         div id: 'f-name-main', ->
-          if main
-            n = get_name main
+          if main_selection
+            n = get_name main_selection
             text bold_entered n
           else
             text ''
         div id: 'f-description-main', ->
-          text get_desc main if main
+          text get_desc main_selection if main_selection
       div id: 'f-cmd', class: cmd_klass, ->
         sugs = @suggestions[@STATES.CMD]
         cmd = sugs.list[sugs.selection]
@@ -118,12 +118,12 @@ popup_template = ->
             if icon
               img class: 'f-icon', src: icon, width: '16px', height: '16px'
             div class: 'f-title', ->
-              console.log 'cur: '
-              console.log cur
-              console.log(get_name cur)
+              # console.log 'cur: '
+              # console.log cur
+              # console.log(get_name cur)
               text get_name cur
             div class: 'f-url', ->
-              console.log(get_desc cur)
+#              console.log(get_desc cur)
               text get_desc cur
 
 

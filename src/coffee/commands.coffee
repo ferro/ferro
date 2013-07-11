@@ -185,16 +185,20 @@ for name, cmd of COMMANDS
     COMMAND_NAMES[c].push {name: sentence_case(name), cmd: cmd} 
 
 equals_ignore_case = (a,b) ->
-  sentence_case(a) is sentence_case(b)
+  a.toLowerCase() is b.toLowerCase()
  
+push_to_top = (list, cmd) ->
+  list = _.reject( list, ((o) => equals_ignore_case(o.name, cmd)))
+  list.unshift  {name: sentence_case(cmd), cmd: COMMANDS[cmd]}
+  list
+
 # put defaults first
 #
 # needs to only be called in browser, because needs underscore
 init = () ->
   for i, cmd of DEFAULTS
     if cmd
-      COMMAND_NAMES[i] = _.reject(COMMAND_NAMES[i], (o) => equals_ignore_case o.name, cmd)
-      COMMAND_NAMES[i].unshift {name: sentence_case(cmd), cmd: COMMANDS[cmd]}
+      COMMAND_NAMES[i] = push_to_top COMMAND_NAMES[i], cmd
 
 prepare = (win) ->
   _.extend _.copy(win, 'left', 'top', 'width', 'height', 'focused'),
