@@ -10,7 +10,6 @@ Please do contribute! I'm not planning on doing these anytime soon. Open an issu
 * icons for commands
 * allow for multiple search terms for extract, close, etc.
 * show entered capital letters
-* have < 5 suggestions if < 5 have a nonzero score
 * implement/use pubsub for shortcut, sessions, and chrome.* getters
 * weigh scoring for previously-used key sequences
 * filter exts/apps when `mayDisable` is false and `cmd` is disable
@@ -19,7 +18,7 @@ Please do contribute! I'm not planning on doing these anytime soon. Open an issu
 * allow omnibox keyword interaction, eg `f extract google.com`
 * remove custom compilation system - make modules and require them
 * class system for different types of suggestions
-* write some tests? need to mock chrome api
+* write some tests? need to mock chrome api for some parts
 
 ### When the manifest command limit of 4 is lifted
 

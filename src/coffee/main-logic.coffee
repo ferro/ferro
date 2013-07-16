@@ -154,7 +154,8 @@ re_sort = ->
     display_suggestions()
 
 set_suggestions_visibility = (visible) ->
-  d 'set_suggestions_visibility'
+  z 'set_suggestions_visibility'
+  z visible
   $f('#f-suggestions').style.opacity = if visible then 1 else 0
   suggestions_are_visible = visible
   if visible
@@ -248,11 +249,11 @@ switch_to_main = ->
 
   $f('#f-main').className = 'f-selected'
   $f('#f-cmd').className = ''
+  append_template()
   if text_mode_text
     $f('#f-text').focus() 
   else
     set_suggestions_visibility true
-#    append_template()
 
 append_template = =>
   body = $f('body')

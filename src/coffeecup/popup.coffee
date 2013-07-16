@@ -107,6 +107,7 @@ popup_template = ->
       div id: 'f-entered', ->
         span id: 'f-entered-text', ->
           text @text_entered
+      console.log @suggestions
       if @suggestions[@state].selection isnt null
         size = Math.min(@suggestions[@state].list.length, @NUM_SUGGESTIONS)
         for i in [0...size]
