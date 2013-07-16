@@ -25,11 +25,13 @@
     "offline_enabled": true,
     "options_page": "options.html",
     "permissions": [
+	"http://www.iheartquotes.com/",
 	"tabs",
 	"bookmarks",
 	"chrome://favicon/",
 	"management",
-	"history"
+	"history",
+	"tts"
     ],
     "commands": {
 	"_execute_browser_action": {

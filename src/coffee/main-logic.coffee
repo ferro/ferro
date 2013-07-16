@@ -183,7 +183,7 @@ execute = ->
     d main.selection
   d 'suggestions'
   d suggestions
-  if main_choice().cmd and not text_mode_text
+  if not text_mode_text and main_choice().cmd
     d 'main_choice.cmd'
     send_cmd main_choice().cmd
   else

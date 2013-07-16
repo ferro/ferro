@@ -167,7 +167,7 @@ DEFAULTS =  # tied to CONTEXTS
   1: 'options'
   2: 'launch'
   3: 'restore'
-  4: 'history'
+  4: 'search_history'
   5: 'open'
   6: 'open'
   7: null
@@ -185,7 +185,7 @@ for name, cmd of COMMANDS
     COMMAND_NAMES[c].push {name: sentence_case(name), cmd: cmd} 
 
 equals_ignore_case = (a,b) ->
-  a.toLowerCase() is b.toLowerCase()
+  a.replace('_',' ').toLowerCase() is b.replace('_',' ').toLowerCase()
  
 push_to_top = (list, cmd) ->
   list = _.reject( list, ((o) => equals_ignore_case(o.name, cmd)))
