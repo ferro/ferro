@@ -97,7 +97,7 @@ COMMANDS =
     desc: 'Show description of extension or app'
     context: [CONTEXTS.EXTENSION, CONTEXTS.APP]
     fn: (ext) ->
-      alert ext.description + ' -- Version: ' + ext.version
+      display_message ext.description + ' -- Version: ' + ext.version
   homepage:
     desc: 'Open homepage of extension or app'
     context: [CONTEXTS.EXTENSION, CONTEXTS.APP]
@@ -153,7 +153,7 @@ COMMANDS =
           tab_open page.url for page in pages 
   delete:
     desc: 'Delete session or bookmark'
-    context: [CONTEXTS.SESSION, CONTEXTS.BOOKMARKS]
+    context: [CONTEXTS.SESSION, CONTEXTS.BOOKMARK]
     fn: (bookmark) ->
       if bookmark.wins # actually a session
         sessions.get_by_name(bookmark.name).destroy()

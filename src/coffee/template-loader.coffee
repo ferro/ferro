@@ -4,8 +4,7 @@ $(document).ready ->
   refresh_all()
   append_template()
   $('body').click (event) ->
-    $('body').empty()
-    $('body').html '''
+    display_message '''
 <audio src="egg.ogg"></audio>
 Dear Ferro user,
 <br><br>

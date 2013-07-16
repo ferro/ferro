@@ -1,6 +1,6 @@
 d = (z) ->
-  0
-#  console.log z
+
+  console.log z
 
 z = (x) ->
   console.log x
@@ -195,8 +195,8 @@ execute = ->
     d 'arg'
     d arg      
     send_cmd cmd, arg
-  # window.close()
   d 'window.close'
+  window.close()
 
 # if no arg, uses current tab
 send_cmd = (cmd, arg = null) ->
@@ -222,6 +222,7 @@ get_type = (o) -> # see, wouldn't a class system be nice?
     CONTEXTS.SPECIAL
   
 switch_to_command = ->
+  z 'switch_to_command'
   if text_mode_text
     context = CONTEXTS.TEXT
   else
