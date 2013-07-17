@@ -67,12 +67,12 @@ popup_template = ->
       textarea id: 'f-text', cols: '20', rows: '4', style: 'visibility: ' + visibility
       main_klass = ''
       cmd_klass = ''
-      if @state is @STATES?.MAIN
-        main_klass = 'f-selected'
-        cmd_klass = ''
-      else
+      if @state is @STATES.CMD
         main_klass = ''
         cmd_klass = 'f-selected'
+      else
+        main_klass = 'f-selected'
+        cmd_klass = ''
       div id: 'f-main', class: main_klass, ->
         sugs = @suggestions[@STATES?.MAIN]
 #        if @text_entered
@@ -97,7 +97,7 @@ popup_template = ->
         cmd = sugs.list[sugs.selection]
         d 'AAAA sugs'
         d sugs
-        d 'cmd'
+        d 'popup cmd'
         d cmd
         div id: 'f-name-cmd', ->
           text get_name(cmd) or ''
@@ -108,7 +108,7 @@ popup_template = ->
         span id: 'f-entered-text', ->
           text @text_entered
       console.log @suggestions
-      if @suggestions[@state].selection isnt null
+      if @state isnt @STATES.TEXT and @suggestions[@state].selection isnt null
         size = Math.min(@suggestions[@state].list.length, @NUM_SUGGESTIONS)
         for i in [0...size]
           cur = @suggestions[@state]?.list[i]

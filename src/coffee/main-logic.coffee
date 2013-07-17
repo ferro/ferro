@@ -232,7 +232,9 @@ switch_to_command = ->
     else
       context = type
   
-  command.list = COMMAND_NAMES[context]
+  if command.selection is null
+    command.list = COMMAND_NAMES[context]
+  
   d 'context:'
   d context
   d COMMAND_NAMES
@@ -252,7 +254,10 @@ switch_to_main = ->
   $f('#f-cmd').className = ''
   append_template()
   if text_mode_text
-    $f('#f-text').focus() 
+    $f('#f-text').focus()
+    box = $('#f-text')
+    len = box.val().length
+    $f('#f-text').setSelectionRange len, len
   else
     set_suggestions_visibility true
 
@@ -294,7 +299,10 @@ update_default_cmd = ->
   setTimeout ->
     if (state is STATES.CMD) and (command.selection isnt null)
       return
-    context = get_type main_choice()
+    if main_choice()
+      context = get_type main_choice()
+    else if state is STATES.TEXT
+      context = CONTEXTS.TEXT
     if DEFAULTS[context]
       command.list = COMMAND_NAMES[context]
       command.selection = 0
@@ -360,6 +368,7 @@ window.onkeypress = (key) =>
         $f('#f-text').style.visibility = 'visible'
         $f('#f-text').focus()
         state = STATES.TEXT
+        update_default_cmd()
       else 
         update key
         update_default_cmd()
