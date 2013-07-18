@@ -17,6 +17,7 @@ class SessionView extends Backbone.View
 
   events:
     'click .delete': 'delete'
+    'focus span': 'set_carat'
     keyup: 'edited'
     paste: 'edited'
 
@@ -40,6 +41,26 @@ class SessionView extends Backbone.View
       @model.destroy()
       $(@el).remove()
 
+  set_carat: ->
+    set_carat_at_end $(@el).children('span')[0]
+
+
+set_carat_at_end = (el) ->
+  if (typeof window.getSelection != "undefined" and typeof document.createRange != "undefined") 
+    range = document.createRange()
+    range.selectNodeContents(el)
+    range.collapse(false)
+    sel = window.getSelection()
+    sel.removeAllRanges()
+    sel.addRange(range)
+  else if (typeof document.body.createTextRange != "undefined")
+    textRange = document.body.createTextRange()
+    textRange.moveToElementText(el)
+    textRange.collapse(false)
+    textRange.select()
+
+
+  
 $ =>
 # sessions.fetch()
   
@@ -58,6 +79,7 @@ $ =>
 
 
   l 'start'
+  sessions = new SessionList
   sessions.each (m) ->
     l m  
     m.save()
@@ -65,6 +87,8 @@ $ =>
   sessions.fetch()
   sessions.each (s) =>
     if s.attributes.id
+      l 'adding li'
+      l s
       $('#session-list').append (new SessionView({model: s})).render().el 
 
   if sessions.size() is 0

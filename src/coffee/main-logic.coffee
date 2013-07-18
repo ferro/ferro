@@ -1,6 +1,5 @@
 d = (z) ->
-
-  console.log z
+#  console.log z
 
 z = (x) ->
   console.log x
@@ -39,8 +38,8 @@ main_choice = null
 text_mode_text = ''
 timer_id = null
 suggestions_are_visible = false
-sessions = []#todo load
 bookmarks = []
+sessions = null
 
 $f = (id) ->
   if id[0] is '#'
@@ -56,16 +55,20 @@ is_down = (e) ->
 
 
 # need some delay between calling this and user entering text
-refresh_all = ->
+load_data = ->
+  sessions = new SessionList
+  sessions.fetch()
+  z 'SESSIONS'
+  z sessions
   chrome.management.getAll (apps) =>
     chrome.bookmarks.getTree (tree) =>
       flatten_bookmarks tree[0]
       chrome.windows.getAll populate: true, (wins) =>
         tabs = (tab for tab in _.flatten(win.tabs for win in wins)) 
-        main.list = COMMAND_NAMES[CONTEXTS.MAIN]
+        main.list = COMMANDS_BY_CONTEXT[CONTEXTS.MAIN]
           .concat tabs
           .concat apps
-          .concat sessions
+          .concat sessions.models
           .concat bookmarks
           .concat SPECIAL_PAGES
 
@@ -138,8 +141,10 @@ re_sort = ->
 #     x.charCodeAt(0)
 
     # everything has a name except for tabs
-    if s.name
+    if s.name 
       weight = s.name.score text_entered
+    else if s.get #session
+      weight = s.get('name').score text_entered
     else
       weight = _.max [s.title?.score text_entered, s.url?.score text_entered]
     1 - weight 
@@ -195,8 +200,8 @@ execute = ->
     d 'arg'
     d arg      
     send_cmd cmd, arg
-  d 'window.close'
-  window.close()
+  d 'WINDOW.CLOSE'
+#  window.close()
 
 # if no arg, uses current tab
 send_cmd = (cmd, arg = null) ->
@@ -214,7 +219,7 @@ get_type = (o) -> # see, wouldn't a class system be nice?
     CONTEXTS.BOOKMARK
   else if 'index' of o
     CONTEXTS.TAB
-  else if 'wins' of o
+  else if 'get' of o
     CONTEXTS.SESSION
   else if 'id' of o
     CONTEXTS.HISTORY
@@ -233,11 +238,11 @@ switch_to_command = ->
       context = type
   
   if command.selection is null
-    command.list = COMMAND_NAMES[context]
+    command.list = COMMANDS_BY_CONTEXT[context]
   
   d 'context:'
   d context
-  d COMMAND_NAMES
+  d COMMANDS_BY_CONTEXT
   d 'cmd sugs:'
   d command.list
   state = STATES.CMD
@@ -268,7 +273,7 @@ append_template = =>
   div = document.createElement 'div'
   html = coffeecup.render popup_template, {
     text_mode_text, state, STATES, suggestions, text_entered: text_entered.toLowerCase(), NUM_SUGGESTIONS, gear_icon, page_icon, pages_icon, filter
-  }
+  }, hardcode: helpers
   div.innerHTML = html
   div.id = 'ferro-container'
   body.appendChild div
@@ -304,7 +309,7 @@ update_default_cmd = ->
     else if state is STATES.TEXT
       context = CONTEXTS.TEXT
     if DEFAULTS[context]
-      command.list = COMMAND_NAMES[context]
+      command.list = COMMANDS_BY_CONTEXT[context]
       command.selection = 0
       display_suggestions()
   , 3000

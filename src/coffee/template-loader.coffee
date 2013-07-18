@@ -1,9 +1,14 @@
+OPTIONS = {voiceName: 'Vicki', gender: 'female', volume: 0.4}
+
+speak = (text, opts) ->
+  _.extend opts, OPTIONS
+  chrome.tts.speak text, opts
+
 $(document).ready ->
-  console.log 'template loader, document.ready'
-  d 'command names'
-  d COMMAND_NAMES
-  init()
-  refresh_all()
+  z 'template loader, document.ready'
+  init_commands_by_context()
+  z COMMANDS_BY_CONTEXT
+  load_data()
   append_template()
   $('body').click (event) ->
     unless $('audio')[0]
@@ -26,8 +31,8 @@ Loren
     times = parseInt(localStorage.times) + 1
     localStorage.times = times
     if times > 1
-      chrome.tts.speak 'You have clicked Ferro ' + times + ' times.'
+      speak 'You have clicked Ferro ' + times + ' times.', {rate: 2}
       $.get 'http://www.iheartquotes.com/api/v1/random?source=starwars&format=json', (data) ->
-        chrome.tts.speak data.quote, {enqueue: true, rate: 1.0}
+        speak data.quote, {enqueue: true, rate: 1.3}
 
   

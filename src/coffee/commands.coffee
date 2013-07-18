@@ -118,31 +118,31 @@ COMMANDS =
     context: CONTEXTS.SESSION
     fn: (session) ->
       chrome.tabs.getSelected (tab) =>
-        s = sessions.get_by_name session.name
-        wins = s.get 'wins'
-        wins[0].url.push tab.url
+        s = sessions.get_by_name session.get('name')
+        wins = s.get 'wins' 
+        wins[0].urls.push tab.url
         wins[0].pins.push tab.pinned
+        wins[0].icons.push tab.favIconUrl
         s.save {wins}
   save:
     desc: 'Save the current window with the name given'
     context: CONTEXTS.TEXT
     fn: (name) ->
-      chrome.windows.getCurrent (win) =>
+      chrome.windows.getCurrent {populate: true}, (win) =>
         save_session name, [prepare win]
   save_all:
     desc: 'Save all open windows with the name given'
     context: CONTEXTS.TEXT
     fn: (name) ->
       chrome.windows.getAll {populate: true}, (wins) =>
-        save_session name, prepare win for win in wins
+        save_session name, (prepare win for win in wins)
   open:
     desc: 'Open saved session, bookmark, history item, or special page'
     context: [CONTEXTS.SESSION, CONTEXTS.SPECIAL, CONTEXTS.BOOKMARK, CONTEXTS.HISTORY]
     fn: (page) ->
-      if page.wins
-        # it's actually a session. typechecking classes would be nice...
-        session = page
-        open_session session
+      if page.constructor.name is 'Session'
+        # it's actually a session. typechecking for other classes would be nice...
+        open_session page
       else if page.url
         tab_open page.url
       else
@@ -155,8 +155,8 @@ COMMANDS =
     desc: 'Delete session or bookmark'
     context: [CONTEXTS.SESSION, CONTEXTS.BOOKMARK]
     fn: (bookmark) ->
-      if bookmark.wins # actually a session
-        sessions.get_by_name(bookmark.name).destroy()
+      if bookmark.constructor.name is 'Session'
+        sessions.get_by_name(bookmark.get('name')).destroy()
       else if bookmark.children and bookmark.children.length isnt 0
         chrome.bookmarks.removeTree bookmark.id if confirm "Recursively delete all #{bookmark.children.length} bookmarks in folder?"
       else
@@ -166,7 +166,7 @@ DEFAULTS =  # tied to CONTEXTS
   0: 'select'
   1: 'options'
   2: 'launch'
-  3: 'restore'
+  3: 'open'
   4: 'search_history'
   5: 'open'
   6: 'open'
@@ -174,15 +174,15 @@ DEFAULTS =  # tied to CONTEXTS
   8: null
   9: 'open'
   
-COMMAND_NAMES = []
+COMMANDS_BY_CONTEXT = []
 
-# load COMMAND_NAMES 2D array
+# load COMMANDS_BY_CONTEXT 2D array
 for name, cmd of COMMANDS
   context = cmd.context
   context = [context] unless context instanceof Array
   for c in context
-    COMMAND_NAMES[c] or= []
-    COMMAND_NAMES[c].push {name: sentence_case(name), cmd: cmd} 
+    COMMANDS_BY_CONTEXT[c] or= []
+    COMMANDS_BY_CONTEXT[c].push {name: sentence_case(name), cmd: cmd} 
 
 equals_ignore_case = (a,b) ->
   a.replace('_',' ').toLowerCase() is b.replace('_',' ').toLowerCase()
@@ -195,10 +195,10 @@ push_to_top = (list, cmd) ->
 # put defaults first
 #
 # needs to only be called in browser, because needs underscore
-init = () ->
+init_commands_by_context = () ->
   for i, cmd of DEFAULTS
     if cmd
-      COMMAND_NAMES[i] = push_to_top COMMAND_NAMES[i], cmd
+      COMMANDS_BY_CONTEXT[i] = push_to_top COMMANDS_BY_CONTEXT[i], cmd
 
 prepare = (win) ->
   _.extend _.copy(win, 'left', 'top', 'width', 'height', 'focused'),
@@ -229,13 +229,20 @@ apply_to_regex_tabs = (regex, fn) ->
     fn tabs
   
 open_session = (session) ->
-  for win in session.wins
-    win.url = win.urls.toString() #todo syntax http://developer.chrome.com/extensions/windows.html
-    chrome.windows.create win, (new_win) => 
-      for i in [0...win.tabs.length]
+  for win in session.get('wins')
+    win.url = win.urls
+    z 'WIN.URL'
+    z win.url
+    chrome.windows.create _.omit(win, 'urls', 'pins', 'icons'), (new_win) =>
+      z new_win  
+      for i in [0...win.urls.length]
         chrome.tabs.update new_win.tabs[i].id, {pinned: win.pins[i]}
+      chrome.tabs.update new_win.tabs[0].id, {active: true}
 
 save_session = (name, wins) ->
+  s = sessions.get_by_name name
+  if s
+    s.destroy()
   s = new Session {name, wins}
   sessions.add s
   s.save()

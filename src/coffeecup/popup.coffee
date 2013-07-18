@@ -46,19 +46,35 @@ get_icon = (o, accept_array = false) ->
       null
 
 get_name = (o) ->
-  o?.name or o?.title      
+  unless o
+    return ''
+  o.name or o.title or o.get('name')
 
-get_desc = (o) ->
-  desc = o?.cmd?.desc or o?.desc or o?.description
-  if o?.url
-    if o?.url[0..6] is 'http://'
-      desc = o?.url[7..-1]
-    else if o?.url[0..7] is 'https://'
-      desc = o?.url[8..-1]
-    else
-      desc = o?.url
-#  desc[0..39] if desc
-  desc
+helpers =
+    icon: (attrs) ->
+      attrs.width = attrs.height = '16px'
+      img attrs
+  
+    description: (o) ->
+      unless o
+        return -> text ''
+
+      if o.constructor.name is 'Session'
+        ->
+          for win in o.get('wins')
+            for url in win.icons
+              icon {src: url}
+            span class: 'spacer'
+      else
+        desc = o?.cmd?.desc or o?.desc or o?.description
+        if o?.url
+          if o?.url[0..6] is 'http://'
+            desc = o?.url[7..-1]
+          else if o?.url[0..7] is 'https://'
+            desc = o?.url[8..-1]
+          else
+            desc = o?.url
+        -> desc
 
 popup_template = ->
   div id: 'ferro', ->
@@ -81,17 +97,16 @@ popup_template = ->
         d @text_entered
         d sugs
         d main_selection
-        icon = get_icon main_selection
-        if icon
-          img id: 'f-icon-main', src: icon, width: '16px', height: '16px'
+        url = get_icon main_selection
+        if url
+          icon {src: url, id: 'f-icon-main'}
         div id: 'f-name-main', ->
           if main_selection
-            n = get_name main_selection
-            text bold_entered n
+            # text bold_entered get_name main_selection
+            text get_name main_selection
           else
             text ''
-        div id: 'f-description-main', ->
-          text get_desc main_selection if main_selection
+        div id: 'f-description-main', description main_selection
       div id: 'f-cmd', class: cmd_klass, ->
         sugs = @suggestions[@STATES.CMD]
         cmd = sugs.list[sugs.selection]
@@ -101,8 +116,7 @@ popup_template = ->
         d cmd
         div id: 'f-name-cmd', ->
           text get_name(cmd) or ''
-        div id: 'f-description-cmd', ->
-          text get_desc(cmd) or ''
+        div id: 'f-description-cmd', description cmd
     div id: 'f-suggestions', ->
       div id: 'f-entered', ->
         span id: 'f-entered-text', ->
@@ -115,17 +129,14 @@ popup_template = ->
           klass = 'f-suggest'
           klass += ' f-selected' if i is @suggestions[@state].selection
           div id: 'f-' + i, class: klass, ->
-            icon = get_icon cur
-            if icon
-              img class: 'f-icon', src: icon, width: '16px', height: '16px'
+            url = get_icon cur
+            if url
+              icon {src: url, class: 'f-icon'}
             div class: 'f-title', ->
               # console.log 'cur: '
               # console.log cur
               # console.log(get_name cur)
               text get_name cur
-            div class: 'f-url', ->
-#              console.log(get_desc cur)
-              text get_desc cur
-
+            div class: 'f-url', description cur
 
 
