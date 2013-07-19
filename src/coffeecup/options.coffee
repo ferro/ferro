@@ -23,9 +23,12 @@ html ->
         code 'tab'
         t 'and type again) and hit '
         code 'enter'
-        t '. TODO '
+        t '. For more information on usage, go to '
+        a href: 'http://getferro.com', -> 'getferro.com'
       h3 'Saved Sessions'
-      ul id: 'session-list', ->
+      ul id: 'session-list'
+      p ->
+        t 'Note that sessions are only saved locally to your computer. When Chrome provides a method of syncing extension data via your Google account, we will implement synced sessions.'
       h3 'Keyboard Shortcuts'
       p ->
         t 'To change a keyboard shortcut, go to the extensions page ('

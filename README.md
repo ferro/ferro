@@ -5,6 +5,7 @@
 Please do contribute! I'm not planning on doing these anytime soon. Open an issue if you'd like to be pointed in the right direction on how to implement something.
 
 * enable scrolling past 5th suggestion
+* refactor popup into a backbone app
 * make icons fade to transparent
 * make something funny happen when a suggestion is clicked
 * when url has highest score, title is still text-match emboldened 

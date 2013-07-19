@@ -1,5 +1,5 @@
 d = (z) ->
-#  console.log z
+  console.log z
 
 z = (x) ->
   console.log x
@@ -35,7 +35,7 @@ text_entered = ''
 context = null
 main_i = -2
 main_choice = null
-text_mode_text = ''
+text_mode_text = null
 timer_id = null
 suggestions_are_visible = false
 bookmarks = []
@@ -53,6 +53,9 @@ is_down = (e) ->
     k is KEYS.CODES.DOWN or
     ((e.altKey or e.ctrlKey) and (k is KEYS.CODES.N or k is KEYS.CODES.J))
 
+
+in_text_mode = () ->
+  text_mode_text?.constructor?.name is 'String'
 
 # need some delay between calling this and user entering text
 load_data = ->
@@ -183,20 +186,28 @@ set_entered = (e) ->
   $f('#f-entered-text').innerHTML = e.toLowerCase()
 
 execute = ->
+  z '======= execute'
   if main_i < 0
     d 'yes'
     d main.selection
   d 'suggestions'
   d suggestions
-  if not text_mode_text and main_choice().cmd
+  if not in_text_mode() and main_choice().cmd
     d 'main_choice.cmd'
     send_cmd main_choice().cmd
   else
     d 'execute else'
-    cmd = cmd_choice() or COMMANDS[DEFAULTS[get_type main_choice()]]
+    cmd = if cmd_choice()
+      cmd_choice()
+    else if in_text_mode()
+      COMMANDS[DEFAULTS[CONTEXTS.TEXT]]
+    else
+      COMMANDS[DEFAULTS[get_type main_choice()]]
     d 'cmd'
     d cmd
-    arg = text_mode_text or main_choice()
+    arg = main_choice()
+    if in_text_mode()
+      arg = $f('#f-text').value
     d 'arg'
     d arg      
     send_cmd cmd, arg
@@ -228,7 +239,7 @@ get_type = (o) -> # see, wouldn't a class system be nice?
   
 switch_to_command = ->
   z 'switch_to_command'
-  if text_mode_text
+  if in_text_mode()
     context = CONTEXTS.TEXT
   else
     type = get_type main_choice()
@@ -251,33 +262,52 @@ switch_to_command = ->
   $f('#f-main').className = ''  #todo for text
   $f('#f-cmd').className = 'f-selected'
   
+focus_text = () ->
+  $f('#f-text').focus()
+  box = $('#f-text')
+  len = box.val().length
+  $f('#f-text').setSelectionRange len, len
+
+
 switch_to_main = ->
-  state = if text_mode_text then STATES.TEXT else STATES.MAIN
+  state = if in_text_mode() then STATES.TEXT else STATES.MAIN
   set_entered ''
 
   $f('#f-main').className = 'f-selected'
   $f('#f-cmd').className = ''
   append_template()
-  if text_mode_text
-    $f('#f-text').focus()
-    box = $('#f-text')
-    len = box.val().length
-    $f('#f-text').setSelectionRange len, len
+  if in_text_mode()
+    focus_text()
   else
     set_suggestions_visibility true
 
+switch_to_text = ->
+  text_mode_text = ''
+  window.setTimeout ->
+    $f('#f-text').value = ''
+  , 10
+  $f('#f-text').style.visibility = 'visible'
+  $f('#f-text').focus()
+  state = STATES.TEXT
+  main.selection = command.selection = null
+  main.list = command.list = []
+  set_entered ''
+  set_suggestions_visibility false
+  
 append_template = =>
   body = $f('body')
   if body.firstChild
     body.removeChild body.firstChild
   div = document.createElement 'div'
   html = coffeecup.render popup_template, {
-    text_mode_text, state, STATES, suggestions, text_entered: text_entered.toLowerCase(), NUM_SUGGESTIONS, gear_icon, page_icon, pages_icon, filter
+    text_mode_text, state, STATES, suggestions, text_entered: text_entered.toLowerCase(), NUM_SUGGESTIONS, gear_icon, page_icon, pages_icon, filter, in_text_mode
   }, hardcode: helpers
   div.innerHTML = html
   div.id = 'ferro-container'
   body.appendChild div
-  $f('#f-text').value = text_mode_text #todo needed?
+  $f('#f-text').value = text_mode_text
+  if state is STATES.TEXT
+    focus_text()
   d 'done appending'
 
 display_suggestions = ->
@@ -308,10 +338,13 @@ update_default_cmd = ->
       context = get_type main_choice()
     else if state is STATES.TEXT
       context = CONTEXTS.TEXT
+      text_mode_text = $f('#f-text').value
+      z 'update_default text'
+      z text_mode_text
     if DEFAULTS[context]
       command.list = COMMANDS_BY_CONTEXT[context]
       command.selection = 0
-      display_suggestions()
+      append_template()
   , 3000
 
 clear_cmd = ->
@@ -319,7 +352,7 @@ clear_cmd = ->
   display_suggestions()
 
 ready_to_execute = ->
-  text_entered or (command.selection isnt null)
+  text_entered or $f('#f-text').value or (command.selection isnt null)
 
 is_transition = (key) ->  
   _([TAB, KEYS.CODES.LEFT, KEYS.CODES.RIGHT]).contains key.keyCode
@@ -367,12 +400,7 @@ window.onkeypress = (key) =>
   switch state
     when STATES.MAIN
       if key.charCode is PERIOD
-        window.setTimeout ->
-          $f('#f-text').value = ''
-        , 10
-        $f('#f-text').style.visibility = 'visible'
-        $f('#f-text').focus()
-        state = STATES.TEXT
+        switch_to_text()
         update_default_cmd()
       else 
         update key

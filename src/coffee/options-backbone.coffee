@@ -45,20 +45,6 @@ class SessionView extends Backbone.View
     set_carat_at_end $(@el).children('span')[0]
 
 
-set_carat_at_end = (el) ->
-  if (typeof window.getSelection != "undefined" and typeof document.createRange != "undefined") 
-    range = document.createRange()
-    range.selectNodeContents(el)
-    range.collapse(false)
-    sel = window.getSelection()
-    sel.removeAllRanges()
-    sel.addRange(range)
-  else if (typeof document.body.createTextRange != "undefined")
-    textRange = document.body.createTextRange()
-    textRange.moveToElementText(el)
-    textRange.collapse(false)
-    textRange.select()
-
 
   
 $ =>

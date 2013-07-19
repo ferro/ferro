@@ -74,12 +74,15 @@ helpers =
             desc = o?.url[8..-1]
           else
             desc = o?.url
-        -> desc
+        -> text desc
 
 popup_template = ->
   div id: 'ferro', ->
     div id: 'f-box', ->
-      visibility = if @text_mode_text then 'visible' else 'hidden'
+      z @in_text_mode()
+      z @text_mode_text
+      visibility = if @in_text_mode() then 'visible' else 'hidden'
+      z visibility
       textarea id: 'f-text', cols: '20', rows: '4', style: 'visibility: ' + visibility
       main_klass = ''
       cmd_klass = ''
