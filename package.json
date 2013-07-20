@@ -2,6 +2,8 @@
     "name": "ferro",
     "version": "0.0.1",
     "dependencies": {
+	"backbone": "1.0.0",
+	"zappajs": "0.4.22",
 	"coffeecup": "0.3.19",
 	"coffee-script": "1.6.2"
     }

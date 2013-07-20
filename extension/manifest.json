@@ -19,19 +19,21 @@
     "background": {
 	"scripts": ["js/background.js"]
     },
-    "content_security_policy": "script-src 'self' 'unsafe-eval'; object-src 'self'",
+    "content_security_policy": "script-src 'self' https://checkout.stripe.com 'unsafe-eval'; object-src 'self'",
     "homepage_url": "http://getferro.com",
     "incognito": "spanning",
     "offline_enabled": true,
     "options_page": "options.html",
     "permissions": [
-	"http://www.iheartquotes.com/",
 	"tabs",
 	"bookmarks",
 	"chrome://favicon/",
 	"management",
 	"history",
-	"tts"
+	"tts",
+	"http://www.iheartquotes.com/",
+	"https://*stripe.com/",
+	"https://donate.getferro.com/"
     ],
     "commands": {
 	"_execute_browser_action": {

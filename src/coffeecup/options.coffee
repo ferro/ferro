@@ -11,43 +11,60 @@ html ->
       rel: 'stylesheet'
       type: 'text/css'
     script src: 'js/options.js'
+    script src: 'https://checkout.stripe.com/v2/checkout.js'
   body ->
-    div '#banner', ->
+    aside '#banner', ->
       a href: 'https://github.com/ferro/ferro/', -> 'Fork me on GitHub'
-    div '#main', ->
+    aside '#donate', ->
+      h3 'Feed me'
+      img src: 'images/panang.jpg', height: '120', width: '120'
+      p 'I emphatically adore Thai vittles. Your donation will endow my occasional excursions to the local Thai restaurant and thereupon deliver felicity to my life. It will also get rid of this box, which has probably been making you hungry.'
+      label 'Donor name:'
+      input id: 'name', type: 'text', placeholder: 'Anonymous'
+      label 'Amount:'
+      span '.currency', ->
+        text '$'
+        input id: 'amount', type: 'number', placeholder: '9.95'
+      span '.note', 'Chicken Panang Curry (พะแนง) is $9.95'
+      span '.header', 'Amount left after processing fees'
+      input '#stripe', type: 'button', 'Use credit card'
+      span 
+      input '#bitcoin', type: 'button', 'Use bitcoins'
+      span
+      p 'Most recent donations: '
+      ul '#donations'
+      a href: 'http://donate.getferro.com', -> 'Full list of donors'
+    section '#main', ->
       h1 'Ferro'
       p ->
-        t 'Provides a better keyboard interface and session management. Hit '
+        t 'Ferro provides session management and a keyboard interface to Chrome. It functions similarly to application launchers like Quicksilver. Hit '
         code 'Alt-Shift-F'
         t ', type, (optionally hit '
         code 'tab'
         t 'and type again) and hit '
         code 'enter'
-        t '. For more information on usage, go to '
+        t '. For more information on usage, visit '
         a href: 'http://getferro.com', -> 'getferro.com'
+        t '.'
       h3 'Saved Sessions'
       ul id: 'session-list'
       p ->
-        t 'Note that sessions are only saved locally to your computer. When Chrome provides a method of syncing extension data via your Google account, we will implement synced sessions.'
+        t 'Sessions are only saved locally to this computer. When Chrome provides a method of syncing extension data to your other computers, I will implement synced sessions.'
       h3 'Keyboard Shortcuts'
       p ->
-        t 'To change a keyboard shortcut, go to the extensions page ('
+        t 'To set up keyboard shortcuts, go to the extensions page ('
         code 'chrome://extensions'
         t ') and click the "Configure commands" link on the bottom right.'
       span '#prefix', ->
         code 'Alt-Shift-'
       table '.keys', ->
         tr ->
-          th 'Default Shortcut'
+          th 'Recommended Shortcut'
           th 'Command'
         tr ->
           td ->
             code 'F'
-          td 'Open Ferro popup'
-        tr ->
-          td ->
-            code 'P'
-          td 'Pin/Unpin current tab'
+          td 'Activate the extension'
         tr ->
           td ->
             code 'D'
@@ -55,13 +72,11 @@ html ->
         tr ->
           td ->
             code 'R'
-          td 'Repeat previous command'
-        # tr ->
-        #   td ->
-        #     code 'K'
-        #   td 'Kill tab'
-      p ->
-        t 'Note that if you already have these shortcuts set to other extensions, you will have to set shortcuts for Ferro yourself.'
+          td 'Repeat the last command'
+        tr ->
+          td ->
+            code 'P'
+          td 'Toggle tab pin'
       h3 'Available Commands'
       table ->
         tr ->
@@ -92,4 +107,4 @@ html ->
       footer ->
         a href: 'http://getferro.com', -> 'getferro.com'
         t '&#167'
-        a href: 'https://github.com/ferro/ferro/issues', -> 'Problems & Suggestions'
+        a href: 'https://github.com/ferro/ferro/issues', -> 'problems & suggestions'

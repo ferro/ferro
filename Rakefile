@@ -1,11 +1,6 @@
-
-
-#require 'crxmake'
-
-#https://github.com/documentcloud/backbone/raw/master/backbone.js
-#https://github.com/douglascrockford/JSON-js/raw/master/json2.js
-
 task :default => :compile
+
+task :compile => [:options_template, :options_app,  :popup, :background, :sass]
 
 task :watch do
   exec 'coffee -cw -o extension/js/ src/coffee/'
@@ -15,11 +10,8 @@ task :watch do
 end
 
 task :sass do
-  #  `node_modules/coffeecup/bin/coffeecup -fw -o extension/js/ src/coffeecup/options.coffee &`
   `sass --watch src/sass/:extension/css/`
 end
-
-task :compile => [:options_template, :options_app,  :popup, :background, :sass]
 
 task :background do
   compile(
@@ -129,21 +121,10 @@ f = {}
 
       `echo "#{pre}" > tmp.js`
       `cat tmp2.js >> tmp.js`
-
-      # `rm tmp.js`
-      `rm tmp.coffee`
-#      `mv tmp.js extension/js/#{opts[:js]}`
     else
       `node_modules/coffeecup/bin/coffeecup tmp.coffee`
       `mv tmp.html extension/#{opts[:ccup]}.html`
     end
-    # if opts[:use_node]
-    #   `coffee -bc tmp.coffee`
-    #   `node tmp.js`
-    # else
-    # end
-    `rm tmp.coffee`
-
   else
     `cat src/coffee/#{coffee[0]}.coffee > tmp.coffee`
     coffee.each do |file|
@@ -155,7 +136,6 @@ f = {}
       `cat src/coffeecup/#{opts[:ccup_js]}.coffee >> tmp.coffee`
     end
     `coffee -bc tmp.coffee`
-    `rm tmp.coffee`
 
     if ENV['env'] == 'production'
       js.each do |s|
@@ -174,18 +154,15 @@ f = {}
       `echo "#{opts[:post]}" >> tmp2.js`
     end
 
-    # if opts[:ccup]
-    #   `node_modules/coffeecup/bin/coffeecup --js src/coffeecup/#{opts[:ccup]}.coffee`
-    #   `cat src/coffeecup/#{opts[:ccup]}.js >> tmp2.js`
-    #   `rm src/coffeecup/#{opts[:ccup]}.js`
-    # end
-
     `cat tmp.js >> tmp2.js`
 
     opts[:ext] ||= 'js'
     opts[:dest] ||= 'extension/js'
     `mv tmp2.js #{opts[:dest]}/#{opts[:output]}.#{opts[:ext]}`
   end
+
+  `rm tmp.js`
+  `rm tmp.coffee`
 end
 
 def exec cmd
@@ -207,7 +184,6 @@ task :vendor do
   get 'http://documentcloud.github.com/backbone/backbone.js'
   get 'https://raw.github.com/gradus/coffeecup/master/lib/coffeecup.js'
 end
-
 
 def get url, name = nil
   name = url[url.rindex('/')+1..-1] unless name
