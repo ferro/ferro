@@ -6,7 +6,7 @@
 	"zappajs": "0.4.22",
 	"coffeecup": "0.3.19",
 	"coffee-script": "1.6.2"
-    }
+    },
     "engines": {
 	"node": "0.8.x",
 	"npm": "1.1.x"
