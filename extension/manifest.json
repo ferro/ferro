@@ -19,7 +19,7 @@
     "background": {
 	"scripts": ["js/background.js"]
     },
-    "content_security_policy": "script-src 'self' https://checkout.stripe.com 'unsafe-eval'; object-src 'self'",
+    "content_security_policy": "script-src 'self' https://checkout.stripe.com https://ssl.google-analytics.com https://coinbase.com https://ajax.googleapis.com 'unsafe-eval'; object-src 'self'",
     "homepage_url": "http://getferro.com",
     "incognito": "spanning",
     "offline_enabled": true,
@@ -32,8 +32,10 @@
 	"history",
 	"tts",
 	"http://www.iheartquotes.com/",
-	"https://*stripe.com/",
-	"https://donate.getferro.com/"
+	"https://*.stripe.com/",
+	"https://*.coinbase.com/",
+	"https://donate.getferro.com/",
+	"https://ajax.googleapis.com/"
     ],
     "commands": {
 	"_execute_browser_action": {

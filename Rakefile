@@ -17,6 +17,7 @@ task :background do
   compile(
           [],
           [
+            'analytics',
             'init',
             'commands',
             'background'
@@ -51,6 +52,7 @@ task :popup do
             'string-score'
           ],
           [
+            'analytics',
             'init',
             'model',
             'keys',
@@ -77,8 +79,11 @@ task :options_app do
             'coffeecup'
           ],
           [
-           'model',
-           'options-backbone'
+            'analytics',
+            'init',
+            'model',
+            'donate',
+            'options-backbone'
           ],
           {
             output: 'options'
@@ -161,7 +166,7 @@ f = {}
     `mv tmp2.js #{opts[:dest]}/#{opts[:output]}.#{opts[:ext]}`
   end
 
-  `rm tmp.js`
+  `rm tmp.js 2> /dev/null`
   `rm tmp.coffee`
 end
 

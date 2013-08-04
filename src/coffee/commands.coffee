@@ -14,6 +14,11 @@ CONTEXTS = # tied to DEFAULTS
 
 # don't add commands that have keyboard shortcuts by default, like close tab, close window, and create bookmark
 COMMANDS =
+  speak:
+    desc: 'Speak aloud the given text'
+    context: [CONTEXTS.TEXT]
+    fn: (text) ->
+      chrome.tts.speak text
   duplicate:
     desc: 'Duplicate tab'
     context: [CONTEXTS.TAB, CONTEXTS.MAIN]
@@ -57,7 +62,7 @@ COMMANDS =
     fn: (text) ->
       apply_to_matching_tabs text, (tabs) ->
         kill tab.id for tab in tabs
-  kill_all: #todo test
+  kill_all:
     desc: 'Kill all tabs'
     context: CONTEXTS.MAIN
     fn: (x) ->
@@ -184,6 +189,10 @@ for name, cmd of COMMANDS
     COMMANDS_BY_CONTEXT[c] or= []
     COMMANDS_BY_CONTEXT[c].push {name: sentence_case(name), cmd: cmd} 
 
+# add name to COMMANDS
+for name, cmd of COMMANDS
+  cmd.name = name
+  
 equals_ignore_case = (a,b) ->
   a.replace('_',' ').toLowerCase() is b.replace('_',' ').toLowerCase()
  

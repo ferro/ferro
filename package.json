@@ -1,15 +1,22 @@
 {
-    "name": "ferro",
-    "version": "0.0.1",
-    "dependencies": {
-	"backbone": "1.0.0",
-	"zappajs": "0.4.22",
-	"coffeecup": "0.3.19",
-	"coffee-script": "1.6.2"
-    },
-    "engines": {
-	"node": "0.8.x",
-	"npm": "1.1.x"
-    }
+  "name": "ferro",
+  "version": "1.0.0",
+  "private": true,
+  "scripts": {
+    "start": "coffee server/app.coffee"
+  },
+  "dependencies": {
+    "backbone": "1.0.0",
+    "coffeecup": "0.3.19",
+    "coffee-script": "1.6.2",
+    "zappajs": "0.4.22",
+    "zappajs-partials": "0.0.7",
+    "request": "2.25.0",
+    "sequelize": "~2.0.0-alpha2",
+    "pg": "~2.2.0"
+  },
+  "engines": {
+    "node": "0.8.x",
+    "npm": "1.1.x"
+  }
 }
-  

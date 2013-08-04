@@ -81,6 +81,7 @@ load_data = ->
         # else
         #   append_template()
 
+
 flatten_bookmarks = (node) ->
   if node.children
     unless node.children.length is 0
@@ -93,10 +94,12 @@ update_selection = (down) ->
     display_suggestions()
   cur = suggestions[state].selection
 
+  mod = Math.min NUM_SUGGESTIONS, suggestions[state].list.length
+
   if down
-    cur = (cur + 1) % NUM_SUGGESTIONS
+    cur = (cur + 1) % mod
   else
-    cur = (cur - 1 + NUM_SUGGESTIONS) % NUM_SUGGESTIONS
+    cur = (cur - 1 + mod) % mod
 
   suggestions[state].selection = cur
 
@@ -209,7 +212,7 @@ execute = ->
     if in_text_mode()
       arg = $f('#f-text').value
     d 'arg'
-    d arg      
+    d arg
     send_cmd cmd, arg
   d 'WINDOW.CLOSE'
 #  window.close()
@@ -219,7 +222,9 @@ send_cmd = (cmd, arg = null) ->
   chrome.tabs.getSelected (tab) ->
     d 'send_cmd'
     chrome.extension.getBackgroundPage().update_cmd cmd.fn, arg, tab
-    cmd.fn arg or tab
+    final_arg = arg or tab
+    track 'Commands', cmd.name, get_type final_arg
+    cmd.fn final_arg
 
 get_type = (o) -> # see, wouldn't a class system be nice?
   if 'cmd' of o
@@ -310,17 +315,16 @@ append_template = =>
     focus_text()
   d 'done appending'
 
-display_suggestions = ->
+display_suggestions = (visible = true)->
   z '_display_suggestions'
   z 'suggestions'
   z suggestions
   z suggestions[1].selection
-  felem = $f '#ferro-container'
-  # felem = $f '#ferro'
-  body = $f 'body'
-  body.removeChild felem if felem
+  # felem = $f '#ferro-container'
+  # body = $f 'body'
+  # body.removeChild felem if felem
   append_template()
-  set_suggestions_visibility true
+  set_suggestions_visibility visible
 
 main_choice = ->
   main_i = main.selection
@@ -344,7 +348,7 @@ update_default_cmd = ->
     if DEFAULTS[context]
       command.list = COMMANDS_BY_CONTEXT[context]
       command.selection = 0
-      append_template()
+      display_suggestions state isnt STATES.TEXT
   , 3000
 
 clear_cmd = ->

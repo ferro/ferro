@@ -23,3 +23,7 @@ sentence_case = (s) ->
 display_message = (msg) ->
   $('body').empty()
   $('body').html msg
+
+track = (args...) ->
+  args.unshift '_trackEvent'
+  _gaq.push args

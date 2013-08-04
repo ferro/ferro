@@ -12,28 +12,34 @@ html ->
       type: 'text/css'
     script src: 'js/options.js'
     script src: 'https://checkout.stripe.com/v2/checkout.js'
+    script src: 'https://coinbase.com/assets/button.js'
   body ->
     aside '#banner', ->
       a href: 'https://github.com/ferro/ferro/', -> 'Fork me on GitHub'
     aside '#donate', ->
-      h3 'Feed me'
       img src: 'images/panang.jpg', height: '120', width: '120'
-      p 'I emphatically adore Thai vittles. Your donation will endow my occasional excursions to the local Thai restaurant and thereupon deliver felicity to my life. It will also get rid of this box, which has probably been making you hungry.'
-      label 'Donor name:'
-      input id: 'name', type: 'text', placeholder: 'Anonymous'
-      label 'Amount:'
-      span '.currency', ->
-        text '$'
-        input id: 'amount', type: 'number', placeholder: '9.95'
-      span '.note', 'Chicken Panang Curry (พะแนง) is $9.95'
-      span '.header', 'Amount left after processing fees'
-      input '#stripe', type: 'button', 'Use credit card'
-      span 
-      input '#bitcoin', type: 'button', 'Use bitcoins'
-      span
-      p 'Most recent donations: '
-      ul '#donations'
-      a href: 'http://donate.getferro.com', -> 'Full list of donors'
+      label 'Chicken Panang Curry (พะแนง) is $9.95'
+      h2 'Feed me'
+      p '#feeding', 'I emphatically adore Thai vittles. Your donation will endow my occasional excursions to the local Thai restaurant and thereupon deliver felicity to my life. Donating will also expunge the photograph, which has perchance been engendering your appetite.'
+      ul '#form', ->
+        li ->
+          label 'Donor name:'
+          input id: 'name', type: 'text', value: 'Anonymous'
+        li ->
+          label 'Amount:'
+          input id: 'amount', type: 'number', value: '9.95'
+      div '.header', 'Amount left after processing fees:'
+      ul '#options', ->
+        li ->
+          span '.stripe', '$ 9.36'
+          button '#stripe', 'Use credit card'
+        li ->
+          span '.bitcoin', '$ 9.95'
+          button '#bitcoin', 'Use bitcoins'
+      p '#list', 'Most recent donations: '
+      ul id: 'donations'
+      a href: 'http://donate.getferro.com', -> 'Complete donor table'
+      div '.coinbase-button', ''
     section '#main', ->
       h1 'Ferro'
       p ->

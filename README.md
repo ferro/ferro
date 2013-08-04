@@ -1,8 +1,10 @@
 # Ferro
 
+This project is being actively maintained. I will make sure it continues to function and will also add commands when the extension API is expanded. I will respond to and categorize issues and review and merge pull requests.
+
 ## TODO
 
-Please do contribute! I'm not planning on doing these anytime soon. Open an issue if you'd like to be pointed in the right direction on how to implement something.
+Please do contribute! I'm not planning on implementing the below items anytime soon. Open an issue if you'd like to be pointed in the right direction on how to implement something.
 
 * enable scrolling past 5th suggestion
 * refactor popup into a backbone app
@@ -33,16 +35,18 @@ Please do contribute! I'm not planning on doing these anytime soon. Open an issu
 ```
 and duplicate.
 
-## The Code
+## Code Structure
 
 There is one background script, which along with the options page and action page has access to the extension's local storage and chrome extension API. The background script also maintains sessions state by making changes to local storage and the `f.sessions` global variable in each tab. The options page provides an interface to change sessions and the Ferro keyboard shortcut, and it updates each tab's `f.sessions` and `f.shortcut` variables (via requests to the background) as well as saving the changes to `localStorage`. 
 
 * `commands:` defines available commands
 * `chrome-pages:` lists the special `about:` and `chrome://` pages
 * `keys:` lists the special keys Ferro recognizes
-* `options:` CoffeeKup template of the extension's options page, converted to HTML before packaging
+* `options:` Coffeecup template of the extension's options page, converted to HTML before packaging
 * `options-backbone:` the Backbone.js application that `options` loads
-* `popup:` CoffeeKup template of the main UI
+* `popup:` Coffeecup template of the main UI
+* `template-loader`: loads popup and sets up Easter egg
+* `donate`: handles donations
 
 Since in all my wisdom I didn't use classes, `types.txt` lists the fields of different types of suggestions.
 

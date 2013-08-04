@@ -62,17 +62,6 @@ load_sessions = ->
   if sessions.size() is 0
     $('#session-list').before '<i>None</i>'
   
-
-DEFAULT_AMT = 9.95
-  
-amt = DEFAULT_AMT
-
-update_amount_left = ->
-  $('#stripe + span').val '$ ' + Math.max(
-    amt - (amt * 0.029) - 0.30,
-    0
-  )
-  $('#bitcoin + span').val '$ ' + Math.max(amt, 0)
   
 $ =>
   # sessions.fetch()
@@ -97,45 +86,4 @@ $ =>
 
   if $('span')[0]
     $('span')[0].focus()
-
-  if localStorage.donated
-    $('#donate').hide()
-
-  $.get 'https://donate.getferro.com/donations', (data) ->
-    for donation in data.donations
-      $('#donations').append $("<li>#{donation.donor}<code>$#{donation.amount}</code></li>")
-
-  update_amount_left()
-
-  $('#amount').on 'change keyup paste input', ->
-    new_amt = parseFloat($('#amount').val()).toFixed 2
-    if new_amt is not amt
-      amt = new_amt
-      update_amount_left()
-
-  $('button').click (e) ->
-    #todo placeholders
-    if e.target.id is 'stripe'
-      if amt <= 0.5
-        alert 'Minimum card charge is 50 cents.'
-        return
-  
-      token = (res) =>
-        $.post 'https://donate.getferro.com/', {token: res.id, name: $('#name').val(), amount: amt} 
-        localStorage.donated = true
-        $('#donate').empty()
-        orders = amt / DEFAULT_AMT
-        $('#donate').append("<p>Thank you so much for your donation of #{orders.toFixed 2} order#{'s' unless orders is 1} of chicken panang!</p>")
-
-      StripeCheckout.open 
-        key:         'pk_test_dqK3ga37dNAty3AQsvfEq2pe',
-        amount:      amt,
-        currency:    'usd',
-        name:        'Ferro',
-        description: 'Donation',
-        panelLabel:  'Donate',
-        token:       token
-        image:       'images/icon-128.gif'
-    else
-      location.href = "https://coinbase.com/checkouts/86fb2558897c24d5cfed70fe4f033f20"
 
