@@ -1,9 +1,3 @@
-d = (z) ->
-  console.log z
-
-z = (x) ->
-  console.log x
-
 STATES =
   MAIN: 1
   TEXT: 2
@@ -41,6 +35,11 @@ suggestions_are_visible = false
 bookmarks = []
 sessions = null
 
+gear_icon = chrome.extension.getURL 'images/gear.png'
+page_icon = chrome.extension.getURL 'images/page.ico'
+pages_icon = chrome.extension.getURL 'images/pages.ico'
+filter = _.filter # needs to be un-underscored global var for template
+
 $f = (id) ->
   if id[0] is '#'
     document.getElementById id[1..]
@@ -61,8 +60,6 @@ in_text_mode = () ->
 load_data = ->
   sessions = new SessionList
   sessions.fetch()
-  z 'SESSIONS'
-  z sessions
   chrome.management.getAll (apps) =>
     chrome.bookmarks.getTree (tree) =>
       flatten_bookmarks tree[0]
@@ -74,13 +71,6 @@ load_data = ->
           .concat sessions.models
           .concat bookmarks
           .concat SPECIAL_PAGES
-
-        #todo remove?
-        # if $f '#ferro'
-        #   $f('#f-box').style.opacity = 1
-        # else
-        #   append_template()
-
 
 flatten_bookmarks = (node) ->
   if node.children
@@ -112,14 +102,12 @@ show_suggestions = =>
   display_suggestions()
   
 update = (e) ->
-  d 'inside update'
   suggestions[state].selection = 0
   c = String.fromCharCode e.charCode
 
   # don't do anything with unprintable chars
   return if not c or e.altKey or e.ctrlKey
 
-  d c
   unless suggestions_are_visible
     if timer_id # very minor race condition
       clearTimeout timer_id
@@ -135,16 +123,9 @@ update = (e) ->
       re_sort()
 
 
-gear_icon = chrome.extension.getURL 'images/gear.png'
-page_icon = chrome.extension.getURL 'images/page.ico'
-pages_icon = chrome.extension.getURL 'images/pages.ico'
-filter = _.filter
   
 re_sort = ->
   suggestions[state].list = _.sortBy suggestions[state].list, (s) =>
-#     x = s.name or s.title or s.url
-# #    d s
-#     x.charCodeAt(0)
 
     # everything has a name except for tabs
     if s.name 
@@ -155,18 +136,10 @@ re_sort = ->
       weight = _.max [s.title?.score text_entered, s.url?.score text_entered]
     1 - weight 
 
-  # for s in suggestions[state].list
-  #   if s.name
-  #     weight = s.name.score text_entered
-  #   else
-  #     weight = _.max [s.title?.score text_entered, s.url?.score text_entered]
-  #   d 1 - weight 
   if suggestions_are_visible
     display_suggestions()
 
 set_suggestions_visibility = (visible) ->
-  z 'set_suggestions_visibility'
-  z visible
   $f('#f-suggestions').style.opacity = if visible then 1 else 0
   suggestions_are_visible = visible
   if visible
@@ -183,51 +156,38 @@ is_up = (e) ->
     k is KEYS.CODES.UP or
     ((e.altKey or e.ctrlKey) and (k is KEYS.CODES.P or k is KEYS.CODES.K))
 
-# todo remove?
 set_entered = (e) ->
   text_entered = e
   $f('#f-entered-text').innerHTML = e.toLowerCase()
 
 execute = ->
-  z '======= execute'
-  if main_i < 0
-    d 'yes'
-    d main.selection
-  d 'suggestions'
-  d suggestions
   if not in_text_mode() and main_choice().cmd
-    d 'main_choice.cmd'
     send_cmd main_choice().cmd
   else
-    d 'execute else'
     cmd = if cmd_choice()
       cmd_choice()
     else if in_text_mode()
       COMMANDS[DEFAULTS[CONTEXTS.TEXT]]
     else
       COMMANDS[DEFAULTS[get_type main_choice()]]
-    d 'cmd'
-    d cmd
     arg = main_choice()
     if in_text_mode()
       arg = $f('#f-text').value
-    d 'arg'
-    d arg
     send_cmd cmd, arg
-  d 'WINDOW.CLOSE'
-#  window.close()
+  window.close()
 
 # if no arg, uses current tab
 send_cmd = (cmd, arg = null) ->
   chrome.tabs.getSelected (tab) ->
-    d 'send_cmd'
     chrome.extension.getBackgroundPage().update_cmd cmd.fn, arg, tab
     final_arg = arg or tab
     track 'Commands', cmd.name, get_type final_arg
     cmd.fn final_arg
 
 get_type = (o) -> # see, wouldn't a class system be nice?
-  if 'cmd' of o
+  if _.isString o
+    CONTEXTS.TEXT
+  else if 'cmd' of o
     CONTEXTS.COMMAND
   else if 'version' of o
     if o?.isApp then CONTEXTS.APP else CONTEXTS.EXTENSION
@@ -243,7 +203,6 @@ get_type = (o) -> # see, wouldn't a class system be nice?
     CONTEXTS.SPECIAL
   
 switch_to_command = ->
-  z 'switch_to_command'
   if in_text_mode()
     context = CONTEXTS.TEXT
   else
@@ -256,15 +215,10 @@ switch_to_command = ->
   if command.selection is null
     command.list = COMMANDS_BY_CONTEXT[context]
   
-  d 'context:'
-  d context
-  d COMMANDS_BY_CONTEXT
-  d 'cmd sugs:'
-  d command.list
   state = STATES.CMD
   set_entered ''
   set_suggestions_visibility false
-  $f('#f-main').className = ''  #todo for text
+  $f('#f-main').className = ''
   $f('#f-cmd').className = 'f-selected'
   
 focus_text = () ->
@@ -272,7 +226,6 @@ focus_text = () ->
   box = $('#f-text')
   len = box.val().length
   $f('#f-text').setSelectionRange len, len
-
 
 switch_to_main = ->
   state = if in_text_mode() then STATES.TEXT else STATES.MAIN
@@ -313,16 +266,8 @@ append_template = =>
   $f('#f-text').value = text_mode_text
   if state is STATES.TEXT
     focus_text()
-  d 'done appending'
 
 display_suggestions = (visible = true)->
-  z '_display_suggestions'
-  z 'suggestions'
-  z suggestions
-  z suggestions[1].selection
-  # felem = $f '#ferro-container'
-  # body = $f 'body'
-  # body.removeChild felem if felem
   append_template()
   set_suggestions_visibility visible
 
@@ -343,13 +288,11 @@ update_default_cmd = ->
     else if state is STATES.TEXT
       context = CONTEXTS.TEXT
       text_mode_text = $f('#f-text').value
-      z 'update_default text'
-      z text_mode_text
     if DEFAULTS[context]
       command.list = COMMANDS_BY_CONTEXT[context]
       command.selection = 0
       display_suggestions state isnt STATES.TEXT
-  , 3000
+  , 500
 
 clear_cmd = ->
   command.selection = null
@@ -363,8 +306,6 @@ is_transition = (key) ->
   
 # STATE machine
 window.onkeydown = (key) =>
-  z 'onkeydown ' + key.keyCode
-
   if key.keyCode is KEYS.CODES.RETURN and ready_to_execute()
     execute()
     return
@@ -395,7 +336,6 @@ window.onkeydown = (key) =>
         update_selection(is_down key) if cmd_choice()
 
 window.onkeypress = (key) =>
-  z 'onkeypress ' + key.keyCode
 
   # ctrl-j,k,n,p are handled in onkeydown
   if _.contains [10,11,14,16], key.keyCode

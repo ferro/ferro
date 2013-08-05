@@ -4,7 +4,7 @@ amt = DEFAULT_AMT
 
 THANK_YOU = """<p class="thankyou">Thank you for donating #{localStorage.orders} order#{'s' unless localStorage.orders is '1'} of chicken panang!</p>"""
 
-complete = (result, type) ->
+complete = (type, result = null) ->
   name = $('#name').val()
   track 'Donations', type, name, amt
   if type is 'stripe'
@@ -21,16 +21,11 @@ update_amount_left = ->
     amt - (amt * 0.029) - 30
     0
   )/100).toFixed 2
-  l 'left'
-  l left
   $('.stripe').text '$ ' + left
   
   $('.bitcoin').text '$ ' + (Math.max(amt, 0)/100).toFixed 2
 
 $ ->
-  l 'what'  
-
-
   # how do you have - in attr name in coffeecup?
   $('.coinbase-button')
     .attr('data-code', '5bb2f730894ac0de1df2fff0c3bdd8fe')
@@ -49,24 +44,19 @@ $ ->
 
   $('#amount').on 'change keyup paste input', ->
     new_amt = parseFloat($('#amount').val()) * 100
-    l new_amt
     if new_amt isnt amt
-      l 'not amt'
       amt = new_amt
-      l amt
       update_amount_left()
 
   $('#stripe').click (e) ->
     track 'Donation clicks', 'stripe'
-    l 'here'
-    l amt
 
     if amt <= 50
       alert 'Minimum card charge is 50 cents.'
       return
   
     token = (res) =>
-      complete res, 'stripe'
+      complete 'stripe', res
 
     StripeCheckout.open 
       key:         'pk_test_dqK3ga37dNAty3AQsvfEq2pe',
@@ -85,4 +75,4 @@ $ ->
     false
 
   $(document).on 'coinbase_payment_complete', (e, code) ->
-    complete {}, 'bitcoin'
+    complete 'bitcoin'

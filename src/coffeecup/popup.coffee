@@ -79,10 +79,7 @@ helpers =
 popup_template = ->
   div id: 'ferro', ->
     div id: 'f-box', ->
-      z @in_text_mode()
-      z @text_mode_text
       visibility = if @in_text_mode() then 'visible' else 'hidden'
-      z visibility
       textarea id: 'f-text', cols: '20', rows: '4', style: 'visibility: ' + visibility
       main_klass = ''
       cmd_klass = ''
@@ -93,19 +90,13 @@ popup_template = ->
         main_klass = 'f-selected'
         cmd_klass = ''
       div id: 'f-main', class: main_klass, ->
-        sugs = @suggestions[@STATES?.MAIN]
-#        if @text_entered
+        sugs = @suggestions[@STATES.MAIN]
         main_selection = sugs.list[sugs.selection] 
-        d 'text_entered, sugs, main_selection: '
-        d @text_entered
-        d sugs
-        d main_selection
         url = get_icon main_selection
         if url
           icon {src: url, id: 'f-icon-main'}
         div id: 'f-name-main', ->
           if main_selection
-            # text bold_entered get_name main_selection
             text get_name main_selection
           else
             text ''
@@ -113,10 +104,6 @@ popup_template = ->
       div id: 'f-cmd', class: cmd_klass, ->
         sugs = @suggestions[@STATES.CMD]
         cmd = sugs.list[sugs.selection]
-        d 'AAAA sugs'
-        d sugs
-        d 'popup cmd'
-        d cmd
         div id: 'f-name-cmd', ->
           text get_name(cmd) or ''
         div id: 'f-description-cmd', description cmd
@@ -124,7 +111,6 @@ popup_template = ->
       div id: 'f-entered', ->
         span id: 'f-entered-text', ->
           text @text_entered
-      console.log @suggestions
       if @state isnt @STATES.TEXT and @suggestions[@state].selection isnt null
         size = Math.min(@suggestions[@state].list.length, @NUM_SUGGESTIONS)
         for i in [0...size]
@@ -136,9 +122,6 @@ popup_template = ->
             if url
               icon {src: url, class: 'f-icon'}
             div class: 'f-title', ->
-              # console.log 'cur: '
-              # console.log cur
-              # console.log(get_name cur)
               text get_name cur
             div class: 'f-url', description cur
 

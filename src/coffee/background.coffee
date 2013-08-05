@@ -6,7 +6,6 @@ old_version = localStorage.version
 localStorage.version = JSON.parse(request.responseText).version
 
 # state
-
 last_fn = last_arg = null
 use_current_tab = false
     

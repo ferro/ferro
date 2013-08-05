@@ -1,5 +1,3 @@
-#TODO check global vars not covering local or getting overwritten
-
 CONTEXTS = # tied to DEFAULTS
   TAB: 0
   EXTENSION: 1
@@ -12,6 +10,18 @@ CONTEXTS = # tied to DEFAULTS
   COMMAND: 8
   HISTORY: 9
 
+DEFAULTS =  # tied to CONTEXTS
+  0: 'select'
+  1: 'options'
+  2: 'launch'
+  3: 'open'
+  4: 'search_history'
+  5: 'open'
+  6: 'open'
+  7: null
+  8: null
+  9: 'open'
+  
 # don't add commands that have keyboard shortcuts by default, like close tab, close window, and create bookmark
 COMMANDS =
   speak:
@@ -46,8 +56,6 @@ COMMANDS =
     context: [CONTEXTS.TEXT, CONTEXTS.MAIN, CONTEXTS.TAB]
     fn: (text) ->
       apply_to_matching_tabs text, (tabs) =>
-        d 'tabs'
-        d tabs
         if tabs and tabs.length > 0
           chrome.extension.getBackgroundPage().create_window _.pluck(tabs, 'id')
   close:
@@ -167,18 +175,6 @@ COMMANDS =
       else
         chrome.bookmarks.remove bookmark.id
 
-DEFAULTS =  # tied to CONTEXTS
-  0: 'select'
-  1: 'options'
-  2: 'launch'
-  3: 'open'
-  4: 'search_history'
-  5: 'open'
-  6: 'open'
-  7: null
-  8: null
-  9: 'open'
-  
 COMMANDS_BY_CONTEXT = []
 
 # load COMMANDS_BY_CONTEXT 2D array
@@ -202,7 +198,6 @@ push_to_top = (list, cmd) ->
   list
 
 # put defaults first
-#
 # needs to only be called in browser, because needs underscore
 init_commands_by_context = () ->
   for i, cmd of DEFAULTS
@@ -240,10 +235,7 @@ apply_to_regex_tabs = (regex, fn) ->
 open_session = (session) ->
   for win in session.get('wins')
     win.url = win.urls
-    z 'WIN.URL'
-    z win.url
     chrome.windows.create _.omit(win, 'urls', 'pins', 'icons'), (new_win) =>
-      z new_win  
       for i in [0...win.urls.length]
         chrome.tabs.update new_win.tabs[i].id, {pinned: win.pins[i]}
       chrome.tabs.update new_win.tabs[0].id, {active: true}

@@ -5,9 +5,7 @@ speak = (text, opts) ->
   chrome.tts.speak text, opts
 
 $(document).ready ->
-  z 'template loader, document.ready'
   init_commands_by_context()
-  z COMMANDS_BY_CONTEXT
   load_data()
   append_template()
   $('body').click (event) ->

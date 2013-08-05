@@ -4,23 +4,21 @@ This project is being actively maintained. I will make sure it continues to func
 
 ## TODO
 
-Please do contribute! I'm not planning on implementing the below items anytime soon. Open an issue if you'd like to be pointed in the right direction on how to implement something.
+Please do contribute! I'm not planning on working on the below items. Open an issue if you'd like to be pointed in the right direction on how to implement something.
 
 * enable scrolling past 5th suggestion
+* allow omnibox keyword interaction, eg `f extract google.com`
+* remember what keys people press and what action they take to improve future suggestions
 * refactor popup into a backbone app
+* take logic out of templates
+* remove custom compilation system - make modules and require them
 * make icons fade to transparent
-* make something funny happen when a suggestion is clicked
 * when url has highest score, title is still text-match emboldened 
-* icons for commands
 * allow for multiple search terms for extract, close, etc.
 * show entered capital letters
-* implement/use pubsub for shortcut, sessions, and chrome.* getters
-* weigh scoring for previously-used key sequences
 * filter exts/apps when `mayDisable` is false and `cmd` is disable
 * make cross-browser with Crossrider
 * put tips based on past usage (eg 'try out saving your session') in the broswer action tooltip and options page
-* allow omnibox keyword interaction, eg `f extract google.com`
-* remove custom compilation system - make modules and require them
 * class system for different types of suggestions
 * write some tests? need to mock chrome api for some parts
 
@@ -46,7 +44,6 @@ There is one background script, which along with the options page and action pag
 * `options-backbone:` the Backbone.js application that `options` loads
 * `popup:` Coffeecup template of the main UI
 * `template-loader`: loads popup and sets up Easter egg
-* `donate`: handles donations
 
 Since in all my wisdom I didn't use classes, `types.txt` lists the fields of different types of suggestions.
 

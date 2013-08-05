@@ -9,7 +9,7 @@ class SessionView extends Backbone.View
       for win in @model.get 'wins'
         li ->
           for icon in win.icons
-            img src: icon, height: '16', width: '16' #todo chrome://favicon, and in manifest permissions
+            img src: icon, height: '16', width: '16'
     button '.delete', ->
       text 'Delete'
 
@@ -34,8 +34,7 @@ class SessionView extends Backbone.View
   render: =>
     $(@el).html coffeecup.render @template, {model: @model}
     @
-#<img src="chrome://favicon/http://www.google.com/">
-  # 
+
   delete: ->
     if confirm 'Delete session?'
       @model.destroy()
@@ -44,46 +43,48 @@ class SessionView extends Backbone.View
   set_carat: ->
     set_carat_at_end $(@el).children('span')[0]
 
+set_carat_at_end = (el) ->
+  if (typeof window.getSelection != "undefined" and typeof document.createRange != "undefined") 
+    range = document.createRange()
+    range.selectNodeContents(el)
+    range.collapse(false)
+    sel = window.getSelection()
+    sel.removeAllRanges()
+    sel.addRange(range)
+  else if (typeof document.body.createTextRange != "undefined")
+    textRange = document.body.createTextRange()
+    textRange.moveToElementText(el)
+    textRange.collapse(false)
+    textRange.select()
+
 
 
 load_sessions = ->
   sessions = new SessionList
   sessions.each (m) ->
-    l m  
     m.save()
 
   sessions.fetch()
   sessions.each (s) =>
     if s.attributes.id
-      l 'adding li'
-      l s
       $('#session-list').append (new SessionView({model: s})).render().el 
 
   if sessions.size() is 0
     $('#session-list').before '<i>None</i>'
   
   
-$ =>
-  # sessions.fetch()
+tabindex_setup = ->
+  spans = $('#session-list span')
+  buttons = $('#session-list button')
+  for i in [0...spans.length]
+    spans[i].tabIndex = (i * 2) + 1
+    buttons[i].tabIndex = (i * 2) + 2
 
-  # for i in [0..sessions.length]
-  #   sessions.at(0)?.destroy()
-
-  # sessions.add [
-  #   {name: 'two', wins: [
-  #     {icons:["http://www.google.com/images/google_favicon_128.png","http://www.google.com/images/google_favicon_128.png"]}
-  #     {icons:["http://www.google.com/images/google_favicon_128.png"]}
-  #   ]}
-  #   {name: 'one', wins: [
-  #     {icons:["http://www.google.com/images/google_favicon_128.png","http://www.google.com/images/google_favicon_128.png"]}
-  #   ]}
-  # ]
-
-
-  l 'start'
-  
+$ ->
   load_sessions()
 
-  if $('span')[0]
-    $('span')[0].focus()
+  tabindex_setup()
 
+  $('#session-list span')[0].focus()
+
+  

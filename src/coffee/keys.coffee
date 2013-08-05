@@ -21,7 +21,5 @@ KEYS =
     P: 80
     K: 75
 
-
-
 KEYS.NAMES = reverse KEYS.CODES
 
