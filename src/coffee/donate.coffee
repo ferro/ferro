@@ -12,6 +12,7 @@ complete = (type, result = null) ->
 
   localStorage.donated = true
   localStorage.orders = (amt / DEFAULT_AMT).toFixed 2
+
   $('#donate').hide()
   $('#donate').append THANK_YOU
 
@@ -26,12 +27,12 @@ update_amount_left = ->
   $('.bitcoin').text '$ ' + (Math.max(amt, 0)/100).toFixed 2
 
 $ ->
-  # how do you have - in attr name in coffeecup?
+  # how do you have '-' in attr name in coffeecup?
   $('.coinbase-button')
     .attr('data-code', '5bb2f730894ac0de1df2fff0c3bdd8fe')
     .attr('data-button-style', 'none')
 
-  if localStorage.donated
+  if chrome.extension and localStorage.donated
     $('#donate > img').hide()
     $('#donate').append THANK_YOU
 

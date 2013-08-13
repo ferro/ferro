@@ -1,3 +1,5 @@
+# used for Chrome extension
+
 task :default => :compile
 
 task :compile => [:options_template, :options_app,  :popup, :background, :sass]

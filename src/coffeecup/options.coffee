@@ -19,7 +19,7 @@ html ->
     aside '#donate', ->
       img src: 'images/panang.jpg', height: '120', width: '120'
       label 'Chicken Panang Curry (พะแนง) is $9.95'
-      h2 'Feed me'
+      h2 'Feed me?'
       p '#feeding', 'I emphatically adore Thai vittles. Your donation will endow my occasional excursions to the local Thai restaurant and thereupon deliver felicity to my life. Donating will also expunge the photograph, which has perchance oft engendered thine appetite.'
       ul '#form', ->
         li ->
@@ -40,7 +40,7 @@ html ->
       ul id: 'donations'
       a href: 'http://donate.getferro.com', tabindex: '104', -> 'Complete donor table'
       div '.coinbase-button', ''
-    section '#main', ->
+    tag 'main', ->
       h1 'Ferro'
       p ->
         t 'Ferro provides session management and a keyboard interface to Chrome. It functions similarly to application launchers like Quicksilver. Hit '
@@ -50,7 +50,7 @@ html ->
         t 'and type again) and hit '
         code 'enter'
         t '. For more information on usage, visit '
-        a href: 'http://getferro.com', -> 'getferro.com'
+        a href: 'http://www.getferro.com', -> 'getferro.com'
         t '.'
       h3 'Saved Sessions'
       ul id: 'session-list'
@@ -109,8 +109,8 @@ html ->
       	  ': Automatically generate, remember, and fill in passwords.'
         li ->
           a href: 'http://defunkt.io/dotjs/', -> 'Dotjs'
-          ': Modify websites yourself with Javascript. Better than Greasemonkey.'
+          ': Modify websites yourself with Javascript. Better than Greasemonkey. Requires OS X.'
       footer ->
-        a href: 'http://getferro.com', -> 'getferro.com'
+        a href: 'http://www.getferro.com', -> 'getferro.com'
         t '&#167'
         a href: 'https://github.com/ferro/ferro/issues', -> 'problems & suggestions'

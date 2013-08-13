@@ -1,5 +1,6 @@
 request = require 'request'
 #db = require './model'
+_ = require 'underscore'
 
 # --- helpers
 
@@ -20,23 +21,50 @@ port = process.env.PORT || 80
 require('zappajs') port, ->
   @use 'partials'
   @enable 'default layout'
+  @use 'static'
 
   @get '/': ->
     host = @request.get 'host'
     switch host
       when 'www.getferro.com'
-        @make_charge amt: 10000, token: 'tok_2GsMkFGfv7yJet', name: 'me'
+#        @make_charge amt: 10000, token: 'tok_2GsMkFGfv7yJet', name: 'me'
         @render www:
           title: 'Ferro: The keyboard interface to Chrome'
+          scripts: [
+            'js/analytics.js'
+          ]
+          stylesheets: [
+            'css/www.css'
+          ]
       when 'donate.getferro.com'
-        db.query(
-            'SELECT * FROM donations ORDER BY amt DESC;'
-            db.Donation
-        ).success (donations) =>
-          @send donate: {
-            title: 'Donate to Ferro',
-            donations
-          }
+        # db.query(
+        #     'SELECT * FROM donations ORDER BY amt DESC;'
+        #     db.Donation
+        # ).success (@donations) =>
+        rs = [{name: 'Ethan', amt: 100, created_at: new Date()},{name: 'Anonymous', amt: 995, created_at: new Date()}]
+        amts = _.pluck(rs, 'amt')
+        sum_fn = (acc, amt) ->
+          acc + amt
+        sum = _.reduce amts, sum_fn, 0
+
+        @render donate:
+          donations: rs
+          total: (sum/100).toFixed 2
+          title:'Ferro Donations'
+          scripts: [
+            '//ajax.googleapis.com/ajax/libs/jquery/2.0.3/jquery.min.js'
+            'js/jquery.tablesorter.min.js'
+            'js/init.js'
+            'js/analytics.js'
+            'js/donate.js'
+            'js/main.js'
+            'https://checkout.stripe.com/v2/checkout.js'
+            'https://coinbase.com/assets/button.js'
+          ]
+          stylesheets: [
+            'css/table.css'
+            'css/donate.css'
+          ]
       else   
         'hello there'
 
@@ -59,17 +87,6 @@ require('zappajs') port, ->
       amt: @params.order.total_native.cents
       name: @params.order.custom
   
-
-  @view www: ->
-    h1 @title
-    p 'what'
-
-  @view donate: ->
-    h1 @title
-    p @donations[0].name
-    p 'what'
-    p JSON.stringify @donations
-
   @helper make_charge: ->
     unless is_valid @params
       @send 'Invalid parameters'
@@ -104,7 +121,7 @@ require('zappajs') port, ->
   # db.Donation
   #   .build
   #     amt: o.amt
-  #     name: o.name
+  #     name: o.name[0...30]
   #     created_at: new Date()
   #   .save()
     @send 'saved donation'

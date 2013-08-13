@@ -1,4 +1,4 @@
-DEBUG = false
+DEBUG = false 
 
 d = (ss...) ->
   if DEBUG
@@ -6,7 +6,7 @@ d = (ss...) ->
       console.log s 
 
 tab_open = (url) ->
-  chrome.tabs.create {url}
+  chrome.tabs?.create {url}
 
 sentence_case = (s) ->
   ret = s[0].toUpperCase() + s[1..-1].toLowerCase()
