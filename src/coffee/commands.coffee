@@ -44,7 +44,7 @@ COMMANDS =
     desc: 'Reload every tab in this window'
     context: CONTEXTS.MAIN
     fn: (x) ->
-      chrome.windows.getCurrent { populate: true }, (win) ->
+      chrome.windows.getLastFocused { populate: true }, (win) ->
         reload_window win
   search_history:
     desc: 'Search through your history for the given text'
@@ -57,7 +57,8 @@ COMMANDS =
     fn: (text) ->
       apply_to_matching_tabs text, (tabs) =>
         if tabs and tabs.length > 0
-          chrome.extension.getBackgroundPage().create_window _.pluck(tabs, 'id')
+          chrome.runtime.getBackgroundPage (win) ->
+            win.create_window _.pluck(tabs, 'id')
   close:
     desc: "Close tabs that match the given text or the given tab's domain"
     context: [CONTEXTS.TEXT, CONTEXTS.MAIN, CONTEXTS.TAB]
@@ -130,7 +131,7 @@ COMMANDS =
     desc: 'Add current tab to session'
     context: CONTEXTS.SESSION
     fn: (session) ->
-      chrome.tabs.getSelected (tab) =>
+      chrome.tabs.query {active: true, currentWindow: true}, ([tab]) =>
         s = sessions.get_by_name session.get('name')
         wins = s.get 'wins' 
         wins[0].urls.push tab.url
@@ -141,7 +142,7 @@ COMMANDS =
     desc: 'Save the current window with the name given'
     context: CONTEXTS.TEXT
     fn: (name) ->
-      chrome.windows.getCurrent {populate: true}, (win) =>
+      chrome.windows.getLastFocused {populate: true}, (win) =>
         save_session name, [prepare win]
   save_all:
     desc: 'Save all open windows with the name given'

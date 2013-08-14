@@ -19,6 +19,7 @@ task :background do
   compile(
           [],
           [
+            'underscore-extensions',
             'analytics',
             'init',
             'commands',

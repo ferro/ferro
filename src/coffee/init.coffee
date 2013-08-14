@@ -1,4 +1,4 @@
-DEBUG = false 
+DEBUG = true
 
 d = (ss...) ->
   if DEBUG
@@ -21,3 +21,4 @@ display_message = (msg) ->
 track = (args...) ->
   args.unshift '_trackEvent'
   _gaq.push args
+

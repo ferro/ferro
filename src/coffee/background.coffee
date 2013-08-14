@@ -1,27 +1,21 @@
-# update version when loaded
-request = new XMLHttpRequest
-request.open 'GET', chrome.extension.getURL('manifest.json'), false
-request.send null
-old_version = localStorage.version
-localStorage.version = JSON.parse(request.responseText).version
 
-# state
-last_fn = last_arg = null
-use_current_tab = false
-    
-window.update_cmd = (fn, arg, tab) ->
-  use_current_tab = not arg
-  last_arg = arg or tab
+# when first installed, init storage and ask them to set the keyboard shortcut
+chrome.runtime.onInstalled.addListener (details) ->
+  if details.reason is 'install'
+    localStorage.use_current_tab = false
 
-#  TODO simply assigning does not work. why is this? last_fn seems to be assigned correctly when viewed in the debugger, but when it is called in the key listener, it has no effect
-#  last_fn = fn
-  eval 'last_fn = ' + fn.toString()
+    chrome.windows.getLastFocused (cur) ->
+      chrome.windows.create
+        url: chrome.extension.getURL 'shortcut.html'
+        top: cur.top + 200
+        left: Math.round cur.left + cur.width/2 - 200
+        width: 500
+        height: 325
+        type: 'popup'
 
-  
 # hotkey listener
-
 chrome.commands.onCommand.addListener (command) ->
-  chrome.tabs.getCurrent (tab) =>
+  chrome.tabs.query {active: true, lastFocusedWindow: true}, ([tab]) ->
     switch command
       when 'toggle_pin'
         if tab.pinned
@@ -29,16 +23,15 @@ chrome.commands.onCommand.addListener (command) ->
         else 
           COMMANDS.pin.fn tab
       when 'repeat_last_command'
-        if last_fn
-          if use_current_tab
-            chrome.tabs.getSelected (tab) ->
-              last_fn tab
+        if localStorage.last_fn
+          if localStorage.use_current_tab is 'true'
+            COMMANDS[localStorage.last_fn].fn tab
           else
-            last_fn last_arg
-      else
-        update_cmd fn, tab
-        COMMANDS[command].fn tab
-  
+            COMMANDS[localStorage.last_fn].fn localStorage.last_arg
+      when 'duplicate'
+        COMMANDS.duplicate.fn tab
+
+
 
 # command helpers with callbacks that don't work inside of the browser action
 

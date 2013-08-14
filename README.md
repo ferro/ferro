@@ -7,6 +7,7 @@ This project is being actively maintained. I will make sure it continues to func
 Please do contribute! I'm not planning on working on the below items. Open an issue if you'd like to be pointed in the right direction on how to implement something.
 
 * enable scrolling past 5th suggestion
+* allow clicking on and reordering saved session icons and rows of icons 
 * allow omnibox keyword interaction, eg `f extract google.com`
 * remember what keys people press and what action they take to improve future suggestions
 * refactor popup into a backbone app

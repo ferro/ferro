@@ -174,17 +174,25 @@ execute = ->
     if in_text_mode()
       arg = $f('#f-text').value
     send_cmd cmd, arg
-  window.close()
+#  window.close()
+
+
+update_stored_cmd = (fn_name, arg, tab) ->
+  localStorage.use_current_tab = not arg
+  localStorage.last_arg = arg or tab
+  localStorage.last_fn = fn_name
 
 # if no arg, uses current tab
 send_cmd = (cmd, arg = null) ->
-  chrome.tabs.getSelected (tab) ->
-    chrome.extension.getBackgroundPage().update_cmd cmd.fn, arg, tab
+  chrome.tabs.query {active: true, currentWindow: true}, ([tab]) ->
+    update_stored_cmd cmd.name, arg, tab
     final_arg = arg or tab
     track 'Commands', cmd.name, get_type final_arg
     cmd.fn final_arg
 
 get_type = (o) -> # see, wouldn't a class system be nice?
+  return null unless o 
+
   if _.isString o
     CONTEXTS.TEXT
   else if 'cmd' of o

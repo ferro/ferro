@@ -60,7 +60,7 @@ html ->
       p ->
         t 'To set up keyboard shortcuts, go to the extensions page ('
         code 'chrome://extensions'
-        t ') and click the "Configure commands" link on the bottom right.'
+        t ') and click the &ldquo;Configure commands&rdquo; link on the bottom right.'
       span '#prefix', ->
         code 'Alt-Shift-'
       table '.keys', ->
