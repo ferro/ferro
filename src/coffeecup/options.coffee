@@ -49,13 +49,11 @@ html ->
         code 'tab'
         t 'and type again) and hit '
         code 'enter'
-        t '. For more information on usage, visit '
+        t '. For a complete usage guide, visit '
         a href: 'http://www.getferro.com', -> 'getferro.com'
         t '.'
       h3 'Saved Sessions'
       ul id: 'session-list'
-      p ->
-        t 'Sessions are only saved locally to this computer. When Chrome provides a method of syncing extension data to your other computers, I will implement synced sessions.'
       h3 'Keyboard Shortcuts'
       p ->
         t 'To set up keyboard shortcuts, go to the extensions page ('
@@ -91,7 +89,6 @@ html ->
         sorted_commands = Object.keys(COMMANDS).sort()
         for i in [0...sorted_commands.length]
           name = sorted_commands[i]
-          console.log "HWEJ"
           cmd = COMMANDS[name]
           tr ->
             td sentence_case name

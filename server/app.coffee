@@ -1,6 +1,8 @@
 request = require 'request'
 #db = require './model'
 _ = require 'underscore'
+{COMMANDS} = require '../src/coffee/commands'
+{sentence_case} = require '../src/coffee/init'
 
 # --- helpers
 
@@ -29,6 +31,8 @@ require('zappajs') port, ->
       when 'www.getferro.com'
 #        @make_charge amt: 10000, token: 'tok_2GsMkFGfv7yJet', name: 'me'
         @render www:
+          COMMANDS: COMMANDS
+          sentence_case: sentence_case
           title: 'Ferro: The keyboard interface to Chrome'
           scripts: [
             'js/analytics.js'

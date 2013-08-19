@@ -178,9 +178,10 @@ execute = ->
 
 
 update_stored_cmd = (fn_name, arg, tab) ->
-  localStorage.use_current_tab = not arg
-  localStorage.last_arg = arg or tab
-  localStorage.last_fn = fn_name
+  chrome.storage.sync.set
+    use_current_tab: not arg
+    last_arg: arg or tab
+    last_fn: fn_name
 
 # if no arg, uses current tab
 send_cmd = (cmd, arg = null) ->

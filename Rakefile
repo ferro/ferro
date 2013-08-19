@@ -50,7 +50,7 @@ task :popup do
             'jquery',
             'underscore',
             'backbone',
-            'backbone-localStorage',
+            'backbone-chromestorage',
             'coffeecup',
             'string-score'
           ],
@@ -78,7 +78,7 @@ task :options_app do
             'jquery',
             'underscore',
             'backbone',
-            'backbone-localStorage',
+            'backbone-chromestorage',
             'coffeecup'
           ],
           [
@@ -188,7 +188,7 @@ task :vendor do
   get 'https://raw.github.com/joshaven/string_score/master/string_score.js', 'string-score.js'
   get 'http://code.jquery.com/jquery-1.9.1.min.js', 'jquery.js'
   get 'http://documentcloud.github.com/underscore/underscore.js'
-  get 'https://raw.github.com/jeromegn/Backbone.localStorage/master/backbone.localStorage.js', 'backbone-localstorage.js'
+  get 'https://raw.github.com/scryptmouse/Backbone.ChromeStorage/master/backbone.chromestorage.min.js', 'backbone-chromestorage.js'
   get 'http://documentcloud.github.com/backbone/backbone.js'
   get 'https://raw.github.com/gradus/coffeecup/master/lib/coffeecup.js'
 end

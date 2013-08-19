@@ -2,19 +2,19 @@ DEFAULT_AMT = 995
   
 amt = DEFAULT_AMT
 
-THANK_YOU = """<p class="thankyou">Thank you for donating #{localStorage.orders} order#{'s' unless localStorage.orders is '1'} of chicken panang!</p>"""
-
 complete = (type, result = null) ->
   name = $('#name').val()
   track 'Donations', type, name, amt
   if type is 'stripe'
     $.post 'https://donate.getferro.com/donations', {token: result.id, name, amt}
 
-  localStorage.donated = true
-  localStorage.orders = (amt / DEFAULT_AMT).toFixed 2
+  donated = true
+  orders = (amt / DEFAULT_AMT).toFixed 2
 
   $('#donate').hide()
-  $('#donate').append THANK_YOU
+  $('#donate').append """<p class="thankyou">Thank you for donating #{orders} order#{'s' unless orders is '1'} of chicken panang!</p>"""
+
+  chrome.storage?.sync.set {donated, orders}
 
 
 update_amount_left = ->
@@ -32,9 +32,10 @@ $ ->
     .attr('data-code', '5bb2f730894ac0de1df2fff0c3bdd8fe')
     .attr('data-button-style', 'none')
 
-  if chrome.extension and localStorage.donated
-    $('#donate > img').hide()
-    $('#donate').append THANK_YOU
+  chrome.storage.sync.get 'donated', (data) ->
+    if chrome.extension and data.donated
+      $('#donate > img').hide()
+      $('#donate').append THANK_YOU
 
   $.get 'https://donate.getferro.com/donations', (data) ->
     for donation in data.donations

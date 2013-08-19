@@ -1,12 +1,15 @@
 unless _gaq
   _gaq = []
   _gaq.push ['_setAccount', 'UA-42896199-1']
-  _gaq.push ['_setCustomVar', 1, 'donated', localStorage.donated, 1]
   _gaq.push(['_setDomainName', 'getferro.com']);
   if chrome.extension
     _gaq.push ['_setSessionCookieTimeout', 0]
     _gaq.push ['_setCustomVar', 2, 'saved sessions', 0, 1] #todo
-  _gaq.push ['_trackPageview']
+    chrome.storage.sync.get 'donated', (data) ->
+      _gaq.push ['_setCustomVar', 1, 'donated', data.donated, 1]
+      _gaq.push ['_trackPageview']
+  else 
+    _gaq.push ['_trackPageview']
 
   ga = document.createElement('script')
   ga.type = 'text/javascript'

@@ -14,6 +14,9 @@ sentence_case = (s) ->
     ret = ret[0..i-1] + ' ' + s[i+1].toUpperCase() + s[i+2..-1].toLowerCase()
   ret
 
+if module?.exports
+  exports.sentence_case = sentence_case
+
 display_message = (msg) ->
   $('body').empty()
   $('body').html msg

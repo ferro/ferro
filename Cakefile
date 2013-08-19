@@ -3,7 +3,7 @@
 {exec} = require 'child_process'
 
 compile_cs = (cs, js) ->  
-  exec "coffee -w --compile --output #{js} #{cs}", (err, stdout, stderr) ->
+  exec "coffee -bw --compile --output #{js} #{cs}", (err, stdout, stderr) ->
     throw err if err
     console.log stdout + stderr
 

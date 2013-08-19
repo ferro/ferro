@@ -60,18 +60,18 @@ set_carat_at_end = (el) ->
 
 
 load_sessions = ->
-  sessions = new SessionList
+  window.sessions = new SessionList
   sessions.each (m) ->
     m.save()
 
-  sessions.fetch()
-  sessions.each (s) =>
-    if s.attributes.id
-      $('#session-list').append (new SessionView({model: s})).render().el 
+  #chromestorage is async
+  sessions.fetch().then ->
+    sessions.each (s) ->
+      if s.attributes.id
+        $('#session-list').append (new SessionView({model: s})).render().el 
 
-  if sessions.size() is 0
-    $('#session-list').before '<i>None</i>'
-  
+    if sessions.size() is 0
+      $('#session-list').before '<i>No sessions are saved.</i>'
   
 tabindex_setup = ->
   spans = $('#session-list span')
@@ -85,6 +85,5 @@ $ ->
 
   tabindex_setup()
 
-  $('#session-list span')[0].focus()
+  $('#session-list span')[0]?.focus()
 
-  

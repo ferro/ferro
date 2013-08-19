@@ -2,7 +2,7 @@
 # when first installed, init storage and ask them to set the keyboard shortcut
 chrome.runtime.onInstalled.addListener (details) ->
   if details.reason is 'install'
-    localStorage.use_current_tab = false
+    chrome.storage.sync.set {use_current_tab: false}
 
     chrome.windows.getLastFocused (cur) ->
       chrome.windows.create
@@ -23,11 +23,12 @@ chrome.commands.onCommand.addListener (command) ->
         else 
           COMMANDS.pin.fn tab
       when 'repeat_last_command'
-        if localStorage.last_fn
-          if localStorage.use_current_tab is 'true'
-            COMMANDS[localStorage.last_fn].fn tab
-          else
-            COMMANDS[localStorage.last_fn].fn localStorage.last_arg
+        chrome.storage.sync.get ['last_fn', 'use_current_tab', 'last_arg'], (data) ->
+          if data.last_fn
+            if data.use_current_tab 
+              COMMANDS[data.last_fn].fn tab
+            else
+              COMMANDS[data.last_fn].fn data.last_arg
       when 'duplicate'
         COMMANDS.duplicate.fn tab
 

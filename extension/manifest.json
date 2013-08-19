@@ -26,6 +26,7 @@
     "offline_enabled": true,
     "options_page": "options.html",
     "permissions": [
+	"storage",
 	"tabs",
 	"bookmarks",
 	"chrome://favicon/",

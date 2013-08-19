@@ -1,3 +1,6 @@
+if module?.exports
+  {sentence_case} = require './init'
+
 CONTEXTS = # tied to DEFAULTS
   TAB: 0
   EXTENSION: 1
@@ -176,6 +179,9 @@ COMMANDS =
       else
         chrome.bookmarks.remove bookmark.id
 
+if module?.exports
+  exports.COMMANDS = COMMANDS
+
 COMMANDS_BY_CONTEXT = []
 
 # load COMMANDS_BY_CONTEXT 2D array
@@ -254,3 +260,4 @@ reload_window = (win) ->
 
 kill = (id) ->
   chrome.tabs.update id, url: 'about:kill'
+

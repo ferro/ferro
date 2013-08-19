@@ -2,7 +2,7 @@ class Session extends Backbone.Model
 
 class SessionList extends Backbone.Collection
   model: Session
-  localStorage: new Backbone.LocalStorage 'sessions'
+  chromeStorage: new Backbone.ChromeStorage 'sessions', 'sync'
   get_by_name: (name) ->
     match = null
     @each (s) ->
