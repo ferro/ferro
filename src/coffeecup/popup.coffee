@@ -91,27 +91,29 @@ popup_template = ->
         cmd_klass = ''
       div id: 'f-main', class: main_klass, ->
         sugs = @suggestions[@STATES.MAIN]
-        main_selection = sugs.list[sugs.selection] 
-        url = get_icon main_selection
-        if url
-          icon {src: url, id: 'f-icon-main'}
-        div id: 'f-name-main', ->
-          if main_selection
-            text get_name main_selection
-          else
-            text ''
-        div id: 'f-description-main', description main_selection
+        if sugs.selection
+          main_selection = sugs.list[sugs.selection] 
+          url = get_icon main_selection
+          if url
+            icon {src: url, id: 'f-icon-main'}
+          div id: 'f-name-main', ->
+            if main_selection
+              text get_name main_selection
+            else
+              text ''
+          div id: 'f-description-main', description main_selection
       div id: 'f-cmd', class: cmd_klass, ->
         sugs = @suggestions[@STATES.CMD]
-        cmd = sugs.list[sugs.selection]
-        div id: 'f-name-cmd', ->
-          text get_name(cmd) or ''
-        div id: 'f-description-cmd', description cmd
+        if sugs.selection
+          cmd = sugs.list[sugs.selection]
+          div id: 'f-name-cmd', ->
+            text get_name(cmd) or ''
+          div id: 'f-description-cmd', description cmd
     div id: 'f-suggestions', ->
       div id: 'f-entered', ->
         span id: 'f-entered-text', ->
           text @text_entered
-      if @state isnt @STATES.TEXT and @suggestions[@state].selection isnt null
+      if (@state isnt @STATES.TEXT) and @suggestions[@state].selection
         size = Math.min(@suggestions[@state].list.length, @NUM_SUGGESTIONS)
         for i in [0...size]
           cur = @suggestions[@state]?.list[i]

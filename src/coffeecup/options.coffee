@@ -32,10 +32,10 @@ html ->
       ul '#options', ->
         li ->
           span '.stripe', '$ 9.36'
-          button '#stripe', 'Use credit card', tabindex: '102'
+          button '#stripe.action', 'Use credit card', tabindex: '102'
         li ->
           span '.bitcoin', '$ 9.95'
-          button '#bitcoin', 'Use bitcoins', tabindex: '103'
+          button '#bitcoin.action', 'Use bitcoins', tabindex: '103'
       p '#list', 'Most recent donations: '
       ul id: 'donations'
       a href: 'http://donate.getferro.com', tabindex: '104', -> 'Complete donor table'

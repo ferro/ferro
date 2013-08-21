@@ -145,14 +145,6 @@ footer
   width: 120px
   padding: .5em
 
-img + label
-  position: absolute
-  top: 150px
-  right: 1em
-  font-size: smaller
-  clear: right
-  width: 120px
-  text-align: center    
 
 #donate
   position: fixed
@@ -162,9 +154,18 @@ img + label
   border: 4px solid $grey
   padding: 20px
 
+  img + label
+    position: absolute
+    top: 150px
+    right: 1em
+    font-size: smaller
+    clear: right
+    width: 120px
+    text-align: center    
+
   a
     float: right
-
+      
   span
     vertical-align: middle
     margin-left: 10%
@@ -183,7 +184,7 @@ ul
   width: 80px
   text-align: right
 
-#donate input, button
+#donate input, #donate button
   position: absolute
   right: 45%
 	
@@ -191,6 +192,8 @@ ul
   padding: .6em
   width: 110px
   border-radius: .6em
+
+.action 
   border: 1px solid $grey
   background-color: #4BB352
   color: white

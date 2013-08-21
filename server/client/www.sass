@@ -1,5 +1,8 @@
 @import 'options'
 
+main, section
+  margin: 0 25%
+
 footer
   margin: 3em 20% 0
 
@@ -16,4 +19,53 @@ main img, section img
 
 ul.spaced li
   margin-bottom: 1em
+
+aside.left 
+  float: left
+  position: fixed
+  left: 5%
+  top: 5em
+  width: 15em
+
+  li
+    list-style: none
+    margin-left: .7em
+
+nav
+  margin-left: 2em
+
+h4
+  font-size: larger
+  margin-bottom: .4em
+
+#install
+  margin-bottom: 5em
+
+  > label
+    font-size: smaller
+    text-align: center
+    margin-left: auto 
+    display: block
   
+  button
+    font-size: 1.5em
+    width: 10em
+    margin-bottom: .3em
+    height: 4em
+    border-radius: .6em
+
+$img-width: 600px
+      
+a.fancybox-thumb + label
+  float: right
+  clear: right
+  width: $img-width
+  text-align: center
+  margin: 1em 0 2em
+
+img
+  width: $img-width
+  margin-left: 1em
+
+.instruction
+  clear: right

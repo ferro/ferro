@@ -35,10 +35,16 @@ require('zappajs') port, ->
           sentence_case: sentence_case
           title: 'Ferro: The keyboard interface to Chrome'
           scripts: [
+            '//ajax.googleapis.com/ajax/libs/jquery/2.0.3/jquery.min.js'
             'js/analytics.js'
+            'fancybox/source/jquery.fancybox.js'
+            'fancybox/source/helpers/jquery.fancybox-thumbs.js'
+            'js/www.js'
           ]
           stylesheets: [
             'css/www.css'
+            'fancybox/source/jquery.fancybox.css'
+            'fancybox/source/helpers/jquery.fancybox-thumbs.css'
           ]
       when 'donate.getferro.com'
         # db.query(
