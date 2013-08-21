@@ -1,4 +1,3 @@
-text JSON.stringify @donations
 section '#main', ->
   h1 '.title', 'Ferro Donations'
   nav '.center', ->

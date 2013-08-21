@@ -37,8 +37,8 @@ $ ->
       $('#donate > img').hide()
       $('#donate').append THANK_YOU
 
-  $.get 'https://donate.getferro.com/donations', (data) ->
-    for donation in data.donations
+  $.get 'http://donate.getferro.com/donations', (data) ->
+    for donation in JSON.parse(data)
       li = "<li>#{donation.name}<code>$#{donation.amt}</code>#{donation.created_at}</li>"
       $('#donations').append $(li)
 
