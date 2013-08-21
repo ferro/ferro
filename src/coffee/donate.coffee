@@ -14,7 +14,7 @@ complete = (type, result = null) ->
   $('#donate').hide()
   $('#donate').append """<p class="thankyou">Thank you for donating #{orders} order#{'s' unless orders is '1'} of chicken panang!</p>"""
 
-  chrome.storage?.sync.set {donated, orders}
+  chrome?.storage?.sync.set {donated, orders}
 
 
 update_amount_left = ->
@@ -32,7 +32,7 @@ $ ->
     .attr('data-code', '5bb2f730894ac0de1df2fff0c3bdd8fe')
     .attr('data-button-style', 'none')
 
-  chrome.storage.sync.get 'donated', (data) ->
+  chrome?.storage?.sync.get 'donated', (data) ->
     if chrome.extension and data.donated
       $('#donate > img').hide()
       $('#donate').append THANK_YOU

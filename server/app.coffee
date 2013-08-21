@@ -67,9 +67,9 @@ require('zappajs') port, ->
               'js/init.js'
               'js/analytics.js'
               'js/donate.js'
-              'js/main.js'
               'https://checkout.stripe.com/v2/checkout.js'
               'https://coinbase.com/assets/button.js'
+              'js/main.js'
             ]
             stylesheets: [
               'css/table.css'
@@ -80,7 +80,7 @@ require('zappajs') port, ->
 
   @get '/donations': ->
     db.sequelize.query(
-      'SELECT * FROM donations ORDER BY id DESC LIMIT 5;'
+      'SELECT * FROM donations ORDER BY created_at DESC LIMIT 5;'
       db.Donation
     ).success (donations) =>
       @send JSON.stringify donations
@@ -91,6 +91,7 @@ require('zappajs') port, ->
   @get '/callback': ->
     unless @params.secret is process.env.COINBASE_CALLBACK
       @send 403
+      return
 
     @save_charge 
       amt: @params.order.total_native.cents
