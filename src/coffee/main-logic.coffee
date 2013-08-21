@@ -174,7 +174,7 @@ execute = ->
     if in_text_mode()
       arg = $f('#f-text').value
     send_cmd cmd, arg
-#  window.close()
+  window.close()
 
 
 update_stored_cmd = (fn_name, arg, tab) ->

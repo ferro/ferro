@@ -1,5 +1,5 @@
 request = require 'request'
-#db = require './model'
+db = require './model'
 _ = require 'underscore'
 {COMMANDS} = require '../src/coffee/commands'
 {sentence_case} = require '../src/coffee/init'
@@ -16,7 +16,7 @@ is_valid = (o) ->
   
 port = process.env.PORT || 80
 
-#db.sequelize.sync()
+db.sequelize.sync()
 
 
 
@@ -47,34 +47,34 @@ require('zappajs') port, ->
             'fancybox/source/helpers/jquery.fancybox-thumbs.css'
           ]
       when 'donate.getferro.com'
-        # db.query(
-        #     'SELECT * FROM donations ORDER BY amt DESC;'
-        #     db.Donation
-        # ).success (@donations) =>
-        rs = [{name: 'Ethan', amt: 100, created_at: new Date()},{name: 'Anonymous', amt: 995, created_at: new Date()}]
-        amts = _.pluck(rs, 'amt')
-        sum_fn = (acc, amt) ->
-          acc + amt
-        sum = _.reduce amts, sum_fn, 0
+        db.query(
+            'SELECT * FROM donations;'
+            db.Donation
+        ).success (rs) =>
+#        rs = [{name: 'Ethan', amt: 100, created_at: new Date()},{name: 'Anonymous', amt: 995, created_at: new Date()}]
+          amts = _.pluck rs, 'amt'
+          sum_fn = (acc, amt) ->
+            acc + amt
+          sum = _.reduce amts, sum_fn, 0
 
-        @render donate:
-          donations: rs
-          total: (sum/100).toFixed 2
-          title:'Ferro Donations'
-          scripts: [
-            '//ajax.googleapis.com/ajax/libs/jquery/2.0.3/jquery.min.js'
-            'js/jquery.tablesorter.min.js'
-            'js/init.js'
-            'js/analytics.js'
-            'js/donate.js'
-            'js/main.js'
-            'https://checkout.stripe.com/v2/checkout.js'
-            'https://coinbase.com/assets/button.js'
-          ]
-          stylesheets: [
-            'css/table.css'
-            'css/donate.css'
-          ]
+          @render donate:
+            donations: rs
+            total: (sum/100).toFixed 2
+            title:'Ferro Donations'
+            scripts: [
+              '//ajax.googleapis.com/ajax/libs/jquery/2.0.3/jquery.min.js'
+              'js/jquery.tablesorter.min.js'
+              'js/init.js'
+              'js/analytics.js'
+              'js/donate.js'
+              'js/main.js'
+              'https://checkout.stripe.com/v2/checkout.js'
+              'https://coinbase.com/assets/button.js'
+            ]
+            stylesheets: [
+              'css/table.css'
+              'css/donate.css'
+            ]
       else   
         'hello there'
 
@@ -86,7 +86,6 @@ require('zappajs') port, ->
       @send JSON.stringify donations
 
   @post '/donations': ->
-    l 'in post'
     @make_charge() 
 
   @get '/callback': ->
@@ -103,7 +102,6 @@ require('zappajs') port, ->
 
     l 'make_charge o:'
     l o
-    l @send
     request
       method: 'POST'
       url: 'https://api.stripe.com/v1/charges'
@@ -128,12 +126,12 @@ require('zappajs') port, ->
     l 'save_charge'
     l o
     # params sanitized by build()
-  # db.Donation
-  #   .build
-  #     amt: o.amt
-  #     name: o.name[0...30]
-  #     created_at: new Date()
-  #   .save()
+    db.Donation
+      .build
+        amt: o.amt
+        name: o.name[0...30]
+        created_at: new Date()
+      .save()
     @send 'saved donation'
 
 
