@@ -86,6 +86,7 @@ require('zappajs') port, ->
       @send JSON.stringify donations
 
   @post '/donations': ->
+    l @params
     @make_charge() 
 
   @get '/callback': ->
