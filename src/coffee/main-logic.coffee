@@ -300,7 +300,10 @@ update_default_cmd = ->
     if DEFAULTS[context]
       command.list = COMMANDS_BY_CONTEXT[context]
       command.selection = 0
-      display_suggestions state isnt STATES.TEXT
+    else
+      command.list = []
+      command.selection = null
+    display_suggestions state isnt STATES.TEXT
   , 500
 
 clear_cmd = ->

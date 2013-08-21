@@ -91,7 +91,7 @@ popup_template = ->
         cmd_klass = ''
       div id: 'f-main', class: main_klass, ->
         sugs = @suggestions[@STATES.MAIN]
-        if sugs.selection
+        if sugs.selection? and sugs.selection isnt null
           main_selection = sugs.list[sugs.selection] 
           url = get_icon main_selection
           if url
@@ -104,7 +104,7 @@ popup_template = ->
           div id: 'f-description-main', description main_selection
       div id: 'f-cmd', class: cmd_klass, ->
         sugs = @suggestions[@STATES.CMD]
-        if sugs.selection
+        if sugs.selection? and sugs.selection isnt null
           cmd = sugs.list[sugs.selection]
           div id: 'f-name-cmd', ->
             text get_name(cmd) or ''
@@ -113,10 +113,10 @@ popup_template = ->
       div id: 'f-entered', ->
         span id: 'f-entered-text', ->
           text @text_entered
-      if (@state isnt @STATES.TEXT) and @suggestions[@state].selection
+      if (@state isnt @STATES.TEXT) and @suggestions[@state].selection isnt null
         size = Math.min(@suggestions[@state].list.length, @NUM_SUGGESTIONS)
         for i in [0...size]
-          cur = @suggestions[@state]?.list[i]
+          cur = @suggestions[@state].list[i]
           klass = 'f-suggest'
           klass += ' f-selected' if i is @suggestions[@state].selection
           div id: 'f-' + i, class: klass, ->
