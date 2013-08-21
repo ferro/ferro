@@ -6,6 +6,7 @@
     "start": "coffee server/app.coffee"
   },
   "dependencies": {
+    "underscore": "1.5.1",
     "backbone": "1.0.0",
     "coffeecup": "0.3.19",
     "coffee-script": "1.6.2",
