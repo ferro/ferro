@@ -3,7 +3,7 @@
   "version": "1.0.0",
   "private": true,
   "scripts": {
-    "install": "cake build"
+    "install": "cake build",
     "start": "coffee server/app.coffee"
   },
   "dependencies": {
