@@ -47,7 +47,7 @@ require('zappajs') port, ->
             'fancybox/source/helpers/jquery.fancybox-thumbs.css'
           ]
       when 'donate.getferro.com'
-        db.query(
+        db.sequelize.query(
             'SELECT * FROM donations;'
             db.Donation
         ).success (rs) =>
@@ -79,7 +79,7 @@ require('zappajs') port, ->
         'hello there'
 
   @get '/donations': ->
-    db.query(
+    db.sequelize.query(
       'SELECT * FROM donations ORDER BY id DESC LIMIT 5;'
       db.Donation
     ).success (donations) =>
