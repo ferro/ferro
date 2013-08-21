@@ -34,11 +34,11 @@ th {
 table {
   border-spacing: 0; }
 
-td {
+main td {
   vertical-align: top;
   border-top: 1px solid #dddddd; }
 
-td:first-child {
+main td:first-child {
   width: 5em;
   padding-left: 0.5em; }
 
@@ -203,6 +203,9 @@ p.center {
   text-align: center;
   width: 50%;
   margin: 0 auto; }
+
+#donate td {
+  padding: 0 2em 0 0; }
 
 .center {
   text-align: center; }

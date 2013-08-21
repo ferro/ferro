@@ -14,7 +14,10 @@ compile_from_extension = (files..., watch) ->
 build = (watch) ->
   compile_cs 'server/client/', 'server/public/js/', watch
   compile_from_extension 'donate', 'init', 'analytics', watch
-  exec "sass --load-path=src/sass/ #{'--watch' if watch} server/client/:server/public/css"
+
+  #todo non-watch doesn't work
+  exec "sass --load-path=src/sass/ #{if watch then '--watch server/client/:server/public/css' else 'server/client/*.sass server/public/css'}"
+
 
 task 'build', 'Build client js and css for getferro.com', ->
   build false

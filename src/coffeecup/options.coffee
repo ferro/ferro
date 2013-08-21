@@ -37,7 +37,27 @@ html ->
           span '.bitcoin', '$ 9.95'
           button '#bitcoin.action', 'Use bitcoins', tabindex: '103'
       p '#list', 'Most recent donations: '
-      ul id: 'donations'
+      table id: 'donations', ->
+        tr ->
+          td ''
+          td ''
+          td ''
+        tr ->
+          td ''
+          td ''
+          td ''
+        tr ->
+          td ''
+          td ''
+          td ''
+        tr ->
+          td ''
+          td ''
+          td ''
+        tr ->
+          td ''
+          td ''
+          td ''
       a href: 'http://donate.getferro.com', tabindex: '104', -> 'Complete donor table'
       div '.coinbase-button', ''
     tag 'main', ->

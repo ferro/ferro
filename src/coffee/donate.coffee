@@ -38,9 +38,13 @@ $ ->
       $('#donate').append THANK_YOU
 
   $.get 'http://donate.getferro.com/donations', (data) ->
-    for donation in JSON.parse(data)
-      li = "<li>#{donation.name}<code>$#{donation.amt}</code>#{donation.created_at}</li>"
-      $('#donations').append $(li)
+    for donation, i in JSON.parse(data)
+      tr = $("#donations tr:nth-child(#{i+1})")
+      tr.find('td:nth-child(1)').text donation.name
+      tr.find('td:nth-child(2)').text '$ ' + (donation.amt/100.0).toFixed 2
+
+      d = new Date(donation.created_at)
+      tr.find('td:nth-child(3)').text d.getMonth() + '/' + d.getDate() + '/' + d.getFullYear()
 
   update_amount_left()
 

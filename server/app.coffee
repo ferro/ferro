@@ -98,19 +98,21 @@ require('zappajs') port, ->
       name: @params.order.custom
   
   @helper make_charge: ->
+    l 'make_charge params:'
+    l @params
+
     unless is_valid @params
       @send 'Invalid parameters'
+      return
 
-    l 'make_charge o:'
-    l o
     request
       method: 'POST'
       url: 'https://api.stripe.com/v1/charges'
       form:
-        amount: o.amt,
+        amount: @params.amt,
         currency: 'usd',
-        card: o.token,
-        description: o.name
+        card: @params.token,
+        description: @params.name
       headers:
         Authorization: 'Bearer ' + process.env.STRIPE_KEY
     , (error, r, body) =>
