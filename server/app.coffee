@@ -21,9 +21,8 @@ db.sequelize.sync()
 
 
 require('zappajs') port, ->
-  @use 'partials'
+  @use 'partials', 'static', 'bodyParser'
   @enable 'default layout'
-  @use 'static'
 
   @get '/': ->
     host = @request.get 'host'
@@ -86,7 +85,7 @@ require('zappajs') port, ->
       @send JSON.stringify donations
 
   @post '/donations': ->
-    l @params
+    l @body
     @make_charge() 
 
   @get '/callback': ->
@@ -95,14 +94,14 @@ require('zappajs') port, ->
       return
 
     @save_charge 
-      amt: @params.order.total_native.cents
-      name: @params.order.custom
+      amt: @body.order.total_native.cents
+      name: @body.order.custom
   
   @helper make_charge: ->
-    l 'make_charge params:'
-    l @params
+    l 'make_charge body:'
+    l @body
 
-    unless is_valid @params
+    unless is_valid @body
       @send 'Invalid parameters'
       return
 
@@ -110,10 +109,10 @@ require('zappajs') port, ->
       method: 'POST'
       url: 'https://api.stripe.com/v1/charges'
       form:
-        amount: @params.amt,
+        amount: @body.amt,
         currency: 'usd',
-        card: @params.token,
-        description: @params.name
+        card: @body.token,
+        description: @body.name
       headers:
         Authorization: 'Bearer ' + process.env.STRIPE_KEY
     , (error, r, body) =>
@@ -122,7 +121,7 @@ require('zappajs') port, ->
         l error
         @send 'error'
       else
-        @save_charge @params
+        @save_charge @body
         l body.paid
       l body
 

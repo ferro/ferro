@@ -2,7 +2,7 @@
 # when first installed, init storage and ask them to set the keyboard shortcut
 chrome.runtime.onInstalled.addListener (details) ->
   if details.reason is 'install'
-    chrome.storage.sync.set {use_current_tab: false}
+    chrome.storage.sync.set {use_current_tab: false, donated: false}
 
     chrome.windows.getLastFocused (cur) ->
       chrome.windows.create

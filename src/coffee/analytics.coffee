@@ -1,6 +1,6 @@
 unless _gaq
   _gaq = []
-  _gaq.push ['_setAccount', 'UA-42896199-1']
+  _gaq.push ['_setAccount', 'UA-42896199-2']
   _gaq.push(['_setDomainName', 'getferro.com']);
   if chrome.extension
     _gaq.push ['_setSessionCookieTimeout', 0]

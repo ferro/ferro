@@ -6,7 +6,7 @@ complete = (type, result = null) ->
   name = $('#name').val()
   track 'Donations', type, name, amt
   if type is 'stripe'
-    $.post 'https://donate.getferro.com/donations', {token: result.id, name, amt}
+    $.post 'http://donate.getferro.com/donations', JSON.stringify({token: result.id, name, amt}), null, 'application/json'
 
   donated = true
   orders = (amt / DEFAULT_AMT).toFixed 2
