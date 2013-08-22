@@ -2,6 +2,9 @@ DEFAULT_AMT = 995
   
 amt = DEFAULT_AMT
 
+thank_you = (orders) ->
+  """<p class="thankyou">Thank you for donating #{orders} order#{'s' unless orders is '1'} of chicken panang!</p>"""
+
 complete = (type, result = null) ->
   name = $('#name').val()
   track 'Donations', type, name, amt
@@ -12,7 +15,7 @@ complete = (type, result = null) ->
   orders = (amt / DEFAULT_AMT).toFixed 2
 
   $('#donate > img').hide()
-  $('#donate').append """<p class="thankyou">Thank you for donating #{orders} order#{'s' unless orders is '1'} of chicken panang!</p>"""
+  $('#donate').append thank_you orders
 
   chrome?.storage?.sync.set {donated, orders}
 
@@ -31,11 +34,12 @@ $ ->
   $('.coinbase-button')
     .attr('data-code', '5bb2f730894ac0de1df2fff0c3bdd8fe')
     .attr('data-button-style', 'none')
+    .attr('data-custom', 'Anonymous Bitcoin')
 
-  chrome?.storage?.sync.get 'donated', (data) ->
+  chrome?.storage?.sync.get ['donated', 'orders'], (data) ->
     if chrome.extension and data.donated
       $('#donate > img').hide()
-      $('#donate').append THANK_YOU
+      $('#donate').append thank_you data.orders
 
   $.get 'http://donate.getferro.com/donations', (data) ->
     for donation, i in JSON.parse(data)
@@ -75,8 +79,8 @@ $ ->
       image:       'images/icon-128.gif'
 
   $('#bitcoin').click ->
-    track 'Donation clicks', 'bitcoin'
     $('.coinbase-button').attr 'data-custom', $('#name').val()
+    track 'Donation clicks', 'bitcoin'
     $(document).trigger 'coinbase_show_modal', '5bb2f730894ac0de1df2fff0c3bdd8fe'
     false
 

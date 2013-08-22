@@ -119,6 +119,10 @@ require('zappajs') port, ->
       headers:
         Authorization: 'Bearer ' + process.env.STRIPE_KEY
     , (error, r, body) =>
+      l 'bodyyy'
+      l body
+      l body.error
+      l JSON.parse(body).error
       if error
         l 'error:'
         l error
@@ -127,7 +131,7 @@ require('zappajs') port, ->
         if body.error
           @send 'invalid'
         else
-          @save_charge body
+          @save_charge @body
           l body.paid
       l body
 
