@@ -28,7 +28,6 @@ require('zappajs') port, ->
     host = @request.get 'host'
     switch host
       when 'www.getferro.com'
-#        @make_charge amt: 10000, token: 'tok_2GsMkFGfv7yJet', name: 'me'
         @render www:
           COMMANDS: COMMANDS
           sentence_case: sentence_case
@@ -50,7 +49,6 @@ require('zappajs') port, ->
             'SELECT * FROM "Donations";'
             db.Donation
         ).success (rs) =>
-#        rs = [{name: 'Ethan', amt: 100, created_at: new Date()},{name: 'Anonymous', amt: 995, created_at: new Date()}]
           amts = _.pluck rs, 'amt'
           sum_fn = (acc, amt) ->
             acc + amt
@@ -85,13 +83,9 @@ require('zappajs') port, ->
       @send JSON.stringify donations
 
   @post '/donations': ->
-    l @body
-    l @body.name
     @make_charge() 
 
   @post '/callback': ->
-    l @query
-    l process.env.COINBASE_CALLBACK
     unless @query.secret is process.env.COINBASE_CALLBACK
       @send 403
       return
@@ -101,9 +95,6 @@ require('zappajs') port, ->
       name: @body.order.custom
   
   @helper make_charge: ->
-    l 'make_charge body:'
-    l @body
-
     unless is_valid @body
       @send 'Invalid parameters'
       return
@@ -119,22 +110,14 @@ require('zappajs') port, ->
       headers:
         Authorization: 'Bearer ' + process.env.STRIPE_KEY
     , (error, r, body) =>
-      l 'bodyyy'
-      l body
-      l body.error
-      l JSON.parse(body).error
       json = JSON.parse body
       if error or json.error
-        l 'error:'
-        l error
         @send 'error'
       else
         @save_charge @body
 
 
   @helper save_charge: (o) ->
-    l 'save_charge'
-    l o
     # params sanitized by build()
     db.Donation
       .build

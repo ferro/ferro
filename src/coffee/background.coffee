@@ -4,14 +4,16 @@ chrome.runtime.onInstalled.addListener (details) ->
   if details.reason is 'install'
     chrome.storage.sync.set {use_current_tab: false, donated: false}
 
-    chrome.windows.getLastFocused (cur) ->
-      chrome.windows.create
-        url: chrome.extension.getURL 'shortcut.html'
-        top: cur.top + 200
-        left: Math.round cur.left + cur.width/2 - 200
-        width: 500
-        height: 325
-        type: 'popup'
+# looks like the suggested shortcuts are set by default
+
+    # chrome.windows.getLastFocused (cur) ->
+    #   chrome.windows.create
+    #     url: chrome.extension.getURL 'shortcut.html'
+    #     top: cur.top + 200
+    #     left: Math.round cur.left + cur.width/2 - 200
+    #     width: 500
+    #     height: 325
+    #     type: 'popup'
 
 # hotkey listener
 chrome.commands.onCommand.addListener (command) ->
@@ -34,7 +36,7 @@ chrome.commands.onCommand.addListener (command) ->
 
 
 
-# command helpers with callbacks that don't work inside of the browser action
+# command helpers with callbacks that don't work inside of the browser action, which closes
 
 window.create_window = (tab_ids) ->
   chrome.windows.create {

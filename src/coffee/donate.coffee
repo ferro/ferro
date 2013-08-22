@@ -69,7 +69,7 @@ $ ->
       complete 'stripe', res
 
     StripeCheckout.open 
-      key:         'pk_test_dqK3ga37dNAty3AQsvfEq2pe',
+      key:         'pk_live_8JM7cWnRQ5aywwea36gqwL81',
       amount:      amt,
       currency:    'usd',
       name:        'Ferro',
