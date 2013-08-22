@@ -10,7 +10,7 @@ l = (x) ->
   console.log x
   
 is_valid = (o) ->
-  o.amt < 0.5 and o.name?.length > 0 and o.token
+  o.amt >= 50 and o.name?.length > 0 and o.token
 
 # ---------
   
@@ -86,9 +86,10 @@ require('zappajs') port, ->
 
   @post '/donations': ->
     l @body
+    l @body.name
     @make_charge() 
 
-  @get '/callback': ->
+  @post '/callback': ->
     unless @params.secret is process.env.COINBASE_CALLBACK
       @send 403
       return
