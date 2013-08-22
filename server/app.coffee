@@ -123,17 +123,14 @@ require('zappajs') port, ->
       l body
       l body.error
       l JSON.parse(body).error
-      if error
+      json = JSON.parse body
+      if error or json.error
         l 'error:'
         l error
         @send 'error'
       else
-        if body.error
-          @send 'invalid'
-        else
-          @save_charge @body
-          l body.paid
-      l body
+        @save_charge @body
+
 
   @helper save_charge: (o) ->
     l 'save_charge'
