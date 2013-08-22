@@ -124,8 +124,11 @@ require('zappajs') port, ->
         l error
         @send 'error'
       else
-        @save_charge @body
-        l body.paid
+        if body.error
+          @send 'invalid'
+        else
+          @save_charge body
+          l body.paid
       l body
 
   @helper save_charge: (o) ->

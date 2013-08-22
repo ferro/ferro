@@ -6,12 +6,12 @@ complete = (type, result = null) ->
   name = $('#name').val()
   track 'Donations', type, name, amt
   if type is 'stripe'
-    $.post 'http://donate.getferro.com/donations', JSON.stringify({token: result.id, name, amt}), null, 'application/json'
+    $.post 'http://donate.getferro.com/donations', {token: result.id, name, amt}
 
   donated = true
   orders = (amt / DEFAULT_AMT).toFixed 2
 
-  $('#donate').hide()
+  $('#donate > img').hide()
   $('#donate').append """<p class="thankyou">Thank you for donating #{orders} order#{'s' unless orders is '1'} of chicken panang!</p>"""
 
   chrome?.storage?.sync.set {donated, orders}
