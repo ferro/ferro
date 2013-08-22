@@ -47,7 +47,7 @@ require('zappajs') port, ->
           ]
       when 'donate.getferro.com'
         db.sequelize.query(
-            'SELECT * FROM donations;'
+            'SELECT * FROM "Donations";'
             db.Donation
         ).success (rs) =>
 #        rs = [{name: 'Ethan', amt: 100, created_at: new Date()},{name: 'Anonymous', amt: 995, created_at: new Date()}]
@@ -79,7 +79,7 @@ require('zappajs') port, ->
 
   @get '/donations': ->
     db.sequelize.query(
-      'SELECT * FROM donations ORDER BY created_at DESC LIMIT 5;'
+      'SELECT * FROM "Donations" ORDER BY created_at DESC LIMIT 5;'
       db.Donation
     ).success (donations) =>
       @send JSON.stringify donations
@@ -90,9 +90,9 @@ require('zappajs') port, ->
     @make_charge() 
 
   @post '/callback': ->
-    l @params
+    l @query
     l process.env.COINBASE_CALLBACK
-    unless @params.secret is process.env.COINBASE_CALLBACK
+    unless @query.secret is process.env.COINBASE_CALLBACK
       @send 403
       return
 
