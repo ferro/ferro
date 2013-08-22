@@ -90,6 +90,8 @@ require('zappajs') port, ->
     @make_charge() 
 
   @post '/callback': ->
+    l @params
+    l process.env.COINBASE_CALLBACK
     unless @params.secret is process.env.COINBASE_CALLBACK
       @send 403
       return
