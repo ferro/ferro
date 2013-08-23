@@ -13,6 +13,7 @@ section '#main', ->
     tbody ->
       for donation in @donations
         tr ->
+          # HTML escaped by coffeecup
           td donation.name
           td '$ ' + (donation.amt / 100.0).toFixed 2
           td donation.created_at.toString()

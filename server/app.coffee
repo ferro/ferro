@@ -90,8 +90,11 @@ require('zappajs') port, ->
       @send 403
       return
 
+    cents = @body.order.total_native.cents
+    return if cents < 50
+
     @save_charge 
-      amt: @body.order.total_native.cents
+      amt: cents
       name: @body.order.custom
   
   @helper make_charge: ->
@@ -118,7 +121,7 @@ require('zappajs') port, ->
 
 
   @helper save_charge: (o) ->
-    # params sanitized by build()
+    # values sanitized by build()
     db.Donation
       .build
         amt: o.amt

@@ -44,6 +44,8 @@ $ ->
   $.get 'http://donate.getferro.com/donations', (data) ->
     for donation, i in JSON.parse(data)
       tr = $("#donations tr:nth-child(#{i+1})")
+
+      # .text escapes html
       tr.find('td:nth-child(1)').text donation.name
       tr.find('td:nth-child(2)').text '$ ' + (donation.amt/100.0).toFixed 2
 
@@ -79,6 +81,10 @@ $ ->
       image:       'images/icon-128.gif'
 
   $('#bitcoin').click ->
+    if amt < 50
+      alert 'Minimum donation is 50 cents.'
+      return
+
     $('.coinbase-button').attr 'data-custom', $('#name').val()
     track 'Donation clicks', 'bitcoin'
     $(document).trigger 'coinbase_show_modal', '5bb2f730894ac0de1df2fff0c3bdd8fe'
