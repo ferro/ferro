@@ -32,11 +32,10 @@ Please do contribute! I'm not planning on working on the below items. Open an is
 	    }
 	}
 ```
-and duplicate.
 
 ## Code Structure
 
-There is one background script, which along with the options page and action page has access to the extension's local storage and chrome extension API. The background script also maintains sessions state by making changes to local storage and the `f.sessions` global variable in each tab. The options page provides an interface to change sessions and the Ferro keyboard shortcut, and it updates each tab's `f.sessions` and `f.shortcut` variables (via requests to the background) as well as saving the changes to `localStorage`. 
+The extension code is in `src/`. There is one background script, which along with the options page and action page has access to the extension's local storage and chrome extension API. The background script also maintains sessions state by making changes to local storage and the `f.sessions` global variable in each tab. The options page provides an interface to change sessions and the Ferro keyboard shortcut, and it updates each tab's `f.sessions` and `f.shortcut` variables (via requests to the background) as well as saving the changes to `localStorage`. 
 
 * `commands:` defines available commands
 * `chrome-pages:` lists the special `about:` and `chrome://` pages
