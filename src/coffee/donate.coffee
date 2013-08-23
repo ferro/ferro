@@ -61,7 +61,7 @@ $ ->
   $('#stripe').click (e) ->
     track 'Donation clicks', 'stripe'
 
-    if amt <= 50
+    if amt < 50
       alert 'Minimum card charge is 50 cents.'
       return
   

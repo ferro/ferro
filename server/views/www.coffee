@@ -5,7 +5,7 @@ aside '#banner', ->
 
 aside '.left', ->
   div '#install', ->
-    form action: 'https://chrome.google.com/webstore/', method: 'get', ->
+    form action: 'https://chrome.google.com/webstore/detail/ferro/pioihedddcnmkeeeomkcfppglpehegfh/', method: 'get', ->
       button '.action', 'Install Ferro'
     label 'Install extension on the Chrome Web Store'
 
