@@ -24,12 +24,14 @@ Loren
         e.stopPropagation()
 
     chrome.storage.sync.get 'times', (data) ->
-      unless data?.times
-        $('audio')[0].play()
+      # autoplay is annoying
+      # unless data?.times
+      #   $('audio')[0].play()
+
       times = (data?.times or 0) + 1
       chrome.storage.sync.set {times}
     
-      if times > 1
+      if times > 1 and $('audio')[0]
         speak 'You have clicked Ferro ' + times + ' times.', {rate: 2}
         $.get 'http://www.iheartquotes.com/api/v1/random?source=starwars&format=json', (data) ->
           speak data.quote, {enqueue: true, rate: 1.3}

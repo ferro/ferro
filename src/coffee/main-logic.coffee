@@ -163,6 +163,7 @@ set_entered = (e) ->
 execute = ->
   if not in_text_mode() and main_choice().cmd
     send_cmd main_choice().cmd
+    window.close()
   else
     cmd = if cmd_choice()
       cmd_choice()
@@ -174,7 +175,9 @@ execute = ->
     if in_text_mode()
       arg = $f('#f-text').value
     send_cmd cmd, arg
-  window.close()
+    
+    unless cmd.name is 'describe'
+      window.close()
 
 
 update_stored_cmd = (fn_name, arg, tab) ->

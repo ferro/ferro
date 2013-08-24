@@ -24,14 +24,13 @@ aside '.left', ->
 
 tag 'main', ->
   h1 'Ferro'
-  p 'Ferro is an extension to the Google Chrome browser that provides the following functionality:'
-  ul '.spaced', ->
-    li ->
-      b 'Session management:'
-      text " Save your current tabs and open them later. You may use this for instance if you are working on a research project and have many web pages open in different tabs or windows, and you would like to close them for a while but be able to reopen them later. Saved sessions are synced with all computers that you have signed on in Chrome with your Google account. (See the “Sign in” section of Chrome's settings.)"
-    li ->
-      b 'Keyboard access to Chrome commands:'
-      text ' Any Chrome command for which there is not already a keyboard shortcut can be quickly run, such as pinning a tab or opening a bookmark.'
+  p ->
+    text 'Ferro is a Google Chrome extension that is similar to application launchers like Quicksilver, Launchy, and Do. Using only your keyboard, you can quickly open pages in your history or bookmarks, open apps or extension pages, and save your current tabs for opening later (see '
+    a href: '#sessions', -> 'sessions section'
+    text ' below). You can also perform other commands, such as deleting a bookmark, disabling an extension, and pining a tab. For more commands, see the full '
+    a href: '#commands', -> 'command list'
+    text '.'
+  
 
 
   h3 '#usage', 'Usage'
@@ -125,8 +124,10 @@ tag 'main', ->
   div '.instruction', ''
 
 section ->
-  h3 '#sessions', 'Sessions'
+  h3 '#sessions', 'Session Management'
 
+  text "You can save your session - current set of open tabs - and open it later. You may use this for instance if you are working on a research project and have many web pages open in different tabs or windows, and you would like to close them for a while but be able to reopen them later. Saved sessions are synced with all computers that you have signed on in Chrome with your Google account. (See the “Sign in” section of Chrome's settings.)"
+  
   a class: 'fancybox-thumb', rel: 'group', href: 'images/session.png', title: 'Saving a session', ->
     img src: 'images/session.png'
   label ''
