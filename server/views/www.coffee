@@ -14,28 +14,26 @@ aside '.left', ->
       a href: '#', 'Ferro'
     ul ->
       li ->
-        a href: '#usage', 'Usage'
-      li ->
-        a href: '#sessions', 'Sessions'
+        a href: '#commands', 'Available Commands'
       li ->
         a href: '#name', 'The Name'
       li ->
-        a href: '#commands', 'Available Commands'
+        a href: '#usage', 'Usage'
+      li ->
+        a href: '#sessions', 'Session Management'
 
 tag 'main', ->
   h1 'Ferro'
   p ->
     text 'Ferro is a Google Chrome extension that is similar to application launchers like Quicksilver, Launchy, and Do. Using only your keyboard, you can quickly open pages in your history or bookmarks, open apps or extension pages, and save your current tabs for opening later (see '
     a href: '#sessions', -> 'sessions section'
-    text ' below). You can also perform other commands, such as deleting a bookmark, disabling an extension, and pinning a tab. For more commands, see the full '
-    a href: '#commands', -> 'command list'
-    text '.'
+    text ' below). You can also perform other commands, such as deleting a bookmark, disabling an extension, and pinning a tab.'
   
 
 #modified from options.coffee
 section ->
   h3 '#commands', 'Available Commands'
-  table ->
+  table '.commands', ->
     tr ->
       th 'Name'
       th 'Description'
