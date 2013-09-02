@@ -20,16 +20,23 @@ complete = (type, result = null) ->
   chrome?.storage?.sync.set {donated, orders}
 
 
-update_amount_left = ->
-  left = (Math.max(
-    amt - (amt * 0.029) - 30
+update_fee = ->
+  fee = (Math.max(
+    (amt * 0.029) + 30
     0
   )/100).toFixed 2
-  $('.stripe').text '$ ' + left
+  $('.stripe').text '$ ' + fee
   
-  $('.bitcoin').text '$ ' + (Math.max(amt, 0)/100).toFixed 2
+# these took forever to load sometimes, and they blocked viewing the page, so moving from head to async
+# script src: 'https://checkout.stripe.com/v2/checkout.js'
+# script src: 'https://coinbase.com/assets/button.js'
+
+add_async_script 'https://checkout.stripe.com/v2/checkout.js'
+add_async_script 'https://coinbase.com/assets/button.js'
 
 $ ->
+
+
   # how do you have '-' in attr name in coffeecup?
   $('.coinbase-button')
     .attr('data-code', '5bb2f730894ac0de1df2fff0c3bdd8fe')
@@ -52,13 +59,13 @@ $ ->
       d = new Date(donation.created_at)
       tr.find('td:nth-child(3)').text d.getMonth() + '/' + d.getDate() + '/' + d.getFullYear()
 
-  update_amount_left()
+  update_fee()
 
   $('#amount').on 'change keyup paste input', ->
     new_amt = parseFloat($('#amount').val()) * 100
     if new_amt isnt amt
       amt = new_amt
-      update_amount_left()
+      update_fee()
 
   $('#stripe').click (e) ->
     track 'Donation clicks', 'stripe'

@@ -23,7 +23,7 @@ section '#main', ->
 aside '#donate', ->
   img src: 'panang.jpg', height: '120', width: '120'
   label 'Chicken Panang Curry (พะแนง) is $9.95'
-  h2 'Feed me?'
+  h2 'Create happiness'
   p '#feeding', 'I emphatically adore Thai vittles. Your donation will endow my occasional excursions to the local Thai restaurant and thereupon deliver felicity to my life.'
   ul '#form', ->
     li ->
@@ -32,13 +32,13 @@ aside '#donate', ->
     li ->
       label 'Amount:'
       input id: 'amount', type: 'number', value: '9.95', tabindex: '101'
-  div '.header', 'Amount left after processing fees:'
+  div '.header', 'Amount lost to processing fees:'
   ul '#options', ->
     li ->
-      span '.stripe', '$ 9.36'
+      span '.stripe', '$ 0.59'
       button '#stripe.action', 'Use credit card', tabindex: '102'
     li ->
-      span '.bitcoin', '$ 9.95'
+      span '.bitcoin', '$ 0.00'
       button '#bitcoin.action', 'Use bitcoins', tabindex: '103'
   p '#list', 'Most recent donations: '
   table id: 'donations', ->

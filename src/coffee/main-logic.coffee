@@ -177,7 +177,8 @@ execute = ->
     send_cmd cmd, arg
     
     unless cmd.name is 'describe'
-      window.close()
+      d 'close'
+#      window.close()
 
 
 update_stored_cmd = (fn_name, arg, tab) ->

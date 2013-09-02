@@ -16,7 +16,7 @@ is_valid = (o) ->
   
 port = process.env.PORT || 80
 
-db.sequelize.sync()
+db?.sequelize.sync()
 
 
 

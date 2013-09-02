@@ -20,8 +20,8 @@ task :background do
           [],
           [
             'underscore-extensions',
-            'analytics',
             'init',
+            'analytics',
             'commands',
             'background'
           ],
@@ -55,8 +55,8 @@ task :popup do
             'string-score'
           ],
           [
-            'analytics',
             'init',
+            'analytics',
             'model',
             'keys',
             'chrome-pages',
@@ -82,8 +82,8 @@ task :options_app do
             'coffeecup'
           ],
           [
-            'analytics',
             'init',
+            'analytics',
             'model',
             'donate',
             'options-backbone'

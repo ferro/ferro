@@ -1,4 +1,4 @@
-DEBUG = false
+DEBUG = true
 
 d = (ss...) ->
   if DEBUG
@@ -25,3 +25,10 @@ track = (args...) ->
   args.unshift '_trackEvent'
   _gaq.push args
 
+add_async_script = (url) ->
+  ga = document.createElement('script')
+  ga.type = 'text/javascript'
+  ga.async = true
+  ga.src = url
+  s = document.getElementsByTagName('script')[0]
+  s.parentNode.insertBefore(ga, s)

@@ -8,8 +8,9 @@ class SessionView extends Backbone.View
     ul '.sessions', ->
       for win in @model.get 'wins'
         li ->
-          for icon in win.icons
-            img src: icon, height: '16', width: '16'
+          for icon, i in win.icons
+            a href: win.urls[i], ->
+              img src: icon, height: '16', width: '16'
     button '.delete', ->
       text 'Delete'
 
@@ -72,6 +73,8 @@ load_sessions = ->
 
     if sessions.size() is 0
       $('#session-list').before '<i>No sessions are saved.</i>'
+
+    tabindex_setup()
   
 tabindex_setup = ->
   spans = $('#session-list span')
@@ -82,8 +85,6 @@ tabindex_setup = ->
 
 $ ->
   load_sessions()
-
-  tabindex_setup()
 
   $('#session-list span')[0]?.focus()
 

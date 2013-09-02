@@ -227,7 +227,10 @@ apply_to_matching_tabs = (text, fn) ->
       apply_to_regex_tabs /^(chrome|about)/, fn
     else
       http = '^https*://'
+      d tab.url
+      d tab.url.match(new RegExp(http + '(.*\..{2,4}/)', 'i'))
       domain = tab.url.match(new RegExp(http + '(.*\..{2,4}/)', 'i'))[1]
+      d domain  
       apply_to_regex_tabs(new RegExp(http + domain, 'i'), fn) if domain
   else
     apply_to_regex_tabs new RegExp(text, 'i'), fn

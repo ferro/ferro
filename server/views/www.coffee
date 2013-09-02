@@ -32,7 +32,28 @@ tag 'main', ->
     text '.'
   
 
+#modified from options.coffee
+section ->
+  h3 '#commands', 'Available Commands'
+  table ->
+    tr ->
+      th 'Name'
+      th 'Description'
+    sorted_commands = Object.keys(@COMMANDS).sort()
+    for i in [0...sorted_commands.length]
+      name = sorted_commands[i]
+      cmd = @COMMANDS[name]
+      tr ->
+        td @sentence_case name
+        td cmd.desc
 
+
+section ->
+  h3 '#name', 'The Name'
+  p "Ferro is named after iron. Iron and chromium are joined to form the alloy ferrochrome, a constituent of steel (it prevents corrosion and increases hardness). Iron is also pretty exquisite on its own. It is the center of the protein that transports oxygen around our bodies, it is the most common element inside our planet, and it is the largest element the Sun can create until it becomes a red giant in ~5.4 billion years. (And then it can only make up to Bismuth. It takes a much larger star to make larger elements, and then only when it explodes.) Thank you China for mining the majority of today's iron ore."
+
+
+section ->
   h3 '#usage', 'Usage'
 
   a class: 'fancybox-thumb', rel: 'group', href: 'images/blank.png', title: 'Initial popup', ->
@@ -151,27 +172,6 @@ section ->
   p 'Sessions can be opened or deleted by typing the name of the session in the Ferro popup.'
 
   div '.instruction', ''
-
-section ->
-  h3 '#name', 'The Name'
-  p "Ferro is named after iron. Iron and chromium are joined to form the alloy ferrochrome, a constituent of steel (it prevents corrosion and increases hardness). Iron is also pretty exquisite on its own. It is the center of the protein that transports oxygen around our bodies, it is the most common element inside our planet, and it is the largest element the Sun can create until it becomes a red giant in ~5.4 billion years. (And then it can only make up to Bismuth. It takes a much larger star to make larger elements, and then only when it explodes.) Thank you China for mining the majority of today's iron ore."
-
-
-#modified from options.coffee
-section ->
-  h3 '#commands', 'Available Commands'
-  table ->
-    tr ->
-      th 'Name'
-      th 'Description'
-    sorted_commands = Object.keys(@COMMANDS).sort()
-    for i in [0...sorted_commands.length]
-      name = sorted_commands[i]
-      cmd = @COMMANDS[name]
-      tr ->
-        td @sentence_case name
-        td cmd.desc
-
 
 footer ->
   a href: 'http://donate.getferro.com', -> 'donate'

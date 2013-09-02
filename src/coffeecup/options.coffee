@@ -11,15 +11,13 @@ html ->
       rel: 'stylesheet'
       type: 'text/css'
     script src: 'js/options.js'
-    script src: 'https://checkout.stripe.com/v2/checkout.js'
-    script src: 'https://coinbase.com/assets/button.js'
   body ->
     aside '#banner', ->
       a href: 'https://github.com/ferro/ferro/', -> 'Fork me on GitHub'
     aside '#donate', ->
       img src: 'images/panang.jpg', height: '120', width: '120'
       label 'Chicken Panang Curry (พะแนง) is $9.95'
-      h2 'Feed me?'
+      h2 'Create happiness'
       p '#feeding', 'I emphatically adore Thai vittles. Your donation will endow my occasional excursions to the local Thai restaurant and thereupon deliver felicity to my life. Donating will also expunge the photograph, which has perchance oft engendered thine appetite.'
       ul '#form', ->
         li ->
@@ -28,13 +26,13 @@ html ->
         li ->
           label 'Amount:'
           input id: 'amount', type: 'number', value: '9.95', tabindex: '101'
-      div '.header', 'Amount left after processing fees:'
+      div '.header', 'Amount lost to processing fees:'
       ul '#options', ->
         li ->
-          span '.stripe', '$ 9.36'
+          span '.stripe', '$ 0.59'
           button '#stripe.action', 'Use credit card', tabindex: '102'
         li ->
-          span '.bitcoin', '$ 9.95'
+          span '.bitcoin', '$ 0.00'
           button '#bitcoin.action', 'Use bitcoins', tabindex: '103'
       p '#list', 'Most recent donations: '
       table id: 'donations', ->
@@ -102,7 +100,7 @@ html ->
             code 'P'
           td 'Toggle tab pin'
       h3 'Available Commands'
-      table ->
+      table '.commands', ->
         tr ->
           th 'Name'
           th 'Description'
@@ -114,7 +112,7 @@ html ->
             td sentence_case name
             td cmd.desc
       h3 'Recommended Extensions'
-      ul ->
+      ul '#recommendations', ->
       	li ->
       	  a href: 'https://chrome.google.com/webstore/detail/dbepggeogbaibhgnhhndojpepiihcmeb', -> 'Vimium'
       	  ': Provides better keyboard navigation. You can even customize the shortcuts to better match the one true editor.'

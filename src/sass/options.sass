@@ -41,9 +41,15 @@ main td
   vertical-align: top
   border-top: 1px solid #ddd
 
+.commands td
+  padding: .3em 0
+
 main td:first-child
   width: 5em
   padding-left: .5em
+
+.commands td:first-child
+  padding-right: 1em
 
 #session-list
   display: table
@@ -93,12 +99,14 @@ footer
     margin: 0 3em
 
 #banner
+  position: absolute
+  top: 0
+  right: 0
   height: 149px
   width: 149px
   overflow: hidden
   padding: 0
   margin: 0
-  float: right
 
   a
     z-index: 1
@@ -119,7 +127,6 @@ footer
     -webkit-transform: rotate(45deg)
     -webkit-box-shadow: 1px 1px 5px 1px #666
 
-    transform-origin: 0 0	
     transform: rotate(45deg)
     box-shadow: 1px 1px 5px 1px #666
 
@@ -155,7 +162,7 @@ footer
   padding: 20px
 
   img + label
-    position: absolute
+    float: right
     top: 150px
     right: 1em
     font-size: smaller
@@ -186,7 +193,7 @@ ul
 
 #donate input, #donate button
   position: absolute
-  right: 45%
+  left: 11em
 	
 #donate button
   padding: .6em
@@ -227,3 +234,6 @@ p.center
 
 #donate td
   padding: 0 2em 0 0 
+
+#recommendations li
+  padding-bottom: .5em

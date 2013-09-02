@@ -1,8 +1,5 @@
 @import 'options'
 
-main, section
-  margin: 0 25%
-
 footer
   margin: 3em 20% 0
 
@@ -19,17 +16,6 @@ main img, section img
 
 ul.spaced li
   margin-bottom: 1em
-
-aside.left 
-  float: left
-  position: fixed
-  left: 5%
-  top: 5em
-  width: 15em
-
-  li
-    list-style: none
-    margin-left: .7em
 
 nav
   margin-left: 2em
@@ -69,3 +55,38 @@ img
 
 .instruction
   clear: right
+
+aside.left 
+  top: 5em
+  left: 5%
+  width: 15em
+
+  li
+    list-style: none
+    margin-left: .7em
+
+@media (max-width: 1079px)
+  main, section
+    margin: 0 5%
+
+@media (min-width: 1080px) and (max-width: 1279px)
+  main, section
+    margin: 0 15%
+
+@media (max-width: 1279px)
+  aside.left
+    margin: 1em 0 0 1em
+      
+@media (min-width: 1280px)
+  aside.left 
+    float: left
+    position: fixed
+
+@media (min-width: 1280px) and (max-width: 1579px)
+  main, section
+    margin: 0 10% 0 25%
+
+@media (min-width: 1580px)
+  main, section
+    margin: 0 25%
+

@@ -9,7 +9,11 @@ $(document).ready ->
   load_data()
   append_template()
   $('body').click (event) ->
-    unless $('audio')[0]
+    first_click = true
+    if $('audio')[0]
+      first_click = false
+
+    if first_click
       display_message """
 Dear Ferro user,
 <br><br>
@@ -31,7 +35,7 @@ Loren
       times = (data?.times or 0) + 1
       chrome.storage.sync.set {times}
     
-      if times > 1 and $('audio')[0]
+      if times > 1 and not first_click
         speak 'You have clicked Ferro ' + times + ' times.', {rate: 2}
         $.get 'http://www.iheartquotes.com/api/v1/random?source=starwars&format=json', (data) ->
           speak data.quote, {enqueue: true, rate: 1.3}
