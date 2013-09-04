@@ -4,16 +4,16 @@ speak = (text, opts) ->
   _.extend opts, OPTIONS
   chrome.tts.speak text, opts
 
+session_times = 0
+
 $(document).ready ->
   init_commands_by_context()
   load_data()
   append_template()
   $('body').click (event) ->
-    first_click = true
-    if $('audio')[0]
-      first_click = false
+    session_times++
 
-    if first_click
+    if session_times > 1
       display_message """
 Dear Ferro user,
 <br><br>
@@ -26,6 +26,7 @@ Loren
 """
       $('audio').click (e) ->
         e.stopPropagation()
+    
 
     chrome.storage.sync.get 'times', (data) ->
       # autoplay is annoying
@@ -35,7 +36,7 @@ Loren
       times = (data?.times or 0) + 1
       chrome.storage.sync.set {times}
     
-      if times > 1 and not first_click
+      if session_times > 2
         speak 'You have clicked Ferro ' + times + ' times.', {rate: 2}
         $.get 'http://www.iheartquotes.com/api/v1/random?source=starwars&format=json', (data) ->
           speak data.quote, {enqueue: true, rate: 1.3}

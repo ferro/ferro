@@ -1,4 +1,4 @@
-DEBUG = true
+DEBUG = false
 
 d = (ss...) ->
   if DEBUG

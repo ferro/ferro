@@ -84,7 +84,7 @@ code {
 
 footer {
   text-align: center;
-  margin: 2em 5em 0;
+  margin: 3em auto 0;
   border-top: 1px solid #dddddd;
   padding: 0.5em 0 1em; }
   footer a {
@@ -128,7 +128,8 @@ footer {
 
 #donate img, .thankyou {
   float: right;
-  border: 2px solid black; }
+  border: 2px solid black;
+  margin-left: 0.5em; }
 
 .thankyou {
   position: absolute;
@@ -145,6 +146,7 @@ footer {
   border: 4px solid #f0f0f0;
   padding: 20px; }
   #donate img + label {
+    margin-left: 0.5em;
     float: right;
     top: 150px;
     right: 1em;

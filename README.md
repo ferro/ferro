@@ -4,8 +4,9 @@ This project is being actively maintained. I will make sure it continues to func
 
 ## TODO
 
-Please do contribute! I'm not planning on working on the below items. Open an issue if you'd like to be pointed in the right direction on how to implement something.
+Please do contribute! I'm not planning on working on the below items. Open an issue or WIP pull request if you'd like to be pointed in the right direction on how to implement something.
 
+* save command history and display on options page along with usage statistics/graphs
 * enable scrolling past 5th suggestion
 * allow clicking on and reordering saved session icons and rows of icons 
 * allow omnibox keyword interaction, eg `f extract google.com`
@@ -21,7 +22,7 @@ Please do contribute! I'm not planning on working on the below items. Open an is
 * make cross-browser with Crossrider
 * put tips based on past usage (eg 'try out saving your session') in the broswer action tooltip and options page
 * class system for different types of suggestions
-* write some tests? need to mock chrome api for some parts
+* write tests, need to mock chrome api for some parts
 
 ### When the manifest command limit of 4 is lifted
 

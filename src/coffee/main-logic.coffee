@@ -318,10 +318,13 @@ ready_to_execute = ->
   text_entered or $f('#f-text').value or (command.selection isnt null)
 
 is_transition = (key) ->  
+  d _([TAB, KEYS.CODES.LEFT, KEYS.CODES.RIGHT]).contains key.keyCode
   _([TAB, KEYS.CODES.LEFT, KEYS.CODES.RIGHT]).contains key.keyCode
-  
+
 # STATE machine
 window.onkeydown = (key) =>
+  d key.keyCode
+
   if key.keyCode is KEYS.CODES.RETURN and ready_to_execute()
     execute()
     return
@@ -352,6 +355,7 @@ window.onkeydown = (key) =>
         update_selection(is_down key) if cmd_choice()
 
 window.onkeypress = (key) =>
+  d key.keyCode  
 
   # ctrl-j,k,n,p are handled in onkeydown
   if _.contains [10,11,14,16], key.keyCode
