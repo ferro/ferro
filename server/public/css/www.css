@@ -294,3 +294,5 @@ aside.left {
 @media (min-width: 1580px) {
   main, section {
     margin: 0 25%; } }
+#video {
+  margin: 0 auto; }
