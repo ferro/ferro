@@ -1,6 +1,6 @@
 {
     "name": "Ferro",
-    "version": "1.0.2",
+    "version": "1.0.3",
     "manifest_version": 2,
     "description": "The keyboard interface to Chrome. Hit Alt-Shift-F, type, (optionally hit tab and type again) and return.",
     "icons": {

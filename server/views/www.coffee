@@ -31,6 +31,7 @@ tag 'main', ->
     a href: '#sessions', -> 'sessions section'
     text ' below). You can also perform many other commands, such as deleting a bookmark, disabling an extension, and pinning a tab.'
   
+iframe width: "420", height: "315", src: "//www.youtube.com/embed/zZg8sJv8o_o", frameborder: "0", allowfullscreen: true
 
 #modified from options.coffee
 section '#commands', ->
