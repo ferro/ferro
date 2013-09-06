@@ -27,7 +27,7 @@ aside '.left', ->
 tag 'main', ->
   h1 'Ferro'
   p ->
-    text 'Ferro is a Google Chrome extension that is similar to application launchers like Quicksilver, Launchy, and Do. Using only your keyboard, you can quickly open pages in your history or bookmarks, open apps or extension pages, and save your current tabs for opening later (see '
+    text 'Ferro is a Google Chrome extension that functions similarly to application launchers like Quicksilver, Launchy, and Do, but it can do much more than just open an app. Using only your keyboard, you can quickly open pages in your history or bookmarks, open apps or extension pages, and save your current tabs for opening later (see '
     a href: '#sessions', -> 'sessions section'
     text ' below). You can also perform other commands, such as deleting a bookmark, disabling an extension, and pinning a tab.'
   

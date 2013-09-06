@@ -1,6 +1,6 @@
 {
     "name": "Ferro",
-    "version": "1.0.1",
+    "version": "1.0.2",
     "manifest_version": 2,
     "description": "The keyboard interface to Chrome. Hit Alt-Shift-F, type, (optionally hit tab and type again) and return.",
     "icons": {
@@ -13,7 +13,7 @@
 	    "19": "images/icon-19.gif",
 	    "38": "images/icon-38.gif"
 	},
-	"default_title": "Don't use your mouse: use your keyboard shortcut :)",
+	"default_title": "Don't click me! Type Alt-Shift-F :)",
 	"default_popup": "popup.html"
     },
     "background": {
