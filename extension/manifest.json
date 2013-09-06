@@ -21,7 +21,7 @@
 	"persistent": false
     },
     "content_security_policy": "script-src 'self' https://checkout.stripe.com https://ssl.google-analytics.com https://coinbase.com https://ajax.googleapis.com 'unsafe-eval'; object-src 'self'",
-    "homepage_url": "http://getferro.com",
+    "homepage_url": "http://www.getferro.com",
     "incognito": "spanning",
     "offline_enabled": true,
     "options_page": "options.html",
