@@ -57,7 +57,7 @@ in_text_mode = () ->
   text_mode_text?.constructor?.name is 'String'
 
 # need some delay between calling this and user entering text
-load_data = ->
+load_data = =>
   sessions = new SessionList
   sessions.fetch()
   chrome.management.getAll (apps) =>
@@ -178,19 +178,19 @@ execute = ->
     
     unless cmd.name is 'describe'
       d 'close'
-#      window.close()
+      window.close()
 
 
-update_stored_cmd = (fn_name, arg, tab) ->
+update_stored_cmd = (fn_name, arg) ->
   chrome.storage.sync.set
     use_current_tab: not arg
-    last_arg: arg or tab
+    last_arg: arg
     last_fn: fn_name
 
 # if no arg, uses current tab
 send_cmd = (cmd, arg = null) ->
   chrome.tabs.query {active: true, currentWindow: true}, ([tab]) ->
-    update_stored_cmd cmd.name, arg, tab
+    update_stored_cmd cmd.name, arg
     final_arg = arg or tab
     track 'Commands', cmd.name, get_type final_arg
     cmd.fn final_arg

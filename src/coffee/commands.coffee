@@ -18,7 +18,7 @@ DEFAULTS =  # tied to CONTEXTS
   1: 'options'
   2: 'launch'
   3: 'open'
-  4: 'search_history'
+  4: 'extract'
   5: 'open'
   6: 'open'
   7: null

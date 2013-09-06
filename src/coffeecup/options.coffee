@@ -99,7 +99,7 @@ html ->
           td ->
             code 'P'
           td 'Toggle tab pin'
-      h3 'Available Commands'
+      h3 'Commands'
       table '.commands', ->
         tr ->
           th 'Name'

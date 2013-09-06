@@ -17,6 +17,7 @@ chrome.runtime.onInstalled.addListener (details) ->
 
 # hotkey listener
 chrome.commands.onCommand.addListener (command) ->
+  d command
   chrome.tabs.query {active: true, lastFocusedWindow: true}, ([tab]) ->
     switch command
       when 'toggle_pin'

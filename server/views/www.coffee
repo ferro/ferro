@@ -1,4 +1,4 @@
-link rel: 'icon', type: 'image/png', href: 'favicon.gif'
+
 
 aside '#banner', ->
   a href: 'https://github.com/ferro/ferro/', -> 'Fork me on GitHub'
@@ -14,7 +14,7 @@ aside '.left', ->
       a href: '#', 'Ferro'
     ul ->
       li ->
-        a href: '#commands', 'Available Commands'
+        a href: '#commands', 'Commands'
       li ->
         a href: '#name', 'The Name'
       li ->
@@ -34,7 +34,7 @@ tag 'main', ->
 
 #modified from options.coffee
 section '#commands', ->
-  h3 'Available Commands'
+  h3 'Commands'
   table '.commands', ->
     tr ->
       th 'Name'
@@ -140,7 +140,7 @@ section '#usage', ->
   label ->
     text 'After typing '
     code '.elon'
-  p 'Some commands, such as “Speak” or “Search History,” require you to enter text in the left section. To begin entering text, press period. Then type the text and continue as normal. For more such commands, see those in the full command list below that call for “given text” or “name given”.'
+  p 'Some commands, such as “Extract” or “Speak,” require you to enter text in the left section. To begin entering text, press period. Then type the text and continue as normal. For more such commands, see those in the full command list below that call for “given text” or “name given”.'
 
   div '.instruction', ''
 
@@ -175,7 +175,7 @@ section '#sessions', ->
 
 section '#security', ->
   h3 'Security'
-  p "Ferro does not transmit your personal information to nor store it on our servers. That includes, for instance, your browsing history, bookmarks, and saved sessions. The only personal information that is stored is your saved sessions, and that is either stored on your computer, or if you are signed into Chrome, on Google's Chrome sync servers."
+  p "Ferro does not transmit your personal information to nor store it on our servers. That includes, for instance, your browsing history, bookmarks, and saved sessions. The only personal information stored is your saved sessions, and that is either stored on your computer, or if you are signed into Chrome, on Chrome's sync servers, which are secured by Google."
   p 'The only dynamic content that is displayed to you and did not originate from you is the list of recent donations on the options page, and that data is escaped.'
 
 footer ->

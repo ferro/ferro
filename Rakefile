@@ -17,7 +17,9 @@ end
 
 task :background do
   compile(
-          [],
+          [
+            'underscore'
+          ],
           [
             'underscore-extensions',
             'init',

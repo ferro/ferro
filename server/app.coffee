@@ -1,6 +1,6 @@
 request = require 'request'
-db = require './model'
-_ = require 'underscore'
+#db = require './model'
+#_ = require 'underscore'
 {COMMANDS} = require '../src/coffee/commands'
 {sentence_case} = require '../src/coffee/init'
 
@@ -22,7 +22,6 @@ db?.sequelize.sync()
 
 require('zappajs') port, ->
   @use 'partials', 'static', 'bodyParser'
-  @enable 'default layout'
 
   @get '/': ->
     host = @request.get 'host'
@@ -33,17 +32,18 @@ require('zappajs') port, ->
           sentence_case: sentence_case
           title: 'Ferro: The keyboard interface to Chrome'
           scripts: [
-            '//ajax.googleapis.com/ajax/libs/jquery/2.0.3/jquery.min.js'
-            'js/analytics.js'
-            'fancybox/source/jquery.fancybox.js'
-            'fancybox/source/helpers/jquery.fancybox-thumbs.js'
-            'js/www.js'
+            '//ajax.googleapis.com/ajax/libs/jquery/2.0.3/jquery.min'
+            'js/analytics'
+            'fancybox/source/jquery.fancybox'
+            'fancybox/source/helpers/jquery.fancybox-thumbs'
+            'js/www'
           ]
           stylesheets: [
-            'css/www.css'
-            'fancybox/source/jquery.fancybox.css'
-            'fancybox/source/helpers/jquery.fancybox-thumbs.css'
+            'css/www'
+            'fancybox/source/jquery.fancybox'
+            'fancybox/source/helpers/jquery.fancybox-thumbs'
           ]
+        , layout: 'layout'
       when 'donate.getferro.com'
         db.sequelize.query(
             'SELECT * FROM "Donations";'
@@ -59,19 +59,20 @@ require('zappajs') port, ->
             total: (sum/100).toFixed 2
             title:'Ferro Donations'
             scripts: [
-              '//ajax.googleapis.com/ajax/libs/jquery/2.0.3/jquery.min.js'
-              'js/jquery.tablesorter.min.js'
-              'js/init.js'
-              'js/analytics.js'
-              'js/donate.js'
-              'https://checkout.stripe.com/v2/checkout.js'
-              'https://coinbase.com/assets/button.js'
-              'js/main.js'
+              '//ajax.googleapis.com/ajax/libs/jquery/2.0.3/jquery.min'
+              'js/jquery.tablesorter.min'
+              'js/init'
+              'js/analytics'
+              'js/donate'
+              'https://checkout.stripe.com/v2/checkout'
+              'https://coinbase.com/assets/button'
+              'js/main'
             ]
             stylesheets: [
-              'css/table.css'
-              'css/donate.css'
+              'css/table'
+              'css/donate'
             ]
+          , layout: 'layout'
       else   
         'hello there'
 
@@ -131,6 +132,21 @@ require('zappajs') port, ->
     @send 'saved donation'
 
 
-
-
+  @view layout: ->
+    doctype 5
+    html ->
+      head ->
+        title @title if @title
+        if @scripts
+          for s in @scripts
+            script src: s + '.js'
+        script(src: @script + '.js') if @script
+        if @stylesheets
+          for s in @stylesheets
+            link rel: 'stylesheet', href: s + '.css'
+        link(rel: 'stylesheet', href: @stylesheet + '.css') if @stylesheet
+        style @style if @style
+        link rel: 'icon', type: 'image/png', href: 'favicon.gif'
+      body @body
+    
 
