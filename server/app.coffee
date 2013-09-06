@@ -1,6 +1,6 @@
 request = require 'request'
-#db = require './model'
-#_ = require 'underscore'
+db = require './model'
+_ = require 'underscore'
 {COMMANDS} = require '../src/coffee/commands'
 {sentence_case} = require '../src/coffee/init'
 
