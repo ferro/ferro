@@ -32,7 +32,7 @@ tag 'main', ->
     text ' below). You can also perform many other commands, such as deleting a bookmark, disabling an extension, and pinning a tab.'
   
 div '#video', ->
-  iframe width: "420", height: "315", src: "//www.youtube.com/embed/zZg8sJv8o_o", frameborder: "0", allowfullscreen: true
+  iframe width: "960", height: "720", src: "//www.youtube.com/embed/zZg8sJv8o_o", frameborder: "0", allowfullscreen: true
 
 #modified from options.coffee
 section '#commands', ->
