@@ -54,7 +54,7 @@ $ ->
 
       # .text escapes html
       tr.find('td:nth-child(1)').text donation.name
-      tr.find('td:nth-child(2)').text '$ ' + (donation.amt/100.0).toFixed 2
+      tr.find('td:nth-child(2)').text '$' + (donation.amt/100.0).toFixed 2
 
       d = new Date(donation.created_at)
       tr.find('td:nth-child(3)').text d.getMonth() + '/' + d.getDate() + '/' + d.getFullYear()

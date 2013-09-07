@@ -9,7 +9,7 @@ class SessionView extends Backbone.View
       for win in @model.get 'wins'
         li ->
           for icon, i in win.icons
-            a href: win.urls[i], ->
+            a target: '_blank', href: win.urls[i], ->
               img src: icon, height: '16', width: '16'
     button '.delete', ->
       text 'Delete'

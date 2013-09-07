@@ -14,50 +14,6 @@ html ->
   body ->
     aside '#banner', ->
       a href: 'https://github.com/ferro/ferro/', -> 'Fork me on GitHub'
-    aside '#donate', ->
-      img src: 'images/panang.jpg', height: '120', width: '120'
-      label 'Chicken Panang Curry (พะแนง) is $9.95'
-      h2 'Create happiness'
-      p '#feeding', 'I emphatically adore Thai vittles. Your donation will endow my occasional excursions to the local Thai restaurant and thereupon deliver felicity to my life. Donating will also expunge the photograph, which has perchance oft engendered thine appetite.'
-      ul '#form', ->
-        li ->
-          label 'Donor name:'
-          input id: 'name', type: 'text', value: 'Anonymous', tabindex: '100'
-        li ->
-          label 'Amount:'
-          input id: 'amount', type: 'number', value: '9.95', tabindex: '101'
-      div '.header', 'Amount lost to processing fees:'
-      ul '#options', ->
-        li ->
-          span '.stripe', '$ 0.59'
-          button '#stripe.action', 'Use credit card', tabindex: '102'
-        li ->
-          span '.bitcoin', '$ 0.00'
-          button '#bitcoin.action', 'Use bitcoins', tabindex: '103'
-      p '#list', 'Most recent donations: '
-      table id: 'donations', ->
-        tr ->
-          td ''
-          td ''
-          td ''
-        tr ->
-          td ''
-          td ''
-          td ''
-        tr ->
-          td ''
-          td ''
-          td ''
-        tr ->
-          td ''
-          td ''
-          td ''
-        tr ->
-          td ''
-          td ''
-          td ''
-      a href: 'http://donate.getferro.com', tabindex: '104', -> 'Complete donor table'
-      div '.coinbase-button', ''
     tag 'main', ->
       h1 'Ferro'
       p ->
@@ -129,3 +85,47 @@ html ->
         a href: 'http://www.getferro.com', -> 'getferro.com'
         t '&#167'
         a href: 'https://github.com/ferro/ferro/issues', -> 'problems & suggestions'
+    aside '#donate', ->
+      img src: 'images/panang.jpg', height: '120', width: '120'
+      label 'Chicken Panang Curry (พะแนง) is $9.95'
+      h2 'Create happiness'
+      p '#feeding', 'I emphatically adore Thai vittles. Your donation will endow my occasional excursions to the local Thai restaurant and thereupon deliver felicity to my life. Donating will also expunge the photograph, which has perchance oft engendered thine appetite.'
+      ul '#form', ->
+        li ->
+          label 'Donor name:'
+          input id: 'name', type: 'text', value: 'Anonymous', tabindex: '100'
+        li ->
+          label 'Amount:'
+          input id: 'amount', type: 'number', value: '9.95', tabindex: '101'
+      div '.header', 'Amount lost to processing fees:'
+      ul '#options', ->
+        li ->
+          span '.stripe', '$ 0.59'
+          button '#stripe.action', 'Use credit card', tabindex: '102'
+        li ->
+          span '.bitcoin', '$ 0.00'
+          button '#bitcoin.action', 'Use bitcoins', tabindex: '103'
+      p '#list', 'Most recent donations: '
+      table id: 'donations', ->
+        tr ->
+          td ''
+          td ''
+          td ''
+        tr ->
+          td ''
+          td ''
+          td ''
+        tr ->
+          td ''
+          td ''
+          td ''
+        tr ->
+          td ''
+          td ''
+          td ''
+        tr ->
+          td ''
+          td ''
+          td ''
+      a href: 'http://donate.getferro.com', tabindex: '104', -> 'Complete donor table'
+      div '.coinbase-button', ''
