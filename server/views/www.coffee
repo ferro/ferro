@@ -25,7 +25,9 @@ aside '.left', ->
         a href: '#security', 'Security'
 
 tag 'main', ->
-  h1 'Ferro'
+  h1 '#title', 'Ferro'
+  div '#byline', ->
+    text 'Be effortless. Go mouse-less.'
   p ->
     text 'Ferro is a Google Chrome extension that functions similarly to application launchers like Quicksilver, Launchy, and GNOME Do, but it can do much more than just open apps. Using only your keyboard, you can quickly open pages in your history or bookmarks, open extension options pages, and save your current tabs for opening later (see '
     a href: '#sessions', -> 'sessions section'
@@ -52,7 +54,7 @@ section '#commands', ->
 
 section '#name', ->
   h3 'The Name'
-  p "Ferro is named after iron. Iron and chromium are joined to form the alloy ferrochrome, a constituent of steel (it prevents corrosion and increases hardness). Iron is also pretty exquisite on its own. It is the center of the protein that transports oxygen around our bodies, it is the most common element inside our planet, and it is the largest element the Sun can create until it becomes a red giant in ~5.4 billion years. (And then it can only make up to Bismuth. It takes a much larger star to make larger elements, and then only when it explodes.) Shout out to China for mining the majority of today's iron ore."
+  p "Ferro is named after iron. Iron and chromium are joined to form the alloy ferrochrome, a constituent of steel (it prevents corrosion and increases hardness). Iron is also pretty exquisite on its own. It is the center of the protein that transports oxygen around our bodies, it is the most common element inside our planet, and it is the largest element the sun can create until it becomes a red giant in ~5.4 billion years. (And then it can only make up to Bismuth. It takes a much larger star to make larger elements, and then only when it explodes.) Shout out to China for mining the majority of today's iron ore."
 
 
 section '#usage', ->
