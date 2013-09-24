@@ -22,7 +22,7 @@ section '#main', ->
 # TODO unduplicate
 aside '#donate', ->
   img src: 'panang.jpg', height: '120', width: '120'
-  label 'Chicken Panang Curry (พะแนง) is $9.95'
+  label 'Chicken Panang Curry (พะแนงไก่) is $9.95'
   h2 'Create happiness'
   p '#feeding', 'I emphatically adore Thai vittles. Your donation will endow my occasional excursions to the local Thai restaurant and thereupon deliver felicity to my life.'
   ul '#form', ->

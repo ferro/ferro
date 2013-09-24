@@ -34,7 +34,7 @@ tag 'main', ->
     text ' below). You can also perform many other commands, such as deleting a bookmark, disabling an extension, and pinning a tab.'
   
 div '#video', ->
-  iframe width: "960", height: "720", src: "//www.youtube.com/embed/zZg8sJv8o_o", frameborder: "0", allowfullscreen: true
+  iframe width: "640", height: "480", src: "//www.youtube.com/embed/zZg8sJv8o_o", frameborder: "0", allowfullscreen: true
 
 #modified from options.coffee
 section '#commands', ->
@@ -54,7 +54,7 @@ section '#commands', ->
 
 section '#name', ->
   h3 'The Name'
-  p "Ferro is named after iron. Iron and chromium are joined to form the alloy ferrochrome, a constituent of steel (it prevents corrosion and increases hardness). Iron is also pretty exquisite on its own. It is the center of the protein that transports oxygen around our bodies, it is the most common element inside our planet, and it is the largest element the sun can create until it becomes a red giant in ~5.4 billion years. (And then it can only make up to Bismuth. It takes a much larger star to make larger elements, and then only when it explodes.) Shout out to China for mining the majority of today's iron ore."
+  p "Ferro is named after iron. Iron and chromium are joined to form the alloy ferrochrome, a constituent of steel (it prevents corrosion and increases hardness). Iron is also pretty exquisite on its own. At a small scale, it is the center of the protein that transports oxygen around our bodies. At a medium scale, it's the most common element inside our planet. And at a large scale, it's the largest element the Sun can create until our dear star becomes a red giant in ~5.4 billion years. (And then it can only make up to Bismuth. It takes a much larger star to make larger elements, and then only when it explodes.) Shout out to China for mining the majority of today's iron ore."
 
 
 section '#usage', ->
