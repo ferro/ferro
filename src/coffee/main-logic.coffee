@@ -163,7 +163,8 @@ set_entered = (e) ->
 execute = ->
   if not in_text_mode() and main_choice().cmd
     send_cmd main_choice().cmd
-    window.close()
+    d 'close'
+    window.close() unless DEBUG
   else
     cmd = if cmd_choice()
       cmd_choice()
@@ -178,7 +179,7 @@ execute = ->
     
     unless cmd.name is 'describe'
       d 'close'
-      window.close()
+      window.close() unless DEBUG
 
 
 update_stored_cmd = (fn_name, arg) ->
