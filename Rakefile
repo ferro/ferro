@@ -4,6 +4,7 @@ task :default => :compile
 
 task :compile => [:options_template, :options_app,  :popup, :background, :sass]
 
+
 task :watch do
   exec 'coffee -cw -o extension/js/ src/coffee/'
   exec 'sass --watch src/sass/options.sass:extension/options.sass'
@@ -13,6 +14,10 @@ end
 
 task :sass do
   `sass --watch src/sass/:extension/css/`
+end
+
+task :zip do
+  `zip -r ferro extension/*`
 end
 
 task :background do

@@ -256,7 +256,12 @@ save_session = (name, wins) ->
     s.destroy()
   s = new Session {name, wins}
   sessions.add s
-  s.save()
+  d name, wins, 'sessions:', sessions
+  s.save().then (complete) ->
+    d 'complete:', complete
+  , (error) ->
+    d 'error:', error
+  
   
 reload_window = (win) ->
   chrome.tabs.update(tab.id, url: tab.url) for tab in win.tabs

@@ -164,7 +164,7 @@ execute = ->
   if not in_text_mode() and main_choice().cmd
     send_cmd main_choice().cmd
     d 'close'
-    window.close() unless DEBUG
+    delayed_close()
   else
     cmd = if cmd_choice()
       cmd_choice()
@@ -179,8 +179,13 @@ execute = ->
     
     unless cmd.name is 'describe'
       d 'close'
-      window.close() unless DEBUG
+      delayed_close()
 
+# sometimes commands aren't executed if the window is closed immediately  
+delayed_close = ->
+  setTimeout ->
+    window.close() unless DEBUG
+  , 50
 
 update_stored_cmd = (fn_name, arg) ->
   chrome.storage.sync.set
