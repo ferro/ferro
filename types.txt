@@ -28,6 +28,7 @@ tab
   pinned
   favIconUrl
   ...
+  http://developer.chrome.com/extensions/tabs.html#type-Tab
 
 bookmark (for icon use chrome://favicon/url)
   title

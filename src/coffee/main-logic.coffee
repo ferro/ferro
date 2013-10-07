@@ -181,11 +181,12 @@ execute = ->
       d 'close'
       delayed_close()
 
-# sometimes commands aren't executed if the window is closed immediately  
+# sometimes commands aren't executed if the window is closed immediately.
+# command that takes the longest is opening a session
 delayed_close = ->
   setTimeout ->
     window.close() unless DEBUG
-  , 50
+  , 200
 
 update_stored_cmd = (fn_name, arg) ->
   chrome.storage.sync.set

@@ -94,7 +94,8 @@ COMMANDS =
     desc: 'Select tab'
     context: CONTEXTS.TAB
     fn: (tab) ->
-      chrome.tabs.update tab.id, {selected: true}
+      chrome.tabs.update tab.id, {active: true}
+      chrome.windows.update tab.windowId, {focused: true}
   enable:
     desc: 'Enable extension or app'
     context: [CONTEXTS.EXTENSION, CONTEXTS.APP]
@@ -246,9 +247,11 @@ open_session = (session) ->
   for win in session.get('wins')
     win.url = win.urls
     chrome.windows.create _.omit(win, 'urls', 'pins', 'icons'), (new_win) =>
-      for i in [0...win.urls.length]
-        chrome.tabs.update new_win.tabs[i].id, {pinned: win.pins[i]}
+      for j in [0...win.urls.length]
+        chrome.tabs.update new_win.tabs[j].id, {pinned: win.pins[j]}
       chrome.tabs.update new_win.tabs[0].id, {active: true}
+      chrome.windows.update new_win.id, {focused: true}
+
 
 save_session = (name, wins) ->
   s = sessions.get_by_name name
