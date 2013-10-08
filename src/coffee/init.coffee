@@ -25,6 +25,7 @@ track = (args...) ->
   args.unshift '_trackEvent'
   _gaq.push args
 
+# also in server www.coffee
 add_async_script = (url) ->
   ga = document.createElement('script')
   ga.type = 'text/javascript'
