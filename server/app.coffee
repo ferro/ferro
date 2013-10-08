@@ -33,6 +33,7 @@ require('zappajs') port, ->
           title: 'Ferro: The keyboard interface to Chrome'
           scripts: [
             '//ajax.googleapis.com/ajax/libs/jquery/2.0.3/jquery.min'
+            'js/init'
             'js/analytics'
             'fancybox/source/jquery.fancybox'
             'fancybox/source/helpers/jquery.fancybox-thumbs'
