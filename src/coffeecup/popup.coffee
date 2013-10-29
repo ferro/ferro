@@ -23,11 +23,11 @@ get_icon = (o, accept_array = false) ->
       @gear_icon      
     when @CONTEXTS.SPECIAL
       @page_icon
-    when @CONTEXTS.BOOKMARK
+    when @CONTEXTS.BOOKMARK, @CONTEXTS.HISTORY
       # this only goes through your local browser cache
       # 'chrome://favicon/' + o.url
   
-      'https://plus.google.com/_/favicon?domain=' + o.url
+      'https://plus.google.com/_/favicon?domain=' + escape o.url
     when @CONTEXTS.APP, @CONTEXTS.EXTENSION
       icons = @filter o.icons, (i) ->
         i.size is 16

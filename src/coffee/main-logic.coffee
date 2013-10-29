@@ -38,7 +38,7 @@ sessions = null
 gear_icon = chrome.extension.getURL 'images/gear.png'
 page_icon = chrome.extension.getURL 'images/page.ico'
 pages_icon = chrome.extension.getURL 'images/pages.ico'
-filter = _.filter # needs to be un-underscored global var for template
+filter = _.filter # needs to be un-underscored global var for templating
 
 $f = (id) ->
   if id[0] is '#'
