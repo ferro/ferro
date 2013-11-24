@@ -15,6 +15,7 @@ complete = (type, result = null) ->
   orders = (amt / DEFAULT_AMT).toFixed 2
 
   $('#donate > img').hide()
+  $('#donate > label').hide()
   $('#donate').append thank_you orders
 
   chrome?.storage?.sync.set {donated, orders}
@@ -27,12 +28,10 @@ update_fee = ->
   )/100).toFixed 2
   $('.stripe').text '$ ' + fee
   
-# these took forever to load sometimes, and they blocked viewing the page, so moving from head to async
-# script src: 'https://checkout.stripe.com/v2/checkout.js'
-# script src: 'https://coinbase.com/assets/button.js'
-
-add_async_script 'https://checkout.stripe.com/v2/checkout.js'
-add_async_script 'https://coinbase.com/assets/button.js'
+# these took forever to load sometimes, and they blocked viewing the page, so i moved them from head to async
+# but then I moved back to head in order to take out the alarming permissions, see issue #9
+# add_async_script 'https://checkout.stripe.com/v2/checkout.js'
+# add_async_script 'https://coinbase.com/assets/button.js'
 
 $ ->
 
@@ -46,6 +45,7 @@ $ ->
   chrome?.storage?.sync.get ['donated', 'orders'], (data) ->
     if chrome.extension and data.donated
       $('#donate > img').hide()
+      $('#donate > label').hide()
       $('#donate').append thank_you data.orders
 
   $.get 'http://donate.getferro.com/donations', (data) ->

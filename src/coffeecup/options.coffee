@@ -11,6 +11,8 @@ html ->
       rel: 'stylesheet'
       type: 'text/css'
     script src: 'js/options.js'
+    script src: 'https://checkout.stripe.com/v2/checkout.js'
+    script src: 'https://coinbase.com/assets/button.js'
   body ->
     aside '#banner', ->
       a href: 'https://github.com/ferro/ferro/', -> 'Fork me on GitHub'

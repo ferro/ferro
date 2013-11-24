@@ -262,9 +262,12 @@ a.fancybox-thumb + label {
   text-align: center;
   margin: 1em 0 2em; }
 
-img {
+section img {
   width: 600px;
   margin-left: 1em; }
+
+nav img {
+  margin-top: 4em; }
 
 .instruction {
   clear: right; }

@@ -24,6 +24,9 @@ aside '.left', ->
       li ->
         a href: '#security', 'Security'
 
+    a href: "https://flattr.com/submit/auto?user_id=loren&url=http%3A%2F%2Fwww.getferro.com&title=Ferro&category=software", target: "_blank", ->
+      img src: "//api.flattr.com/button/flattr-badge-large.png", alt: "Flattr this", title: "Flattr this", border: "0"
+
 tag 'main', ->
   h1 '#title', 'Ferro'
   div '#byline', ->

@@ -1,6 +1,6 @@
 {
     "name": "Ferro",
-    "version": "1.0.8",
+    "version": "1.0.9",
     "manifest_version": 2,
     "description": "The keyboard interface to Chrome. Hit Alt-Shift-F, type, (optionally hit tab and type again) and return.",
     "icons": {
@@ -34,8 +34,6 @@
 	"history",
 	"tts",
 	"http://www.iheartquotes.com/",
-	"https://*.stripe.com/",
-	"https://*.coinbase.com/",
 	"http://donate.getferro.com/",
 	"https://ajax.googleapis.com/"
     ],

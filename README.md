@@ -1,5 +1,7 @@
 # Ferro
 
+[![Flattr this git repo](http://api.flattr.com/button/flattr-badge-large.png)](https://flattr.com/submit/auto?user_id=loren&url=http%3A%2F%2Fwww.getferro.com&title=Ferro&tags=github&category=software) 
+
 This project is being actively maintained. I will make sure it continues to function and will also add commands when the extension API is expanded. I will respond to and categorize issues and review and merge pull requests.
 
 ## TODO

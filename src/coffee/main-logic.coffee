@@ -127,13 +127,18 @@ update = (e) ->
 re_sort = ->
   suggestions[state].list = _.sortBy suggestions[state].list, (s) =>
 
-    # everything has a name except for tabs
+    # everything has a name except for tabs/bookmark/history
     if s.name 
       weight = s.name.score text_entered
-    else if s.get #session
+    else if s.get #is a session
       weight = s.get('name').score text_entered
     else
       weight = _.max [s.title?.score text_entered, s.url?.score text_entered]
+      if s.favIconUrl #is a tab
+        weight = Math.min(1, weight + 0.3)
+      else if s.lastVisitTime #is a history item
+        weight = Math.max(0, weight - 0.3)
+        
     1 - weight 
 
   if suggestions_are_visible
