@@ -2,6 +2,8 @@
 
 [![Flattr this git repo](http://api.flattr.com/button/flattr-badge-large.png)](https://flattr.com/submit/auto?user_id=loren&url=http%3A%2F%2Fwww.getferro.com&title=Ferro&tags=github&category=software) 
 
+[Our old website](https://chrome.google.com/webstore/detail/ferro/pioihedddcnmkeeeomkcfppglpehegfh) (Heroku stopped supporting our buildpack)
+
 Here's a nice-looking alternative, although with fewer functions: https://www.tabbs.pro/
 
 ## TODO
